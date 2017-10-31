@@ -1,0 +1,10 @@
+<tab>_c	TclComplete.txt	/*<tab>_c*
+TclComplete	TclComplete.txt	/*TclComplete*
+TclComplete#popupscroll	TclComplete.txt	/*TclComplete#popupscroll*
+TclComplete.txt	TclComplete.txt	/*TclComplete.txt*
+TclComplete:Populate	TclComplete.txt	/*TclComplete:Populate*
+TclComplete:config	TclComplete.txt	/*TclComplete:config*
+TclComplete:ctrl-d	TclComplete.txt	/*TclComplete:ctrl-d*
+TclComplete:ctrl-u	TclComplete.txt	/*TclComplete:ctrl-u*
+cells	TclComplete.txt	/*cells*
+g:TclComplete#dir	TclComplete.txt	/*g:TclComplete#dir*

@@ -1,0 +1,123 @@
+*TclComplete.txt*  Omni-completion for Tcl!!
+
+Author:  Chris Heithoff ( christopher.b.heithoff@intel.com )
+Initial Date:  10/31/2017
+Latest Rev:    10/31/2017
+   
+==============================================================================
+1. Intro                                          *TclComplete*
+   TclComplete.vim adds omni-completion for Tcl (filetype=tcl).
+
+   Omni-completion is a built-in Vim auto-completion reserved for
+   filetype-dependent user-defined completion.
+   
+   Vim ships with omni-completion for Python, Ruby, Tcl, Javascript, etc...
+   but not a dedicated one for Tcl....so here it is!
+   
+   This plug-in ships with a sample set of TclComplete collateral 
+   files in the TclComplete/sample directory.  This is the default
+   location that TclComplete looks in.
+
+==============================================================================
+2) Populating the completion files                *TclComplete:Populate*
+
+   Because there can be different versions of Tcl, and also many
+   possible procs that may vary from project to project, it is
+   recommended to open up your Tcl shell (or icc2_shell or pt_shell..)
+   and source the tcl/create_tcl_complete_files.tcl file.
+
+   This will create a directory $WARD/TclComplete and populate it with
+   lists of commands, procs, builtins, namespaces, and packages.
+    (NOTE:  This expects user to be an Intel back-end engineer who works
+     in a back-end environment, where the $WARD is your work area. If 
+     you need this changed, then modify the tcl script or fake it out
+     by defining an environment variable called WARD.)
+
+   
+==============================================================================
+3) Configuring TclComplete in Vim             *TclComplete:config*
+
+                                                  *g:TclComplete#dir*
+   - Tell Vim how to find the TclComplete directory
+       defaults (in order of descending priority)
+          $WARD/TclComplete
+          $WARD/dp/inputs/TclComplete
+          <location_of_plugin>/sample
+
+       to override default:   
+          :let g:TclComplete#dir = "/non/default/directory/"
+               -Hard-coded strings must be in quotes. 
+               -Environment variables use $ prefixes.
+               -Concatenate strings and expressions with a dot (.)
+            For example:
+              :let g:TclComplete#dir = $PROJ_AREA . "/TclComplete"
+
+
+==============================================================================
+3) Entering TclComplete auto-completion
+
+                                                *<tab>_c*
+<tab>          <c-x><c-o> is the Vim keymap to trigger omni-completion.
+               This still applies, but the <tab> key has been remapped
+               to <c-x><c-o> in insert mode.
+               (future revs will allow an opt-out feature)
+
+               This will bring up Vim's pop-up autocompletion menu.  
+               The menu is context aware:
+                  - A builtin, command, or proc will be the default menu
+                  - If you've already typed a command on the same line
+                     and within a open brackets, then the menu will supply
+                     options for the builtin, command, or proc.
+                  - "package require" will put the package list in the menu.
+                  - Nothing yet is done for namespaces but that's a future plan.
+
+==============================================================================
+4) Once the pop-up menu is open....
+
+  Enter auto-complete mode will open a pop-up menu.  This is the same type
+of pop-up menu used in Vim's built-in auto-complete modes. (:help *insert_expand*)
+
+  ^N and ^P will switch to the next/previous choices.
+
+  ^E will end the pop-up menu and return to insert mode
+  
+  ^Y will accept the current choice and stay in insert mode.  ('yes')
+
+** TclComplete adds a few extra abilities. ****
+
+<tab>    When the pop-up menu is open, <tab> will act like control-n (^N)
+
+                                                *TclComplete:ctrl-d*
+ctrl-d   Scroll the pop-up menu down by 10 choices.
+
+                                                *TclComplete:ctrl-u*
+ctrl-u   Scroll the pop-up menu up by 10 choices.
+
+                                                *TclComplete#popupscroll*
+   (the scroll distance can be set by :let g:TclComplete#popupscroll=<new-value>)
+
+==============================================================================
+5) Wildcard mode.
+
+  By default, the auto-completion takes wilcard (glob) patterns similar to what 
+you would use in Tcl scripts for Synopsys tools.
+
+  *cells* <tab>  --> popup menu will show all matching commands
+
+   (there's no regex mode)
+
+==============================================================================
+6) Call to action!
+     If you like this, let me know!   christopher.b.heithoff@intel.com 
+    
+    Future plans for improvements:
+    - can it run faster?  
+    - add namespaces
+    - add descriptions for options, not just built-ins/commands/procs
+    - identify any compound commands that are not namespace ensembles.
+      for example, "file" is a namespace ensemble, but "info" and "package"
+          are not.  I hardcoded to "info" and "package" subcommands into
+          the tcl script.
+
+
+

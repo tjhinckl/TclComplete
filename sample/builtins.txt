@@ -1,0 +1,85 @@
+after%%
+append%%
+apply%%
+array%anymore donesearch exists get names nextelement set size startsearch statistics unset%
+binary%format scan encode decode%
+break%%
+case%%
+catch%-code%
+chan%blocked close copy create eof event flush gets names pending pipe pop postevent push puts read seek tell truncate configure%
+close%%
+concat%%
+continue%%
+coroutine%%
+dict%append create exists filter for get incr info keys lappend map merge remove replace set size unset update values with%
+encoding%%
+eof%%
+error%-errorcode%
+eval%%
+exec%-ignorestderr -keepnewline%
+expr%abs acos asin atan atan2 bool ceil cos cosh double entier exp floor fmod hypot int isqrt log log10 max min pow rand round sin sinh sqrt srand tan tanh wide%
+fblocked%%
+fconfigure%-blocking -buffering -buffersize -encoding -eofchar -translation%
+fcopy%-command -encoding%
+file%atime attributes channels copy delete dirname executable exists extension isdirectory isfile join link lstat mtime mkdir nativename normalize owned pathtype readable readlink rename rootname separator size split stat system tail tempfile type volumes writable%
+fileevent%%
+flush%%
+for%%
+foreach%%
+format%%
+gets%%
+glob%-directory -join -nocomplain -path -tails -type -types%
+global%%
+if%%
+incr%%
+info%args body class cmdcount commands complete coroutine default errorstack exists frame functions globals hostname level library loaded locals nameofexecutable object patchlevel procs script sharelibextension tclversion vars%
+interp%-command -global -granularity -milliseconds -namespace -option -seconds -value%
+join%%
+lappend%%
+lassign%%
+lindex%%
+linsert%%
+list%%
+llength%%
+lmap%%
+lrange%%
+lrepeat%%
+lreplace%%
+lreverse%%
+lsearch%-all -ascii -bisect -decreasing -dictionary -exact -glob -increasing -index -inline -integer -nocase -not -real -regexp -sorted -start -subindices%
+lset%%
+lsort%-ascii -command -decreasing -dictionary -increasing -index -indices -integer -nocase -real -stride -unique%
+namespace%children code current delete ensemble eval exists export forget import inscope origin parent path qualifiers tail unknown upvar which%
+open%-handshake -lasterror -mode -pollinterval -queue -sysbuffer -timeout -ttycontrol -ttystatus -xchar%
+package%ifneeded names present provide require unknown vcompare versions vsatisfies prefer%
+pid%%
+proc%%
+puts%-translation%
+read%%
+regexp%-about -all -expanded -indices -inline -line -lineanchor -linestop -nocase -start%
+regsub%-all -expanded -line -lineanchor -linestop -nocase -start%
+return%-code -errorcode -errorinfo -errorstack -level -options%
+scan%%
+seek%%
+set%%
+socket%-async -error -myaddr -myport -peername -sockname%
+split%%
+string%bytelength cat compare equal first index is last length map match range repeat replace reverse tolower toupper totitle trim trimleft trimright wordend wordstart%
+subst%%
+switch%-exact -glob -indexvar -matchvar -nocase -regexp%
+tailcall%%
+tell%%
+throw%%
+time%%
+trace%%
+try%-errorcode%
+unset%-nocomplain%
+update%%
+uplevel%%
+upvar%%
+variable%%
+vwait%-server%
+while%%
+yield%%
+yieldto%%
+zlib%-checksum -dictionary -finalize -flush -fullflush -header -level -limit%

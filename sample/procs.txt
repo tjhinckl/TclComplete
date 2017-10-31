@@ -1,0 +1,873 @@
+P_astro_upsize_script%-fix_ratio -out -vio_report%# Create a TDB clocks file based on Synopsys clocks reports
+P_back2back%-out%# Outputs a back2back sequential cell report for the design
+P_cell_usage%-out%# Outputs a cell_usage report for the design
+P_connect_net_to_pin_of_cell%-net -pin%# Connect net in a design to the pin of a cell
+P_continue%-scr -snapshot%# Continues the calling script/proc after P_interrupt or takes a snapshot of current script/procedure
+P_create_unique_object_name%-basename -max_integer -no_warning -object -start_integer%# Returns a unique net/port/cell name with given basename and integer as '$basename$integer'.  Returns an empty string if reaches '-max_integer' limit
+P_elapsed_time%-end -mesg -quiet -start -timestamp%# Echos elapsed time between tasks
+P_find_file_ext%-ext -only -tag%# Looks for the given file with specified extensions (default: .stcl)
+P_find_proc%-only -tag%# Looks for the given procedure/command
+P_get_best_driver%-load -ref -ref_pin%# Returns best possible driver in same ref family for a given load
+P_get_scon_from_rtl%-latest -rtlm -rtlp -sdm%# Copy SCON files from RTL
+P_hookup_port%-no_hier -pin -port%# Hooks up a port to a pin of the cell
+P_interrupt%-scr%# Interrupts the MAIN
+P_proj_analyze%-base -design -hier -inc -pkg -prm -src -type%# Procedure to analyze vhdl/verilog/mcl/bc
+P_proj_change_names%-nohier -rule -verbose%# Changes names in a design hierarchically
+P_rename_soft_macro%-prefix%# Renames the soft macro design name
+P_rpt_unmapped%-output%# Creates a report that has unmapped cells in the design
+P_set_fix_multiple_port_nets%-nohier%# Puts the 'set_fix_multiple_port_nets' attribute on designs hierarchically
+P_set_mcp%-edge -fall_from -fall_through -fall_to -from -reference -rise_from -rise_through -rise_to -through -to -type%# Wrapper around Muticycle Path Cmd
+P_source_proj_setup%-before -force%# Sources the project setup for the Synopsys tool user is working on
+P_split%-char -count -l2r -str%# Splits a string on any character at a specific occurance of that characher
+P_store_syn_vars%-group -proc%# Stores the Synopsys variable in the given group
+P_swap_srflop%-lib -log -srflop_list%# Swap a State Retentive flop with Non State Retentive flop
+P_timestamp%-prefix -quiet%# Echos a timestamp and stores in it array G_TIMESTAMP_HISTORY
+als_change_highlight%-add -color -remove%# Change Highlight
+als_get_highlight%-color%# Get Highlight
+als_print_collection%-annotate -attribute%# Print collection
+als_print_list%-range%# Print list
+analyze_timing_correlation%-clear_work_dir -delay_calculation_style -disable_compatibility_settings -enable_ccs_rcv_cap -enable_compatibility_settings -overwrite_work_dir -pass_rate_threshold -pt_exec_path -pt_post_link_script -pt_pre_link_script -pt_search_path -pt_user_script -save_pt_session -scenarios -script_only -si_enable_analysis -use_pt_save_session -verbose -waveform_analysis_mode -work_dir%# analyze timing correlation between ICC2 and PT
+apr_read_aocvm%-corner -table%# Calls read_aocvm command for given table, with given corner and with distance row if G var is on
+check_wires_for_pushdown%-nets%# Check wires for push down
+compare_checksum%-icc2 -pt%# Compare Checksums
+cr_align_repeaters_to_trunks%-layer -move_repeater_routing -nets -repeater_name%# Moves repeater cells in between trunks on layer 'layer'
+cr_checkerboard_repeaters%-nets -preview -repeater_collection -repeater_name_pattern -spread_mult%# Checkerboards repeaters after they are placed on trunks
+cr_complete_nets_detail%-max_layer -min_layer -nets -shield -shield_name%# Complete routing on trunked nets
+cr_complete_track_region%-fill_trunk_name -pattern -track_region%# Fills track region with trunks squared off to prevent DRCs
+cr_create_finish_metal%-backoff -backoff_multiplier -backoff_override_value -bbox -color -exclude_power -extra_min_width_shrink -get_rid_of_min_width -layer -preview -width%# Creates iccpp polygons on the layer suplied with or without passed bbox
+cr_create_ladders%-add_routing_blockage -cells -do_not_add_vias -layer_width_straps -pin -preview -use_full_cell_bbox%# Creates via ladders based on user input. To collect them use -filter iccpp_trunk=~iccpp_ladder_(netName)
+cr_create_terminals%-add_metal -additional_attributes -bbox -center_coord -custom_tag -do_not_check_shorts -edge -hi -layer -lo -of_cell -port_names -preview -shield -shield_name -shield_type -term_bbox -term_length -term_length_multiplier -terminal_names -track_num -track_step -width%# Creates a terminal based specified arguments, can be boundary or floating.  Edges are numbered clockwise starting at lower left
+cr_create_track_region%-dont_delete_existing_tracks -pattern -track_region%# Creates a region and applies a track pattern to it
+cr_create_track_shared_trunks%-complete_routing -do_not_check_shorts -exclude_cells -find_free_tracks -h_track_freedom -ignore_boundary_guide -layer -nets -of_cells -preview -pullback_lb -pullback_rt -ref_net -ref_obj -shield -shield_name -shield_type -to_trunk -track_num -use_ref_obj_layer -v_track_freedom -width%# Creates track shared trunks off of reference objects or on a specified track
+cr_create_tracks_region%-anchor -bbox -extend -layer -name -of_track_width -pattern%# Creates a tracks region
+cr_create_trunk%-bbox -do_not_check_shorts -exclude_cells -find_free_tracks -gravity -h_track_freedom -ignore_boundary_guides -include_power_for_free_tracks -layer -net_bbox_override -nets -num_wires -of_cells -preview -pullback_lb -pullback_rt -shield -shield_name -shield_type -track_num -track_step -v_track_freedom -width%# Creates a trunk based specified arguments, can be with graviy or track number, gravity applies to net bbox
+cr_create_trunk_from_here_to_there%-avoid_area -avoid_layers -bloat_channel -bloat_zone -channel -clean_channel_tracks -clean_named_zone_tracks -clean_zone_tracks -clear -clear_zone -create_port -custom_attr -custom_tag -cutout_area -cutout_bloat -cutout_pullback -display_channel -display_zone -do_not_check_shorts -do_not_cutout_nets -edge_overhang -edge_pullback -edge_pullback_custom -find_free_tracks -h_track_freedom -ignore_boundary_guides -include_power_for_free_tracks -just_clear_zone -log_track_number -nets -nets_order -num_wires -preview -remove -reuse_channel_tracks -reuse_zone_tracks -shield -shield_name -shield_pullback -shield_type -skip_tracks -snap_to_track -stepping -swizzle -topology -track_overrides_pin -trim_area -use_pin -v_track_freedom -verbose -wrong_way_metal -zone%# Creates trunk(s) based on topology description
+cr_create_trunk_on_track%-bbox -custom_tag -delete -do_not_check_shorts -exclude_cells -find_free_tracks -group -h_track_freedom -hi -ignore_boundary_guides -include_power_for_free_tracks -layer -lo -net_bbox_override -net_path_area -nets -num_wires -of_cells -preview -pullback_lb -pullback_rt -shield -shield_name -shield_type -track_num -track_step -v_track_freedom -width%# Creates trunk(s) on track(s) or x,y coord(s) (to be snapped to tracks)
+cr_create_trunk_straps_for_pins%-do_not_check_shorts -extension_direction -extension_distance -layer -nets -of_cells -preview -route_type -shield -shield_name -snap_to_track -width%# Creates trunks off of pins to point or micron value with the options of finishing with zroute
+cr_create_trunks_from_pin_to_pin%-complete_routing -dir_follows_sign -do_not_check_shorts -extensions -find_free_tracks -h_track_freedom -layer_legs -nets -preview -pullback_lb -pullback_rt -return_track_info -shield -shield_name -shield_type -start_from -v_track_freedom%# Creates trunks off of one pin to another pin, net with single fanout 
+cr_create_trunks_from_pins_to_point%-complete_routing -create_terminals -do_not_check_shorts -extension_direction -extension_distance -layer -min_layer -nets -of_cells -pin_layer -preview -push_pins -shield -shield_name -shield_type -snap_to_track -use_routespec -width%# Creates trunks off of pins to point or micron value with the options of finishing with zroute
+cr_create_trunks_from_pins_to_trunk%-cluster_proximity -complete_routing -do_not_check_shorts -find_free_tracks -h_track_freedom -include_power_for_free_tracks -layer -min_layer -nets -of_cells -offset_cell_pin -pin_direction -preview -pullback_lb -pullback_rt -shield -shield_name -shield_type -track_offset -use_existing_shape -use_routespec -v_track_freedom -width%# Creates trunks off of pins to existing iccpp trunk with the options of finishing with zroute
+cr_create_trunks_from_ports%-backoff_from_ports -complete_routing -do_not_check_shorts -extension_direction -extension_distance -find_free_tracks -h_layer_override -h_track_freedom -ignore_boundary_guide -include_power_for_free_tracks -layer -min_layer -nets -preview -pullback_lb -pullback_rt -shield -shield_name -shield_type -use_port_width -use_routespec -v_layer_override -v_track_freedom -width%# Creates trunks off of port terminals with the options of finishing with zroute
+cr_create_trunks_from_ports_to_trunk%-backoff_from_ports -complete_routing -do_not_check_shorts -find_free_tracks -h_layer_override -h_track_freedom -layer -min_layer -nets -preview -pullback_lb -pullback_rt -shield -shield_name -shield_type -use_routespec -v_layer_override -v_track_freedom -width%# Creates trunks off of ports to existing iccpp trunk
+cr_create_vias_for_custom_shields%-advanced_drc_off -delete -shield_layers -shield_nets -tag%# Creates vias on given shield nets when custom shielding was performed by iTAR
+cr_create_vias_for_preroutes%-advanced_drc_off -bbox -delete -from_layer -nets -tag -to_layer%# Creates vias on given nets
+cr_create_wire_on_track%-adjust_wire -area_bbox -delete -do_not_check_shorts -group -layer -net_name -num_wires -of_track_width -preview -shield -shield_name -track_num -track_step%# Creates a wire on a track
+cr_delete_track_region%-pattern -reset_to_default -track_region%# Deletes a region and bounds associated with it
+cr_extract_track_shared_trunks%-layer_from -layer_to -min_length -nets -output -preview -start_track_num -width_from -width_to%# Extracts track shared shapes on 'layer_from' of width 'width_from' and writes out iTAR commands to create a trunk on 'layer_to' of width 'width_to'.
+cr_get_agressor_locations%-backoff -backoff_multiplier -backoff_override_value -bbox -color -exclude_power -extra_min_width_shrink -get_rid_of_min_width -layer -preview -width%# Gets open tracks for agressor with or without passed bbox
+cr_place_repeaters%-append_suffix -do_not_stagger -exclude_cells -layer -layer_weight -nets -of_cells -preview -remove -repeater_cutlines -repeater_distance -repeater_locations -repeater_name -repeater_number -repeater_relative_cutlines -repeater_suffix -repeater_type -stagger_mult%# Creates repeaters on a net trunk
+cr_report_failed_trunks%-layer -nets -width%# Return a list of nets for which trunking failed. Usefull to promote/demote failed nets to different layers
+cr_restore_itar_attributes_on_nets%-nets -user_attr%# restore itar attributes nets if they were lost due to add_buffer_on_route or some route_group command etc.
+cr_trim_antennas%-nets -user_attr%# trim back antennas on nets
+cr_trunk_flopped_nets_p2p%-hlayer -hwidth -main_trunk_layer -main_trunk_loc -main_trunk_ref_net -nets -position_sequentials -preview -repeater_distance -repeater_locations -repeater_name -repeater_number -repeater_type -start_from -track_step -vlayer -vwidth%# 
+create_bs_upf%-blocks -budget_shell_nlib -budget_shell_nlib_dir -debug%# create budget shell upf
+create_marker_around%-micron -objects%# Create markers around selected objects
+create_pg_mesh_pattern%-layers -parameters -via_rule%# Mega command to create one PG mesh pattern.
+getvar%-names -nosubst -quiet%# Returns a parameter value
+gui_change_layer%-layer -object%# Set the pin layer of object
+gui_change_via_def%-via -via_def%# Change the via_def attribute of a via
+gui_change_via_size%-columns -rows -via%# Set the number of rows and columns attributes of a via
+gui_get_setting%-list -setting -window%# 
+gui_highlight_nets_of_selected%-flylines%# Highlight nets of selected objects
+gui_select_connected_net_shapes%-cross_net -hierarchical%# Select connected net shapes
+gui_select_nets_of_selected%-hierarchical%# Select nets of selected objects
+gui_set_select_menu_adds_to_selection%-value%# enable or disable add to selection mode
+gui_set_setting%-setting -value -window%# 
+gui_show_man_page%-apropos -html%# 
+h2t%-avoid_area -avoid_layers -bloat_channel -bloat_zone -channel -clean_channel_tracks -clean_named_zone_tracks -clean_zone_tracks -clear -clear_zone -create_port -custom_attr -custom_tag -cutout_area -cutout_bloat -cutout_pullback -display_channel -display_zone -do_not_check_shorts -do_not_cutout_nets -edge_overhang -edge_pullback -edge_pullback_custom -find_free_tracks -h_track_freedom -ignore_boundary_guides -include_power_for_free_tracks -just_clear_zone -log_track_number -nets -nets_order -num_wires -preview -remove -reuse_channel_tracks -reuse_zone_tracks -shield -shield_name -shield_pullback -shield_type -skip_tracks -snap_to_track -stepping -swizzle -topology -track_overrides_pin -trim_area -use_pin -v_track_freedom -verbose -wrong_way_metal -zone%# Creates trunk(s) based on topology description
+icc2_dump_icc_mcmm_config%-outdir -regsub_from_to_file%# bridge from icc2 settings to mcmm_config.tcl
+iccpp_com_annotate_rule_based_track_info%-bbox -cutline -group -layer -width%# Annotate rule based tracks on canvas.
+iccpp_com_get_rule_based_track_capacity%-bbox -layer -width%# Return flat sorted list of rule based tracks.
+iccpp_com_get_rule_based_track_info%-layer%# Return a list of rule based track info.
+iccpp_com_get_rule_based_track_info_flat%-bbox -cutline -layer -text_annotation -width%# Return flat sorted list of rule based tracks.
+iccpp_com_get_rule_based_track_info_flat_cntr%-bbox -cutline -exclude_bbox -layer -text_annotation -width%# Return flat sorted list of rule based tracks.
+iccpp_com_get_rule_based_track_info_flat_cntr_width_h2t%-bbox -cutline -exclude_bbox -layer -skip_tracks -width%# Return flat sorted list of rule based tracks.
+iccpp_com_get_rule_based_track_info_flat_cntr_width_h2t_itar%-bbox -cutline -exclude_bbox -layer -skip_tracks -width%# Return flat sorted list of rule based tracks.
+iccpp_com_get_rule_based_track_info_flat_cntr_width_h2t_snps%-bbox -cutline -exclude_bbox -layer -skip_tracks -width%# Return flat sorted list of rule based tracks.
+iccpp_com_get_rule_based_track_info_flat_no_tracks_defined%-bbox -cutline -layer -text_annotation -width%# Return flat sorted list of rule based tracks.
+iccpp_com_get_rule_based_track_info_flat_simple%-bbox -layer -width%# Return flat sorted list of rule based tracks.
+iccpp_com_get_rule_based_track_info_flat_width_h2t%-bbox -cutline -layer -text_annotation -width%# Return flat sorted list of rule based tracks.
+iccpp_com_get_rule_based_track_info_flat_width_h2t_itar%-bbox -cutline -layer -text_annotation -width%# Return flat sorted list of rule based tracks.
+iccpp_com_get_rule_based_track_info_flat_width_h2t_snps%-bbox -cutline -layer -width%# Return flat sorted list of rule based tracks.
+iccpp_com_track_num_to_track_info%-bbox -centerline -clear -display -group -layer -track_num -width%# Return LIST of track info given a list of track numbers.
+iccpp_com_xy_to_track_info%-bbox -centerline -clear -display -dont_init_spreading -group -layer -nets -point -snap_to_dir -width%# Returns LIST of track info for a list of {X Y} coords on canvas.
+iccpp_cr_create_term_from_bbox%-add_metal -area_bbox -associate_shield_nets -delete -do_not_check_shorts -group -layer -net_bbox -port_name -preview -shield -shield_name -shield_type -term_name -track%# Creates a term on a track
+iccpp_cr_create_trunk_from_here_to_there%-avoid_area -avoid_layers -bloat_channel -bloat_zone -channel -clean_channel_tracks -clean_named_zone_tracks -clean_zone_tracks -clear -create_port -custom_attr -custom_tag -cutout_area -cutout_bloat -cutout_pullback -do_not_check_shorts -do_not_cutout_nets -edge_overhang -edge_pullback -edge_pullback_custom -find_free_tracks -h_track_freedom -ignore_boundary_guides -include_power_for_free_tracks -log_track_number -nets -nets_order -preview -reuse_channel_tracks -reuse_zone_tracks -shield -shield_name -shield_pullback -shield_type -skip_tracks -snap_to_track -stepping -swizzle -topology -trim_area -use_pin -v_track_freedom -wrong_way_metal -zone%# Creates trunk(s) based on topology description
+iccpp_cr_create_trunk_from_here_to_there_for_swizzle%-avoid_area -avoid_layers -bloat_channel -bloat_zone -channel -clean_channel_tracks -clean_named_zone_tracks -clean_zone_tracks -clear -create_port -custom_attr -custom_tag -cutout_area -cutout_bloat -cutout_pullback -do_not_check_shorts -do_not_cutout_nets -edge_overhang -edge_pullback -edge_pullback_custom -find_free_tracks -h_track_freedom -ignore_boundary_guides -include_power_for_free_tracks -log_track_number -nets -nets_order -preview -reuse_channel_tracks -reuse_zone_tracks -shield_pullback -skip_tracks -snap_to_track -stepping -swizzle -topology -trim_area -use_pin -v_track_freedom -wrong_way_metal -zone%# Creates trunk(s) based on topology description
+iccpp_cr_create_trunk_from_here_to_there_with_pin_shielding%-avoid_area -avoid_layers -bloat_channel -bloat_zone -channel -clean_channel_tracks -clean_named_zone_tracks -clean_zone_tracks -clear -create_port -custom_attr -custom_tag -cutout_pullback -do_not_check_shorts -edge_overhang -edge_pullback -edge_pullback_custom -find_free_tracks -h_track_freedom -ignore_boundary_guides -include_power_for_free_tracks -log_track_number -nets -nets_order -preview -reuse_channel_tracks -reuse_zone_tracks -shield -shield_name -shield_pullback -shield_type -skip_tracks -snap_to_track -stepping -swizzle -topology -use_pin -v_track_freedom -wrong_way_metal -zone%# Creates trunk(s) based on topology description
+iccpp_cr_create_trunk_from_here_to_there_with_shielding%-avoid_area -avoid_layers -bloat_channel -bloat_zone -channel -clean_channel_tracks -clean_named_zone_tracks -clean_zone_tracks -clear -create_port -custom_attr -custom_tag -cutout_area -cutout_bloat -cutout_pullback -do_not_check_shorts -do_not_cutout_nets -edge_overhang -edge_pullback -edge_pullback_custom -find_free_tracks -h_track_freedom -ignore_boundary_guides -include_power_for_free_tracks -log_track_number -nets -nets_order -preview -reuse_channel_tracks -reuse_zone_tracks -shield -shield_name -shield_pullback -shield_type -skip_tracks -snap_to_track -stepping -swizzle -topology -trim_area -use_pin -v_track_freedom -wrong_way_metal -zone%# Creates trunk(s) based on topology description
+iccpp_cr_create_trunks_from_pin_to_pin%-dir_follows_sign -do_not_check_shorts -extensions -layer_legs -nets -preview -shield -shield_name -shield_type -start_from%# Creates trunks from pins of ebb to pins of ebb or micron value
+iccpp_cr_create_trunks_from_pins_to_point%-create_terminals -do_not_check_shorts -extention_direction -extention_distance -layer -min_layer -nets -of_cells -pin_layer -preview -push_pins -shield -shield_name -shield_type -snap_to_track -width%# Creates trunks from pins to point or micron value
+iccpp_cr_create_trunks_from_pins_to_trunk%-cluster_proximity -do_not_check_shorts -layer -min_layer -nets -of_cells -offset_cell_pin -pin_direction -preview -shield -shield_name -shield_type -track_offset -use_existing_shape -width%# Creates trunks from pins to trunk
+iccpp_cr_create_trunks_from_ports%-backoff_from_ports -do_not_check_shorts -extention_direction -extention_distance -layer -min_layer -nets -preview -shield -shield_name -shield_type -use_port_width -width%# Creates trunks from ports to pins
+iccpp_cr_create_trunks_from_ports_to_trunk%-backoff_from_ports -do_not_check_shorts -layer -min_layer -nets -preview -shield -shield_name -shield_type -width%# Creates trunks from pins to trunk
+iccpp_cr_create_wire_from_net_bbox%-area_bbox -associate_shield_nets -delete -do_not_check_shorts -group -layer -net_bbox -net_name -preview -shield -shield_name -shield_type -track%# Creates a wire on a track
+iccpp_cr_create_wire_from_net_bbox_h2t%-area_bbox -associate_shield_nets -delete -do_not_check_shorts -group -layer -net_bbox -net_name -preview -shield -shield_name -shield_type -track -width%# Creates a wire on a track
+iccpp_cr_create_wire_from_net_bbox_with_track%-area_bbox -associate_shield_nets -delete -do_not_check_shorts -group -layer -net_bbox -net_name -preview -shield -shield_name -shield_type -track%# Creates a wire on a track
+iccpp_cr_place_flops%-layer -layer_weight -nets -repeater_distance -repeater_name -repeater_number -xy%# Creates repeaters on a net trunk
+iccpp_cr_remove_user_shape_antennas%-nets%# remove antennas on user shapes, iccpp_preroutes
+iccpp_cr_remove_vias_for_preroutes%-layer -nets -tag%# Creates vias on given nets
+iccpp_cr_track_shared_trunks%-complete_routing -do_not_check_shorts -layer -nets -preview -ref_net -ref_obj -shield -shield_name -shield_type -to_trunk -track_num -use_ref_obj_layer -width%# Creates track shared trunks off of reference objects or on a specified track
+iccpp_cr_trim_antennas%-interactive -nets -user_attr%# trim back antennas on nets
+info_var%-defined -history -is_array -property -type%# Print variable info
+lminus%-exact%# Remove elements from a list
+pdintent2spec%-blocks -pd_intent_file_path%# Compares (bottom-up) PD Intent against SPEC and writes out a comparision report 
+print_message_info%-ids -summary%# Print information about messages
+print_time%-msg -stage -tag%# Prints time stamp header
+print_vars%-print -regexp -value%# Prints all parameter variables
+pwrlite_gen_saif_all_units%-delay_model -outdir -testname -verilog%# Create GLS-based SAIF for all units in design
+pwrlite_gen_unit_testlists%-outdir -testlist -testname%# Create unit testlist
+rdt_call_configulate_local%-block -cmdline -xml%# Call configulate to parse xml file
+rdt_constrain_visa_logic%-scenario%# adds timing constraints for VISA logic
+rdt_convert_units%-from -to -value%# rdt_convert_units - Converts units of a given metric
+rdt_copy_collateral%-dssc_ver -file_type -flow -output_dir -stage%# rdt_copy_collateral - Copies output (netlist,spef,upf to a directory and creates manifest 
+rdt_done%-stage%# default finish stage: run_logscan, mark_step, save_stage, reports
+rdt_gen_parallel_rpts%-run_dir -stage%# rdt_gen_parallel_rpts - This procedure generates the reports for the flow stages in parallel to stage execution 
+rdt_gen_visa_hier_report%-stage%# extract and report VISA logic information
+rdt_get_all_corners%-block -work_dir%# Reads pvconditions xml file and returns list of all corners
+rdt_get_all_modes%-block -work_dir%# Reads pvconditions xml file and returns list of all modes
+rdt_get_all_scenarios%-block -work_dir%# Reads pvconditions xml file and returns list of all scenarios
+rdt_get_block_data%-block -block_name -debug -keys -noheaders -set_gvars -work_dir%# Reads block_properties xml file and creates G_BLOCK_DETAILS through it
+rdt_get_block_list%-block -fval -work_dir%# Reads block_properties xml file and lists all the blocks that match the provided filters
+rdt_get_derate_data%-alt -analysis_type -block -corner -derate -flow -grid_size -model_type -variant -view -work_dir%# Returns list derate files based on filters provided
+rdt_get_dont_use_list%-groupfile%# Reads groupfile to return a list of dont_use regexps.
+rdt_get_dont_use_reasons%-groupfile%# Reads groupfile to return array of dont_use regex/reason pairs in list format.
+rdt_get_global_voltages%-corner%# Reads G_CORNER_DETAILS to find the voltage associated with a RAIL.
+rdt_get_lib_attribute_data%-alt -block -flow -model_type -variant -view -work_dir%# Returns list of lib attribute files based on filters provided
+rdt_get_lib_data%-alt_type -block -cell_type -corner -file -flow -headers -lib -model_type -variant -view -work_dir%# Returns list libs based on filters provided
+rdt_get_lib_settings_data%-alt -block -flow -headers -model_type -scenario -settings_label -view -work_dir%# Returns list libs based on filters provided
+rdt_get_lib_ver_data%-block -library -manifest -print_libname -section -work_dir%# Reads lib_ver.xml file and returns list
+rdt_get_library_list%-block -work_dir%# Reads lib_ver.xml file and returns list
+rdt_get_license%-max_attempts -wait%# Procedure to get a license
+rdt_get_pdk_data%-fval -headers -separator -work_dir%# Reads pdk xml file and lists all the files that match that filter
+rdt_get_pdk_settings%-block -headers -model_type -stdlib_type -technology -view -work_dir%# Call configulate local to read pdk.xml to set process GVARS
+rdt_get_pvc%-block -corner -debug -noheaders -set_gvars -work_dir%# Reads pvconditions xml file and creates G_CORNER_DETAILS through it
+rdt_get_rail_voltage%-corner -min -rail%# Reads G_CORNER_DETAILS to find the voltage associated with a RAIL.
+rdt_get_relevant_scenario_data%-block -keys -scenario -work_dir%# Reads pvconditions xml file and creates G_CORNER_DETAILS through it
+rdt_get_relevant_scenarios%-block -flow -primary -work_dir%# Reads pvconditions xml file and returns list of all scenarios
+rdt_get_scenario_data%-block -debug -keys -noheaders -scenario -set_gvars -work_dir%# Reads pvconditions/mcmm xml file and creates G_SCENARIO_DETAILS through it
+rdt_is_xml_file_empty%-xml%# Reads pvconditions xml file and returns list of all modes
+rdt_list_flow%-sources%# 
+rdt_list_steps%-print -sources%# 
+rdt_mark_stage%-duration -memory -stage -step_sequence%# get/set rdt step attribute
+rdt_remove_stage%-flow -stage%# Remove a stage from a given flow
+rdt_remove_step%-name%# Remove a step from a given stage in the flow
+rdt_report_dont_use%-cell%# Returns the reason that a cell is in the dont_use list.
+rdt_reset_logscan_pointer%-line -unset%# resets the pointer for start of logscan
+rdt_run_logscan%-aux_rules -check_only -logfiles -rules -skip_logfile_header_lines -summary_file%# run logscan rules
+rdt_run_multiple_sessions%-bits -mode -os -rundir%# rdt_run_multiple_sessions - This procedure  runs multiple runs 
+rdt_save_attributes%-change_stage -change_step -flow_status -parent_run -stage -stage_run -step_attr%# get/set rdt step attribute
+rdt_scenario_timing_constraints%-scenario%# load timing constraints for given scenario
+rdt_signoff_status%-stage%# Give the status of a signoff run
+rdt_source_if_exists%-display -inclusive -local -require -silent%# source script, if it exists
+rdt_source_if_exists_in_scenario%-display -inclusive -local -require -scenario -silent%# source script, if it exists using scenario specific search path
+rdt_status%-leaf -par_rpts -stage%# rdt_status - This procedure displays the status of the flow 
+rdt_step_run_status%-change_stage -change_step -stage -stage_run -step_attr%# get/set rdt step attribute
+rdt_timing_constraints%-scenario%# Prints percentage of cell/net delays in a path
+rdt_wrap%-body -disable -post -pre -stage -step%# Creates a pre or post for a stage or a step to be run
+rdt_zip_files%-logs -reports -stage%# rdt_zip_files - This procedure zips logfiles and reports 
+reconnect_fishbone_style_power_switch%-ack_pin_name -ctrl_pin_name -sw_cells%# blockage aware reconnect fishbone style power switch
+remove_duplicate_timing_contexts%-analyze_only -exclude_group_path_directives%# analyzes and then removes duplicate scenarios, modes and corners across all scenarios
+report_custom_power_data%-cell_internals_data_file -cust_rpt_module_file -help -no_io -outdir -stdcell_regex -unswitched_limit%# Procedure to report cell usage and other heuristics for top level and power domain hierarchies, to feed into power estimation work.
+report_hierarchical_z%-attributes -block -maxDepth -outDir -rootCell -stage%# Report hierarchical Z data for a design/cell.
+rls_table%-breaks -csv_mode -file -footer -format -header -no_separator -offset -repeat_header -spacious -table -title -to -width_limit%# Prints out a list of lists in a text table
+runRDT%-init -jump -load -load_cel -load_path -mark_loaded_stage -no_run -reset_ebb_libs -reset_start_stage -signoff -stage -standalone -start -step -stop -subflow%# Command that runs the RDT flow.  This also provides control in interactive use modes, such as stepping through flow stages, start from existing saved sessions, and running standalone flows.  Status information can be obtained from related commands like rdt_list_stages, rdt_list_steps and rdt_report_stage_status
+sd_add_diffcheck%-include_macro_refs -layer_name -outputview -phase -pitch -skip -width%# add diffcheck layer to a design
+sd_add_halo_metals%-no_partition_twire%# Add boundary transition shapes, boundary pg, and track based boundary route_guides
+sd_add_polycheck%-datatype -include_macro_refs -layer_name -outputview -phase -pitch -skip -width%# add polycheck layer to a design
+sd_add_routing_blockage_for_boundary%-for_create_strap_only%# create route_guides for to block boundary metal & for create strap 
+sd_add_routing_blockage_for_macro%-additional_blkg%# create routing blockage around the macros using G_PWR_MACRO_SPACE and  also additional blockages
+sd_add_routing_blockage_for_va%-for_create_strap_only%# create route_guides for voltage areas 
+sd_aon_pg_hookup%-cells -constraint_only -incremental -logtag%# Insert via ladder on aon power pin
+sd_bottom_up_run_parallel_job%-script_name -work_dir%# manages __BOTTOM_UP__ parallel job for DP flows - this is a helper proc
+sd_channel_add_buffer_on_route%-distance -max_layer -min_layer -nets -repeater -verbose -vialadder%# Channel Add-Buffer-On-Route
+sd_channel_block_recipe%-backoff -debug -distance -keep_reps -max_layer -min_layer -ports -repeater -save_steps -steps -use_gcr -verbose -vialadder -widths%# Channel Block Recipe
+sd_channel_place_cells%-backoff -keep_reps -ports -verbose%# Place Channel Cells (Port-to-Port) Equally Spaced
+sd_channel_place_cells_based_on_route%-first_distance -keep_reps -max_layer -min_layer -ports -use_gcr -widths%# Place Sequential repeaters based on routing
+sd_channel_priority_route%-cells -debug -max_layer -min_layer -use_gcr -verbose -vialadder -widths%# Channel Cells Priority Routing
+sd_channel_remove_repeaters%-port -supernet%# Remove Repeaters on a supernet
+sd_commit_blocks%-same_lib%# Commits blocks for hierarchical design (default: separate libraries)
+sd_connect_ackport%-drv_pin -rev_pin%# Connect drv_pin to rev_pin pin
+sd_connect_aon_supply_pins%-cells -force%# Connect back_up power pin of given cells to aon net in the power domain
+sd_connect_ebb_enables%-reset_based_on_upf -va_name%# Connects EBB's in daisy chain fashion
+sd_create_analog_pg_template%-file -layers%# Creates analog template
+sd_create_analog_power_strap%-pg_regions%# Creates analog grid for pg regions, default it will read from G_ANALOG_PG_REGIONS
+sd_create_bbox_analog_power_strategies%-bbox -grid_template -layers -nets -pg_region -recreate_template%# Creates analog grid strategies for the specified bbox
+sd_create_custom_grid_vars%-pgr -va%# Set G_ vars for custom power grid synthesis
+sd_create_custom_power_strap%-bbox -grid_template -net -pg_region%# Creates interleave grid
+sd_create_dir%-dir%# Creates a temporary directory in local area, given dir name - this is helper proc
+sd_create_path_groups%-modes%# create path_groups to categorize INPUT, OUTPUT, FEED_THROUGH groups
+sd_create_patterns%-add_net_type -outfile -pattern -region -verbose%# Create GCR patterns file
+sd_create_power_straps%-custom_only -custom_tags -layers -no_vias -strategy_only%# Generate power straps
+sd_create_power_straps_m0%-keep_to_bnd -keep_to_macro -m0_width -m2width_ts -remove_only%# 
+sd_create_top_va_pg_blockage%-hierarchical%# sd_create_top_va_pg_blockage
+sd_create_trackfill_config%-layers -out_dir%# Automatically create configuration file for ICC track fill
+sd_create_tracks%-bounding_box -dont_delete -exclusive -layer -pattern -reserved -skip_pg_track -tag -width%# Creates routing tracks
+sd_create_tracks_for_hip_pins%-cells -layers -pins%# creates tracks for offgrid pins inside HIPS
+sd_create_uin%-layers -out_dir -type%# Automatically create uin files for adr and icv/qea run
+sd_ctm_route_dops%-dirty_mode -dop_nets%# Get the available tracks across the bounding box ignore shielding
+sd_eco_boundary_cells%-action -direction -target_obj_boundary_list%# Update the Boundary cells in eco mode
+sd_eco_rc_to_icc2_changelist%-icc2_changelist -rc_changelist%#   Convert RC changelist to a ICC changelist file
+sd_extraction_options_setup%-corners%# Does extraction option setup
+sd_fdr_constraints%-out_path -scenarios%# generates and appplies FDR exceptions
+sd_fdr_write_vrlg_attr%-flow -outfile%# generates FDR attributes file
+sd_find_accessible_tap%-cell -direction -distance -nwell_break_names -nwell_break_refs -tap_cells%# Finds accessible tap cells within specified max spacing
+sd_find_closest_cell%-cell -direction -distance -include_variants -inst_names -ref_cells%# Finds the closest cell of specified ref_name/instance_name to a specifed cell
+sd_fn_calculate_track_region%-cell -coordinate%# Recalculate track creation region for lower level block
+sd_fn_create_stub_upf%-outdir -stub_modules -upf_dir%# load the netlist and create stub_upf
+sd_fn_create_track_check_edge%-bounding_box -direction -exclusive -index -points%# Creates routing tracks
+sd_fn_duplicate_terminal%-attr -port -terms%# Creates duplicate terminal at the current level
+sd_fn_eco_concat_verilog_file%-out_file -v_files -v_list%# Concat list of verilog files into one file
+sd_fn_get_io_connected_cells%-net -type%# Get driver or receiver cells of a net for set io constraints check
+sd_fn_insert_level_shifter%-power%# insert level shifter
+sd_fn_place_global_dic_cells%-dic_distance -num_dics -remove_existing%# Utility to place global DIC(cd/reg) cells in ICC2 db
+sd_fn_place_global_fid_cells%-global_fid_distance -num_global_fids -remove_existing%# Utility to place global FID cells in ICC2 db
+sd_fn_ps_connect_top_pg%-cells%# Hookup to the connection layer of power rail
+sd_fn_ps_create_rb_on_pg%-cell -layers -net%# Insert via ladder on power switch cells.
+sd_fn_pvt_setup%-analysis -corner%# Set pvt for the corner 
+sd_fn_run_a_command_on_blocks%-command%# run the specified TCL command on every blocks in the design
+sd_fn_run_parallel_set_of_commands_on_block%-blocks -command_list%# run the specified TCL command on every blocks in the design
+sd_fn_save_user_attributes%-outfile%# Saves user attributes for ICC 
+sd_fn_source_icc_file%-infile -outfile -tag%# Translates an ICC routing file to ICC2 commands
+sd_fn_template_based_partition_bbt%-partition%# Creates blackbox timing model for a list of blocks and clocks
+sd_gcr_create_commands%-bus_with_signal_flow -debug -devtest -nets -outfile -quick_route -skip_pre_checking -strip_pg_mesh -trunk_only -work_dir%# Create GCR Command File
+sd_gcr_create_patterns%-add_net_type -outfile -verbose -work_dir%# Setup for GCR pattern file creation
+sd_gcr_dump_bus_constraints%-outfile -verbose -work_dir%# Dump GCR bus constraint info
+sd_gcr_pin_analysis_debug%-outfile -return -standalone -work_dir%# GCR Pin Analysis Debug Reporting
+sd_gcr_routing_summary%-outfile -work_dir%# GCR Routing Summary
+sd_generate_critical_nets%-add_options -max_paths -net_threshold -slack_lesser_than%# Generate critical nets from timing report or use [getvar G_QEA_FILL_CRITICAL_NET_FILE]. All clock nets are automatically marked as critical even if G_QEA_FILL_CRITICAL_NET_FILE is used. If used, G_QEA_FILL_CRITICAL_NET_FILE contains one net name per line.
+sd_generate_pg_template%-custom_only -file -layers -macro -no_stack_vias -no_vias%# Generate power grid template
+sd_get_boundary_cells_from_gvar%-boundary_type_list -layer%# Utility proc helps to expand to the boundary cell GVAR
+sd_get_bus_layers_widths%-verbose%# Get bus trunk layers and bundle widths
+sd_get_macro_metal_layers%-hml_type -macro_info -macro_refs%# Get highest level metal for macro and store info in -macro_info argument
+sd_get_normalized_pattern%-add_net_type -mult -pattern -pitch -verbose%# Get normalized pattern to the modular grid
+sd_get_pattern_from_track_def%-add_net_type -track_def -verbose%# Get pattern definition from track pattern definition
+sd_get_twire_config%-use_pg_nets -uses_aon_nets%# Get transition wire config
+sd_get_twire_edge_polygons%-layers%# Get transition-wire edge polygons
+sd_incr_stdcell_power_hookup%-area -cells%# run incremental stdcell power hookup in the defined area
+sd_insert_ps_cells_around_macro%-va%# Inserts PS cells around macros
+sd_lbist_constraints%-scenarios%# Apply LogicVision lbist Constraints
+sd_limit_template_layers%-excl_layers -excl_tags -layers -tags%# exclude the layers from G_PWRGRID_CONFIG
+sd_load_aocvm_gcd%-corner -timing_mode%# Finds relevant AOCVM files based on G_CORNER_DETAILS(corner+MAX|MIN_AOCVM(DEPTH)), then calls apr_read_aocvm command 
+sd_load_aocvm_legacy%-corner -timing_mode -voltage -vt_list%# Finds relevant AOCVM files based on corner, voltage and VT list with legacy method, then calls apr_read_aocvm command 
+sd_macropowerswitchorder%-drive_p -inputPortPattern -outputPortPattern -va_name%# Return ordered  macros list
+sd_mark_critical_nets_for_qea_fill%-nets%# Mark critical nets so that qea fill has option to not place active fill on them.
+sd_mbist_constraints%-scenarios%# Apply LogicVision MBIST Constraints
+sd_mcmm_set_corner_constraints%-corners%# Reading design constraints for list of corners
+sd_mcmm_set_mode_constraints%-modes%# Reading design constraints for list of modes
+sd_mcmm_set_parasitics_parameters%-corners%# call set_parasitics_parameters for requested corners
+sd_mcmm_set_process_labels_numbers%-corners%# sets process labels and numbers for given corners (or all)
+sd_mcmm_set_scenario_constraints%-scenarios%# Reading SDC, lbist, mbist, visa design constraints for list of scenarios
+sd_mcmm_set_temperature%-corners%# sets temperature for given corners (or all)
+sd_mcmm_set_voltage%-corners%# set_voltage for given corners (or all)
+sd_mcmm_set_voltage_by_source%-corners%# set_voltage for given corners (or all)
+sd_mcmm_setup%-keep_existing_scenarios -skip_loading_constraints%# setup MCMM environment according to G variables setup.
+sd_mcmm_source_constraints_file%-filename -flags -logfile%# Sourcing constraints file, with or without log.
+sd_mcmm_timing_constraints%-corners -modes -scenarios%# Reading design constraints
+sd_merge_layout_files%-cell -compress -gds -merge_list -oasis -units%# sd_merge_layout_files - procedure to merge stream files.
+sd_open_library%-block -dont_copy -init -keep_all_blocks -lib -load -readonly -reset_references -update_design_tech -update_techfile%# Opens a MW design
+sd_outputs_box_file%-output_file%# Returns a box file to be used for teh extraction flow
+sd_outputs_data_for_extraction%-generate_boxfile -input_lib -output_lib -update_hips%# Creates MIM,TM9/M9 layers for extraction
+sd_pg_calculate_blockage%-custom_pg -domain_name%# Custom power grid generation for FPS
+sd_pg_calculate_custom_grid_blockage%-no_softmacro_blockage -polygon%# Custom power grid blockage generation
+sd_pg_set_strategy%-block -blockages -custom_tags -net -pg_pin -tag -va -va_mode%# Set power plan strategy
+sd_pg_via0_via1_insertion%-dirty_mode%# create VIA0 & VIA1 in design for std power hookup
+sd_place_pins%-nets%# Does automatic pin placement
+sd_post_priority_route_report%-nets -use_gcr -work_dir%# Post Priority Route Reporting
+sd_pre_priority_route_report%-nets -work_dir%# Pre Priority Route Reporting
+sd_priority_create_shields%-nets -post_gcr%# Priority Create-Shields
+sd_priority_route%-debug -devtest -gcr_avoid_PG_tracks -gcr_effort -gcr_keep_session -gcr_route_clocks -gcr_skip_pre_checking -gcr_specific_constr_only -gcr_strip_pg_mesh -nets -shield_only -use_gcr -verbose -work_dir%# Runs Group-Route - Priority Routing for constrained/critical nets
+sd_priority_route_group%-nets%# Priority Route-Group
+sd_ps_handle_dangling_ack_net%-drv_pin -is_top_level_port -ps_ack_port -ps_ack_port_net%# Connects the given drv_pin to the dangling ps_ack_port_net
+sd_ps_pg_hookup%-cells%# Insert via ladder on power switch cells.
+sd_ps_pg_hookup_use_cfg%-cells -connect_layer -incremental -ps_pin_name%# Connects AON power to PS cells
+sd_ps_remove_hookup%-cells%# Remove power switch hookup objects
+sd_pwr_hookup_interity_check%-checker_max_tracks_for_gcn -checker_max_tracks_for_m0 -max_tracks_for_gcn_in_cell -max_tracks_for_m0_in_cell%# run icv to check for power hookup missing over cells
+sd_read_design%-force_full_view%# Creates a design by reading a verilog
+sd_read_layout_file%-cell -oasis -type%# Read fill oasis file to ndm
+sd_remove_aon_pg_hookup%-cells%# Remove aon pg hookup
+sd_remove_priority_routes%-nets%# Remove Priority Routes
+sd_route_add_via_ladders%-allow_drcs -report_tag%# Add via ladders on feedtrough and output drivers of the partition if G_ENABLE_VL is set to 1
+sd_run_conformal_check%-run_check%# Runs Conformal based functional equivalence check
+sd_run_parallel_job%-blocks -cells -detach -host_options -run_order -script_name -var_list -work_dir%# manages parallel job for DP flows - this is a helper proc
+sd_seq_chain_alignment%-anchors -corridor -run_place_pins%# Script for sequential chain alignment
+sd_set_detail_route_shape_use_and_physical_status%-layers -nets -phys_status -shape_use%# Set Detailed-Route Shape-Use and Physical-Status
+sd_set_freeze_port_constraints%-remove -type%# sets freeze port setting on hier names in gvar G_FREEZE_PORT_HIER_NAMES
+sd_set_io_preroute_constraints%-max_layer_constraint -min_layer_constraint -ports -use_ndr%# Set the layer constraints and ndr rule for input or output ports defined from FC
+sd_set_layer_costs%-costlist -reset%# Set Layer Costs
+sd_set_priority_route_options%-trunk_only -use_gcr%# Set Priority Route Options
+sd_snap_macro_placement%-pushdown%# Snap macros to grid based on G_PLACE_CHECK_GRID
+sd_split_ps_chain%-control_signal -domain_name -use_g_var_libcell%# Split the ps chain into multiple chains if the number of PS cells exceed the threshold
+sd_swap_macrohalos_heml4%-macros%# Swap the m5 halos to m4 halos for specific ebbs
+sd_time_derate_setup%-corners%# Sets timing derate for all corners in case G_TIMING_DERATE equal 1
+sd_tm_popup%-disable_mim%# Proc to consume bottom-up bu_tm files
+sd_tm_route_terminal_blockage_on_boundary%-layer -only_blockages -rects%# creates boundary terminals on interface and boundary blockages on non-interface objects
+sd_tm_write_collateral%-convert_term_to_shape -deleteCurrentLayerTM -disable_mim -dont_delete_top_metals -generate_def -skip_bu_tm%# Runs TMS script, Separates top metal from nlib into .tcl/.def file
+sd_write_collateral_for_block%-block -cache_dir -formats%# Write collateral for a block; it will make the path if it does not exist
+sd_write_evr_collateral_for_one_cell%-cell -file_name -layers%# Write top metal EVR collaterals for one specified cell
+sd_write_layout_file%-cell -compress -create_port_for_terminals -ignore_blocks -lib -output_file -output_net_text -rename_cell -skip_fill_output -use_donut%# sd_write_layout_file - procedure to write gds/oas layout files.
+sd_write_oas2ndm%-fillcell -input_oasis_file -input_top_cell -ndm_lib_cell -ndm_lib_name -ndm_lib_path -rundir%# Write oasis file back to ndm using icv
+sd_zt_brb_on_pin_ends%-pin%# Add brb routing blockage on ends of specified std cell pin on top layer of pin.
+sd_zt_create_brb_around_macro%-back_off_half_dr -macro%# Creates boundary route blockage around macro for proper EK router e2e checks.
+sd_zt_create_fkp_over_macros%-layers%# create fill keepout on specified layers over macros
+sd_zt_create_staggered_pin_triplets%-layers%# In EK/ZT mode, need to create staggered triplet pattern on boundary pins to help track fill. This is done by neighboring isolated pins with dummy terms and creating staggered triplet pattern with neighboring pins.  For each layer that you need boundary pins to have staggered triplet pattern, you must specify G_ZT_PIN_STAGGER_LENGTH1($layer), G_ZT_PIN_STAGGER_LENGTH2($layer) and G_ZT_PIN_STAGGER_LENGTH3($layer) to specify the length of each pin in the staggered pattern.  Only m3, m4 and m5 are needed to be staggered fo 10nm/14nm ZT routing.
+sd_zt_extend_power_staples_neighbors%-terminals -zt_staple_ext%# Extend terminals neighboring staples closest to boundaries and any terminals of longest stagger length thath neighbor the neighbor so that they match the length of the staples. Used in combination with ZT mode routing.  Staples need to already have been extended towards boundaries with sd_zt_extend_power_staples_to_boundary 
+sd_zt_extend_power_staples_to_boundary%-layers%# Extend power staples closest to boundary on specified layers to match backoff for pwr grid set by G_BOUNDARY_ROUTE_GUIDE_SPACING, if violate end-to-end forbidden gap spacing
+sd_zt_extend_power_staples_to_macros%-layers%# Extend power staples closest to macro boundaries on specified layers to match backoff for pwr grid set by G_BOUNDARY_ROUTE_GUIDE_SPACING, if violate end-to-end forbidden gap spacing. Uses staple layers from G_STAPLE_LAYERS_OVERHANGS unless -layers option is set.
+sd_zt_get_dbbrg_layer_spacing%-layer%# Returns proper spacing for dbbrg creation at boundary. Calculation is based off of G_BOUNDARY_ROUTE_GUIDE_SPACING.
+sd_zt_neighbor_isolated_pins%-layers -terminals%# Make sure isolated pins on boundary have neighbors on adjacent tracks by adding dummy terminals. Use in combination with ZT mode routing. 
+sd_zt_pull_back_boundary_terms%-layers%# Pull-back terminals that touch boundary.
+sd_zt_query_term_neighbor%-dir -terminal%# Find neigbhor of specified terminal in specified direction and determine if it is a terminal, shape, strap or staple. Used in combination with ZT mode routing.
+sd_zt_stagger_pin_triplets%-layer -length1 -length2 -length3 -length4 -length5 -length6%# In EK/ZT mode, need to make sure boundary pin ends are not aligned in order to help track fill. This is done by creating staggered pattern with neighboring pins
+set_info_var%-caller -category -one_of -required -type%# Sets a configuration parameter value
+set_ssc_clock%-clock -debug -from -to%# command to auto apply overrides for clock lane of source sync interface
+set_ssc_data_read%-clock -debug -from -hold_args -nofp -setup_args -to%# command to auto apply read path overrides for data lane of source sync interface
+set_ssc_data_write%-clock -debug -from -hold_args -nofp -setup_args -to%# command to auto apply write path overrides for data lane of source sync interface
+setvar%-constant -info -one_of -property -roulette -subst -type%# Sets a configuration parameter value
+setvar_array_copy_partial%-clean -from_array -from_tag -to_array -to_tag%# Copy the array values to another index
+unsetvar%-array%# Unsets a parameter value
+write_checksum%-output_directory -scenario -type%# Writes checksum of design
+write_clock_trunks%-clock -file%# Write a TCL script which regenerates the current clock trunk solution
+write_inc_srsn_for_eco%-blocks%# write out srsn for all the blocks/list of blocks
+write_pt_checksum%-output_directory -pt_exec_path -pt_user_script -type%# Writes checksum for PT
+EVR::convert_evr_tcl_to_icc%-replace -safe -to%
+EVR::cut_wires_cell%-all -attributes_to_add -attributes_to_save -bloat -blockages -bump_numbers -create_block -cut -dr -evr -evr_cells -hier -icc -multiple -net_type_from_netname -netlist -nets -not_strict -pinconn_map -pinlist -pinlist_lowercase -port_to_net -rcext -remove -save -terms -to -to_file -to_inst_name -top_cell%
+EVR::find_all_cell_locations%-boundary%
+EVR::find_cell_hier%-boundary%
+EVR::find_cells%-boundary%
+EVR::find_inst%-boundary%
+EVR::get_cell_info%-hier -multiple%
+EVR::get_cell_poly%-bbox -boundary -hier -multiple%
+EVR::parse_netlist%-cell -top_cell%
+EVR::parse_pinlist%-include_cell -lower%
+EVR::place_cell%-dx -dy -inst -o -replace -verbose -view%
+EVR::place_cell_auto%-hier -inst -optcell -verbose -view%
+EVR::source_to%-cell -create_block -create_net -dx -dy -hier -layers -nets -o -tag -term2wire%
+above_fc::above_fc%-c4_r1_cell -c4_r2_cell -c4bump_lib -calc_dimensions_only -dic_lib -die_file -edm_edm_pins -edm_etch_combined -edm_lib -etch_lib -pkgtop_name -shim_12pp_cell -shim_8pp_cell -shim_lib -soc_edm_pins -soc_lib -soc_name%
+above_fc::process_die_file%-case -dx -dy -o -pkgtop%
+above_fc::propagate_bumps%-default_layer -pins%
+above_fc::read_die_file_cells%-case -dx -dy -o -pkgtop%
+c4bump::connect_hierarchical_pins%-direction -pin_name_list -type%
+c4bump::generate_c4_bump_files%-input_path -library -output_path -top_block%
+c4bump::hier_connect_net_to_pin%-net -pins -type%
+c4bump::write_loc_for_field%-debug -depth -file -print%
+cleanup::convert_wires_to_routing_corridors%-match%
+cleanup::create_terminals_matching_pins%-layers%
+cleanup::remove_duplicate_vias%-method -netname%
+cleanup::remove_null_shape_objects%-force -layers%
+clk_bu::check_glbdrv_legs%-cells%
+clk_bu::is_cell_bbox_in_die%-bbox%
+clkpush::pushdown_clock_network%-buffered_nets -clk_cells -filter -unbuffered_nets%
+clock::check_clock_cells%-clock_cells -file -verbose%
+clock::fix_clock_cell_vt%-cells -vt%
+clock::get_clock_cells%-clock -filter%
+clock::replace_nonclock_cells%-cells%
+clock::resize_cells_to_valid_size%-cells%
+collgen::add_net%-net -nettype%
+collgen::add_port%-port -portdir -porttype%
+collgen::add_port_and_net%-net -nettype -port -portdir -porttype%
+collgen::cgn_connect_net%-net -pin%
+collgen::cleanup_port%-debug -filter -ports%
+collgen::connect_port%-filehandle -ports%
+collgen::copy_lib_and_refs%-no_refs%
+collgen::dump_floorplan%-format -objects -output_file%
+collgen::dump_pin_constraints_for_selected%-no_fts -objects%
+collgen::dump_routes%-format -objects -output_file%
+collgen::dump_terminals_per_block%-file_suffix -objects -outdir%
+collgen::generate_formality_do_file%-file_name%
+collgen::get_tail_connectivity%-port_array -ports%
+collgen::read_wrapper_shadow_eco%-input_dir%
+collgen::set_td_type%-clear -ports -td_type%
+collgen::split_blocks%-blocks -no_refs -tlib%
+collgen::write_macro_shell_verilog%-macro_list%
+collgen::write_td_subset_cells%-block -output_file -path -td_type%
+collgen::write_td_subset_connectivity%-block -output_file -path -td_type%
+collgen::write_td_subset_routes%-block -output_file -path -td_type%
+collgen::write_wrapper_shadow_eco%-append_output -input_shadow_file -nets -output_dir%
+common::check_error_counter%-return_num%
+comp::remove_icc_cmds_from_sdc_file%-cmds_to_remove -sdc_file%
+comp::translate_icc2_orientations%-file%
+comp::translate_icc2_vias_file%-in_pg_vias_file -in_signal_vias_file -outfile%
+comp::translate_icc_dc_dont_touch_cells_file%-infile -outfile%
+comp::translate_icc_place_file%-infile -outfile%
+comp::translate_icc_route_file%-infile -outfile%
+comp::translate_icc_sdc_file%-infile -outfile -sdc_lib_mapping_file%
+comp::translate_icc_track_file%-infile -outfile%
+ctm::balance_levels%-clk -level%
+ctm::check_lib_constraints%-clks%
+ctm::disable_multi_clocks%-clks%
+ctm::duplicate_flop_chain%-bbox -levels -pins%
+ctm::duplicate_instance%-copy_user_attributes -inst -pins -prefix -suffix%
+ctm::get_clock_cells%-clk -group -level%
+ctm::get_clock_leaf_pins%-clk -group -level%
+ctm::get_clock_leaves%-clk -group -level%
+ctm::get_clock_nets%-clk -group -level%
+ctm::get_clock_var%-clk -quiet%
+ctm::get_exceptions%-clk -group%
+ctm::get_grid_nets%-clk -group%
+ctm::get_gridclk%-master%
+ctm::get_non_buffer_driver%-pins%
+ctm::nominalize_clock_cells%-clks%
+ctm::remove_dangling_clock_cells%-clks%
+ctm::report_clock_levels%-clks -groups%
+ctm::set_exceptions%-clocks -ignore_gen_clocks -ignore_pins -stop_cells -stop_pins%
+ctm::set_ideal_latency%-clk -scenario%
+ctm::set_spine_net_timing%-clk%
+ctm::set_stop_pins%-clocks -pins%
+ctm::stamp_gridnet_delays%-clks%
+ctm::write_cell_delay_report%-clocks -file%
+ctm::write_latency_diff_report%-clocks -file%
+ctm::write_latency_expanded_report%-clocks -file%
+ctm::write_net_delay_report%-clocks -file%
+ctm::write_transition_report%-clocks -file%
+cts::expand_refs%-return%
+cts::set_constrainted_clock_max_transition%-clocks -max_tran -scenarios%
+dmm::report_ddh%-file%
+dop::get_dop_clocks%-force -type%
+dop::get_dop_output_nets%-clock -force -group -type%
+dop::get_dops%-clock -force -group -type%
+dop::get_groups_of_clock%-clk -type%
+dop::get_master_dop_pin%-dop_pins -exception_pins%
+dop::get_ref_clock%-group%
+dop::insert_dop_via_ladder%-allow_drcs -dop_nets -dop_pins -remove%
+dop::legalize_dops%-dops -layer%
+dop::read_clock_types%-file -force%
+dop::reconnect_dop_taps%-dop_pins -taps%
+dop::shield_dop_nets%-dirty_mode -dop_nets%
+draw::add_text%-color -location -text -width%
+draw::draw_alignment_edge%-color -edge -layer%
+draw::draw_bbox%-bbox -color -cross -width%
+draw::draw_line%-color -points -type -width%
+draw::draw_polygon%-color -points -width%
+draw::draw_routing_track%-colors -layer -width%
+dtDfm::V0_328_vss_fixing%-contact_name -ground_name -ground_voltage_areas -keepin_cells_list -power_name -power_voltage_areas -process_name -write_def_file%
+dtDfm::fill_base_layer%-density_boundary_assumption -density_kor_assumption -density_window_size -density_window_x_offset -density_window_x_stepping -density_window_y_offset -density_window_y_size -density_window_y_stepping -excludeKOR -far_fill_density_target -keepout_cells_list -korspX -korspY -layer -near_fill_density_target -ply -plys -top_level_only_kor -verbatim%
+dtDfm::fill_metal_icv%-break_min_length -break_offset -break_pattern -break_patterns -cellname -do_ungridded_fill -grid_patterns -hybrid -layer -offset -outputcellname -pattern -property -region_grids -stub_property -stubnet -techname -transition_offset -transition_pattern -transition_patterns -transition_period -viewname%
+dtDfm::fill_metal_icv_init%-cellname -do_final_texting -explicit_parallel -fast_read_fill_vias -fillincelview -fillinmw -icv_options -launch_script -layer_map_for_mw -mwlibrary -mwoutpath -nbclass -nbpool -nbslot -netname_for_untexted_objects -no_tracks_file -only_write_uin -outputcellname -property -rename_nets -run_mode -save_workdir -skip_dummy_250 -skip_output -skip_result_stm_output -stream -streamlined -stub_property -stubnet -techname -text_extensions -uindir -use_lnf_input -use_pds -verbatim -viewname%
+dtDfm::fill_metal_icv_run_streamlined%-layer_opts -layers -prune_cells_lists -tiling_opts%
+dtDfm::fill_via_icv%-check_for_hv -connect_to_existing_floating_metal -ehv_nets -fill_container_name -hv_nets -layers -uhv_nets -use_drawn_kor -use_fill_kor -use_global_kor -use_pod_density_windows -use_route_kor -use_switch_id_kor -verbatim%
+dtDfm::fill_via_icv_old%-cellname -hookup_regions -layer -property -stub_property -techname -viewname%
+dtDfm::fix_v0pax_dfmg%-excludeKOR -keepin_cells_list -keepout_cells_list -keepout_cells_x_space -keepout_cells_y_space -korspX -korspY -layer -result_container_name -top_level_only_kor%
+dtDfm::fix_vcx250%-excludeKOR -keepin_cells_list -keepout_cells_list -keepout_cells_x_space -keepout_cells_y_space -korspX -korspY -layer -result_container_name -top_level_only_kor%
+dtDfm::powerhookup%-add_zt_m1_extensions -bndry_y_min -cell_height -checker_max_tracks_for_gcn -checker_max_tracks_for_m0 -dh_bonus_cells_list -disable_dfm_bridging -disable_m1_row_jumpers -drawn_kor_x_space -drawn_kor_y_space -dsn_core_areas -enable_m0_ek_mode -force_hookup_cells_list -ground_name -ground_pin_names -ground_rail_y_start -ground_voltage_areas -hookup_cell_names_list -hookup_cell_names_list_xn -hookup_via_settings -icc2_mode -keepin_cells_list -keepout_cells_list -keepout_cells_x_space -keepout_cells_y_space -limit_hookup_to_area -m2_rail_width -max_tracks_for_gcn_in_cell -max_tracks_for_m0_in_cell -power_name -power_pin_names -power_voltage_areas -powerhookup_all_segments -powerhookup_avoid_drv -powerhookup_cells_area -powerhookup_drv_vias_cells_list -powerhookup_empty_area -powerhookup_grid_count -powerhookup_offset_locations -process_name -top_level_only_kor -use_drawn_kor -use_fill_kor -use_global_kor -use_route_kor -use_xll_grid -v0_master -v1_master -verbatim -write_coord_file -write_def_file_prefix -write_user_shape_file%
+dtDfm::powervia12dg%-keepout_cells_list -power_nets -process_name%
+dtDfm::read_stm%-convert_to_bbox -from_cell -from_view -layers -netname_for_untexted_objects -path -property -rename_nets -stub_property -stubnet -techname -to_cell -to_view%
+dtDfm::rename_nets%-mw_cellname -nets_to_rename%
+dtDfm::set_metal_fill_defaults_icv%-consider_off_grid -excludeKOR -fill_length -half_dr_end_to_end -korspX -korspY -layers -use_fill_markers -verbatim%
+dtDfm::set_via_fill_defaults_icv%-consider_hv_violations -density_boundary_assumption -density_fill_downto -density_kor_assumption -density_target -density_window_size -density_window_x_offset -density_window_x_stepping -density_window_y_offset -density_window_y_size -density_window_y_stepping -eco_region -ehv_nets -exclCells -excludeKOR -fast_density -fill_container_name -fill_net_names -hv_nets -icv_options -iteration_count -korspX -korspY -layers -top_level_only_kor -uhv_nets -verbatim%
+dtDfm::upsz_via%-excludeKOR -keepin_cells_list -keepout_cells_list -keepout_cells_x_space -keepout_cells_y_space -korspX -korspY -layer -result_container_name -top_level_only_kor%
+eco::get_added_cells%-skip_capture%
+eco::get_added_or_modified_cells%-skip_capture%
+eco::get_modified_cells%-skip_capture%
+eco::get_variant_cells%-skip_capture%
+eco::insert_power_switches%-aon_connect -boundary -dont_chain -dont_snap -x_incr -y_incr%
+eco::insert_ps_around_rp%-ps_x_incr -ps_y_incr -rp_bloat_x -rp_bloat_y%
+fevcheck::generate_lec_do_file%-mode%
+file::create_icc_cmd_file%-cmds -exit -log_file -out_file%
+file::create_icc_setup_cmd_file%-at -cmd_file -dbb -machine -new_machine -ot -out_file -ov -project -tool -work_area_name -xterm%
+foveros::import_die_file%-auto_net_creation -case_sensitive -diefile_netname_mapfile -dx -dy -orientation%
+fp::check_terminal_offgrid%-fix -terminals%
+fp::check_terminal_width%-fix -terminals%
+fp::check_voltage_area%-logfile%
+fp::create_ps_pg_grid%-cells -grid_num -grid_type -indexes -layers -net_tag%
+fp::create_routing_blockage_around_polygons%-enable_guides_on_boundary -layers -margin -poly -prefix%
+fp::create_routing_blockage_for_macro%-layers%
+fp::create_row%-flip_first_row -tiles%
+fp::create_rows_for_bonus%-tileinfo -tilename%
+fp::create_rows_for_core%-die_area -name -tilename%
+fp::define_custom_pg_config%-bbox -custom_template -reset -tag -tag_append -vdd_net -vss_net%
+fp::extend_terminals%-layers -ports%
+fp::get_track_location%-all -dont_ignore_reserved_track -ignore_power -layer -skip_track_next_to_power -width%
+fp::get_tracks_cross_bbox%-bbox -endpoint_offset -layer -pitch -tracks%
+fp::is_boundary_terminal_layer%-layer%
+fp::propagate_macro_pins_to_terminals%-all_pins -convert_pg_pins -debug -for_framgen -layers -macros -pins -skip_mjc%
+fp::pull_back_terminal_from_boundary%-port_list%
+fp::pushdown_cells%-cells%
+fp::write_voltage_area%-gen_cmd -outfile%
+fp_edit::align_pins_from_selected%-anchor -pins%
+fp_edit::align_shape_pins_from_selected%-anchor -objects%
+fp_edit::calc_channel_width%-number_of_routes -pattern%
+fp_edit::calc_path_width%-bbox -shape_dir%
+fp_edit::calc_per_block_polygons%-poly%
+fp_edit::change_width%-force -non_preferred -pins -shapes -width%
+fp_edit::check_shapes_match_pattern%-layer -pattern -polygon -return_offgrid -snap_to_track -terminals -update_width%
+fp_edit::copy_mi_routing%-master -objects -pin_map_file -remove -targets%
+fp_edit::copy_shape_bbox%-bbox -shape%
+fp_edit::count_routing_tracks%-pattern -range%
+fp_edit::create_abutted_pins%-direction -logical_pin_exists -pins%
+fp_edit::create_boundary_terminals_from_shapes%-shapes%
+fp_edit::create_pin_guides_from_pins_with_distance_and_direction%-direction -distance -layers -port -route_corridor%
+fp_edit::create_pins_under_terminals%-logical_pin_exists -ports%
+fp_edit::create_port_terminal%-coord -layer -port -remove_existing_terminals -snap_to_boundary -term_length%
+fp_edit::create_region_tracks%-bbox -create_tracks -file_name -patterns -ratio -tag%
+fp_edit::create_region_tracks_based_on_pins%-file_name -no_filter -pins -range -tag -visualize -yes_filter%
+fp_edit::create_td_pin_shape%-bbox -cell -keep_existing_pin_shapes -shapes%
+fp_edit::create_td_pins_on_dangling_wires%-cells -nets%
+fp_edit::create_terminals_from_bbox%-bbox -layer -port%
+fp_edit::create_terminals_from_shapes%-bbox_coord -rm_shapes -shapes%
+fp_edit::create_top_level_terminal%-layer -net%
+fp_edit::cut_shapes_by_bbox%-bbox_coord -rm_shapes -shapes%
+fp_edit::dump_block_boundaries%-cells%
+fp_edit::extend_pins_to_side_and_preroute%-pins -side%
+fp_edit::extend_shapes_to_boundary%-shapes -side%
+fp_edit::extend_shapes_to_point%-point -shapes%
+fp_edit::find_pattern%-layer -quiet -signal_only -width%
+fp_edit::focus_on_net%-nets -remove%
+fp_edit::identify_pattern%-layer -width_space_list%
+fp_edit::identify_track_pattern_based_on_pins%-no_filter -pins -yes_filter%
+fp_edit::match_pattern%-patterns -width_space_list%
+fp_edit::over_bump_routing%-bbox -list_of_patterns -net%
+fp_edit::port_up_shapes%-shapes%
+fp_edit::project_pins_to_top_boundary%-direction -pins%
+fp_edit::report_track_patterns%-layer%
+fp_edit::route_aligned_ft_terminals%-terminals%
+fp_edit::route_from_pins_given_direction_and_distance%-anchor_pin -direction -distance -hlayer -pins -vlayer%
+fp_edit::route_shape_by_shape%-pins -topo%
+fp_edit::route_signals_push_pins%-bundle -hlayer -hwidth -is_td -nets -points -push_down_pins -vlayer -vwidth%
+fp_edit::route_simple_topology%-nets%
+fp_edit::set_cells_grid%-cells -grid -snap%
+fp_edit::snap_pins%-anchor -objects -port%
+fp_edit::snap_poly_to_zero%-points%
+fp_edit::sort_nets_based_on_pin_location%-direction -pins%
+fp_edit::un_port_terminals%-ports%
+fp_edit::update_to_min_length%-shapes%
+fp_gcr::gcr_group_routing%-debug -effort -group_size -nets -pref_step -verbose -work_dir%
+fp_gcr::gcr_swizzle_routing%-jog_up -layer -nets%
+fp_rpt::break_one_shape_and_reassign%-cut_line -new_net -original_net_side -shape%
+fp_rpt::break_wire_rename_net%-cells -nets -original_net_side%
+fp_rpt::get_timing_based_rpt_coord%-delay -net -start%
+fp_rpt::insert_place_one_repeater%-buffer_lib_cell -inverter_lib_cell -net -new_net -original_net_side -rpt_location -rpt_name -rpt_orientation -shape%
+fp_rpt::rpt_legalize_and_route_tails%-legalize -route_tails -rpt_cells%
+fp_rpt::rpt_pwr_hookup%-cells -power_supply_net%
+fp_rpt::sd_insert_rpt_bboxes%-add_gnacs -grid_width -is_td -nets -on_top_hierarchy -reset_structures -respect_gas_station -respect_voltage_areas -rpt_lib_cell -rpt_station_bboxes -tail_routing%
+fp_rpt::sd_insert_rpt_distance%-dump_command_line_only -exclude_partitions -is_td -legalize -nets -on_top_hierarchy -rpt_lib_cell -rpt_partitions -tail_routing%
+fp_rpt::sd_place_existing_rpt%-bbox -cells -cells_in_grid -grid_height_mult -grid_width -route_dir%
+fp_rpt::sd_place_existing_rpt_based_on_routes%-anchors -bbox -cells -grid_width -route_dir%
+fp_rpt::sd_remove_inv%-buf_lib_cell -cells -remove_buffer%
+fp_rpt::sd_replace_buf_with_inv%-buffers -inv_lib_cell%
+geo::bbox_is_containing_pt%-no_touch%
+geo::create_windows%-columns -rows -within%
+geo::get_boundary_edges%-boundary -edge_type%
+gui::highlight_nets%-layers -nets -terminal_only%
+gui::select_cell%-highlight -zoom%
+gui::select_lib_cell%-highlight -zoom%
+gui::select_net%-highlight -layers -zoom%
+gui::select_port%-highlight -zoom%
+gui::select_terminal%-highlight -of_port -zoom%
+gui::zoom%-selection%
+hc::check_nets_which_cannot_be_pushed_down%-nets%
+hc::distributed_health_checks%-force -init_summary -top_only%
+hc::distributed_health_checks_for_all_blocks%-force -init_summary%
+hc::runtime%-min_time -start%
+hc_cbc::check_cbc_boundary%-hpml -no_report -polygon -stage -top_block_only%
+hc_cbc::check_cbc_multiple_boundary%-polygon -stage%
+hc_cbc::check_cbc_placement%-blocks -stage%
+hc_cbc::check_clock_cells_cbc_placement%-stage%
+hc_cbc::check_custom_cells_cbc_placement%-reference_name -stage -x_lego_number -x_offset -y_lego_number -y_offset%
+hc_cbc::check_hard_macro_minsize%-stage%
+hc_collateral::check_clock_collgen_attributes%-stage%
+hc_collateral::check_clockbuilder_objects_exist%-stage%
+hc_collateral::check_output_collateral_sanity%-collateral_type -stage%
+hc_connectivity::check_cell_dangling_inputs%-gclk -stage%
+hc_connectivity::check_cell_names%-stage%
+hc_connectivity::check_clock_connection_vs_pinlocation%-debug_file -keep_detail_report -nets -out_dir -rtl_connection_file -stage -verbose%
+hc_connectivity::check_clock_p2p_length%-debug_file -hcost -keep_detail_report -layer_prefix -length_diff_tolerance -net -out_dir -stage -vcost -verbose%
+hc_connectivity::check_clock_p2p_polarity%-debug_file -keep_detail_report -net2run_cfg_file -nets -out_dir -polarity -stage -verbose%
+hc_connectivity::check_dangling_ports%-stage%
+hc_connectivity::check_dangling_ports_pins%-stage%
+hc_connectivity::check_feedthru_net_names_match_ports%-stage%
+hc_connectivity::check_illegal_net_names%-stage%
+hc_connectivity::check_multiple_drivers%-gclk -nets -stage%
+hc_connectivity::check_port_net_names%-stage%
+hc_connectivity::check_ports_with_illegal_direction%-stage%
+hc_connectivity::check_spec_fev%-stage%
+hc_connectivity::report_ports_with_inout_direction%-gclk -stage%
+hc_connectivity::report_unconnected_pins%-stage%
+hc_drc::check_opens%-gclk -max_errors -nets -stage%
+hc_drc::check_route_drcs%-stage%
+hc_drc::check_shorts%-gclk -max_errors -nets -stage%
+hc_extraction::check_vias_in_frams%-stage%
+hc_floorplan::check_block_overlaps%-stage%
+hc_floorplan::check_ebb_size_is_lego%-layer%
+hc_floorplan::check_hip_spacing%-stage%
+hc_floorplan::check_min_channel%-stage%
+hc_floorplan::check_no_default_va%-stage%
+hc_floorplan::check_port_supply_net%-block -stage%
+hc_floorplan::check_port_tie_offs%-stage%
+hc_floorplan::check_ps_service_area%-stage%
+hc_floorplan::check_same_power_aon_cells%-stage%
+hc_floorplan::check_std_cell_power_hookup%-stage%
+hc_floorplan::check_terminals_oob%-block_dir -stage%
+hc_floorplan::check_terminals_shorts%-stage%
+hc_floorplan::check_top_layer_hip_power_pins_exposed%-stage%
+hc_floorplan::check_va_boundaries_abutted%-stage%
+hc_floorplan::check_va_dimensions%-stage%
+hc_floorplan::check_xor_voltage_and_bounding_areas%-stage%
+hc_gcr::check_hard_layer_mode_constraints_match_pin_layers%-nets -outfile -return -warn -work_dir%
+hc_gcr::check_missing_terminals_on_priority_net_routing%-nets -outfile -return -work_dir%
+hc_gcr::check_pin_offgrid_and_access_using_gcr_patterns%-nets -outfile -return -skip_gen -verbose -work_dir%
+hc_gcr::check_route_boundary_pin_enclosure%-nets -outfile -return -work_dir%
+hc_gcr::check_unplaced_cells_on_priority_net_routing%-nets -outfile -return -work_dir%
+hc_general::check_lib_versions%-report%
+hc_general::check_missing_library%-report%
+hc_general::check_modification_time%-report%
+hc_netspec::check_allowed_layers_constraints%-debug -layers -min_length -nets -no_error -tolerance -usage -verbose%
+hc_netspec::check_attrxml_netspecs%-dice_dir -dice_file -excl_dtouch -excl_layers -excl_shield -excl_width -min_length -min_seglen -no_macros -prop_fanout -skip_fetch -stage -strict -tolerance -verbose%
+hc_netspec::check_database_netspecs%-excl_layers -excl_limit -excl_match -excl_shield -excl_width -min_length -min_seglen -no_macros -prop_fanout -stage -strict -tolerance -verbose%
+hc_netspec::check_dont_touch_constraints%-debug -nets -no_error -repeaters -usage -verbose%
+hc_netspec::check_length_limit_constraints%-min_value -nets -tolerance%
+hc_netspec::check_length_match_constraints%-nets -per_layer -tolerance%
+hc_netspec::check_multiple_shield_constraints%-constr -debug -gclk -nets -snets -stype -tol_match -tol_space -tol_width -tolerance -usage%
+hc_netspec::check_shield_constraints%-debug -err_info -filter -lshield -min_length -nets -no_error -no_macros -snets -stype -tol_match -tol_space -tol_width -tolerance -usage -verbose%
+hc_netspec::check_width_per_layer_constraints%-debug -lwidth -min_length -min_seglen -nets -no_error -strict -tolerance -usage -verbose%
+hc_pin::check_critical_pin_placement_errors%-stage%
+hc_pin::check_disallowed_layer_terminals%-disallowed_layers -stage%
+hc_pin::check_ebb_pin_placement_errors%-stage%
+hc_pin::check_edge_terminals_below_spec_layer%-spec_layer -stage%
+hc_pin::check_nonedge_terminals_above_heml%-stage%
+hc_pin::check_nonedge_terminals_minlength%-stage%
+hc_pin::check_pg_pin_placement_errors%-skip_top -stage%
+hc_pin::check_pin_placement_errors%-skip_blocks -skip_top -stage%
+hc_pin::check_pin_spacing_errors%-skip_blocks -skip_top -stage%
+hc_pin::check_ports_missing_terminal%-stage%
+hc_pin::check_ports_with_multi_terms%-skip_list -stage%
+hc_pin::check_terminal_widths_match_track_ref%-stage%
+hc_pin::check_terminals_longer_than_threshold%-stage -threshold%
+hc_pin::check_terminals_minlength%-stage%
+hc_pin::check_terminals_not_on_track%-stage%
+hc_pin::check_terminals_within_hsml%-stage%
+hc_pin::check_weave_ft_connections%-stage%
+hc_placement::check_block_abutment%-debug -mlph -no_error -stage%
+hc_placement::check_cells_outside_block_boundary%-debug -macros -mlph -no_error -stage -stdcells%
+hc_placement::check_cells_within_voltage_area%-disallow_multiple_va_shapes -stage%
+hc_placement::check_clk_hip_spacing%-stage%
+hc_placement::check_global_cell_relative_dist_adherence%-highlight -stage -template -threshold%
+hc_placement::check_global_clock_cell_attr%-stage%
+hc_placement::check_hip_bound_for_logic_cells%-stage%
+hc_placement::check_hip_to_parent_boundary%-stage%
+hc_placement::check_negative_boundary_coordinates%-stage%
+hc_placement::check_no_ebbs_touching_parent_boundary%-stage%
+hc_placement::check_odi_vdm_placement%-mlph -stage%
+hc_placement::check_partition_boundary_halo_cells%-stage%
+hc_placement::check_placement_legality%-ignore_expression -stage%
+hc_placement::check_unplaced_cells%-stage%
+hc_placement::check_va_cell_spacing%-gclk -stage%
+hc_placement::check_va_hip_spacing%-stage%
+hc_power::check_no_power_above_hpml%-stage%
+hc_power::check_pg_connectivity_errors%-stage%
+hc_power::check_pg_drc_errors%-stage%
+hc_power::check_pg_region_lego_compliance%-stage%
+hc_power::check_power_domains_missing_voltage_areas%-stage%
+hc_power::check_power_grid_missing_vias%-stage%
+hc_power::check_power_supply_ports_correlation%-stage%
+hc_power::check_voltage_area_lego_compliance%-stage%
+hc_power::check_voltage_value_per_supply_net%-stage%
+hc_route::FindPowerLinesInArea%-bbox -layer -no_shield%
+hc_route::check_floating_vias%-gclk -gui -nets -vias%
+hc_route::check_global_clock_route_widths%-stage%
+hc_route::check_missing_wires%-stage%
+hc_route::check_non_preferred_direction_routes%-exclude_pg -gclk -layers -stage%
+hc_route::check_nonpg_missing_vias%-nets -stage%
+hc_route::check_null_via_shape_objects%-stage%
+hc_route::check_preroute_block_intersection%-nets -stage%
+hc_route::check_preroute_completion%-nets -stage%
+hc_route::check_preroute_width_vs_length%-nets -stage%
+hc_route::check_route_hsml_compliance%-stage%
+hc_route::check_route_shape_endcap_values%-stage%
+hc_route::check_route_shape_type%-stage%
+hc_route::check_route_terminal_intersection%-nets -stage%
+hc_route::check_signal_wire_shorts%-stage%
+hc_route::check_wires_on_track%-gclk -stage%
+hc_route::check_wires_on_track_cb2_track_lines%-gclk -stage%
+hc_route::get_duplicate_shapes%-debug -layer -nets -stage -write_fixer_file%
+hc_route::get_duplicate_vias%-cut_layer -debug -nets -stage -write_fixer_file%
+hc_route::get_track_lines%-bbox -include_power -layer -net -no_hash_reset -widths%
+hc_route::report_clock_pushdown_failures%-stage%
+hc_route::report_pushdown_failures%-stage%
+hc_timing::check_impossible_constraints%-only_top -stage%
+hc_timing::check_io_constraints_clock%-only_top -stage%
+hc_timing::check_unconstrained_pins%-only_top -stage%
+hc_timing::check_unconstrained_ports%-only_top -stage%
+hc_timing::report_pg_with_clock_latency_set%-stage%
+hc_timing::report_pins_with_no_timing_paths%-only_top -stage%
+hc_timing::report_tspec_read%-stage%
+hc_timing::report_unclocked_sequentials%-only_top -stage%
+hc_tm::check_tm_bu_collaterals%-create_terminal -repair -stage%
+hc_tm::check_tsv_bump_alignment%-stage%
+hc_upf::check_hier_srsn%-stage%
+hc_upf::check_isolation%-stage%
+hc_upf::check_mv_design_violations%-dp_mode -stage%
+hc_upf::check_srsn%-skip_partitions -stage%
+hc_utils::bbox_list_to_annotation%-color -keep -name%
+hc_utils::bbox_list_to_err_file%-checker_name -information -layer_list -object_list%
+hc_utils::extract_runtime_from_health_check_logs%-block -checks -out_file -reports_dir -stage%
+hc_utils::init_summary%-clean_slate%
+hc_utils::mark_err_files_based_on_text_waivers%-all_blocks%
+hc_utils::parse_text_rpt_waivers%-list_of_checks -milestone_closure -stage_run -standalone_run%
+hc_utils::runtime%-min_time -start%
+hc_utils::write_text_waivers_from_err_files%-all_blocks%
+iccpp_com::obj_get_defined_attributes%-application -class%
+iccpp_cr::create_route_track_for_net%-layer -nets%
+iccpp_cr::cut_shapes%-bbox -layer -nets%
+iccpp_cr::cut_shapes_on_iccpp_trunks%-bbox -layer -nets%
+iccpp_cr::ri_create_repeater_from_repeater_list%-exclude_cells -of_cells -preview%
+ism::get_ism_attr_info%-attr_name%
+ism::pdintent_write%-all_custom_cells_placement -all_macros -all_pgrs -all_placement_blockages -all_ports_tintent -all_routing_blockages -all_terminals -all_vas -include_tms -path -pgr_collection -va_collection%
+layout_edit::add_gnac%-coordinate -net%
+layout_edit::get_nearest_legal_coord%-cell -coordinate -snap%
+list::numbered_lines_string%-cells -locations -max_lines -no_sort%
+mpp::read_pv_voltage_map%-file%
+mpp::save_incremental_upf%-output%
+mpp::write_voltage_tcl%-pv_voltage_map -voltage_tcl%
+name::generate_unique_name%-name -tag -type%
+netspec::extract_simulation_netlist%-driver_subckt_files -from -nets -spice_header_files -subckt_name -to%
+netspec::gcr_create_bus_constraint%-corner_type -disabled_layers -gap -group_name -min_segment -shield -shield_placement -shield_spacings -shield_widths -snet -valid_layers%
+netspec::gcr_create_diffpair_constraint%-disabled_layers -gap -group_name -min_segment -shield -shield_placement -shield_spacings -shield_widths -snet -valid_layers%
+netspec::gcr_create_length_limit_constraint%-min_value%
+netspec::gcr_create_length_match_constraint%-disabled_layers -group_name -match_type -min_segment -relative -shield -shield_spacings -shield_widths -snet -style -tolerance%
+netspec::gcr_create_net_priority_constraint%-priority%
+netspec::gcr_create_rv_constraint%-disabled_layers -min_segment -rv_spec -shield -shield_spacings -shield_widths -snet -style%
+netspec::gcr_create_shield_constraint%-disabled_layers -min_segment -shield_spacings -shield_widths -snet -style%
+netspec::get_constrained_nets%-dump -gcr%
+netspec::ndr_update_net_routing_rule%-disabled_layers -max_layer_mode -max_layer_mode_soft_cost -max_routing_layer -min_layer_mode -min_layer_mode_soft_cost -min_routing_layer -min_segment -shield -shield_spacings -shield_widths -snet -style -widths%
+netspec::propagate_down%-force%
+netspec::propagate_net_constraints%-constrs%
+netspec::propagate_up%-force%
+netspec::read_attribute_xml_format%-array_name%
+netspec::read_dice_attrxml_files%-echo%
+netspec::read_dice_format%-echo%
+netspec::report_match_lengths%-group -nets -outfile -per_layer -report_file -work_dir%
+netspec::set_allowed_layers_from_net%-net -tnets%
+netspec::set_ndr_from_net%-net -tnets%
+netspec::write_constraints_from_attrxml%-add_lock -append -apply -dice_dir -dice_file -prop_fanout%
+pg_util::sd_create_ebb_blanket_blockage%-boundary_offset -cells -include_ground -layers%
+pg_util::sd_pg_repair%-bbox -layer -net%
+pg_util::sd_protect_pins_in_pg_region%-bbox -layers -size%
+pg_util::sd_pull_back_pg_from_ebb%-cells -force -gap_size -layer -pg_net%
+pg_util::sd_rm_straddle_pg_shapes_over_ebb%-cells -force -layer%
+pinPairing::create_pin_pairing_stubs%-cells -layer -net_name -verbose%
+pinPairing::remove_pin_pairing_stubs%-hierarchical%
+place::rpd_get_overlapped_cells%-vas%
+place::rpd_process_layout_only_cells%-vas%
+place::rpd_process_ps_cells%-vas%
+place::rpd_verify_rp%-check_only -legalize -log%
+place::rpd_write_rsh%-input -output%
+place::swap_cell_types%-cells%
+place::write_placement%-all -filename -ignore_fixed -inst_list%
+ppp::pop_tm_terminals%-layers -macros%
+ppp::push_routes%-nets%
+ps::get_pwr_grid_config%-layer -net_type -param%
+ps::get_pwr_switch_config%-dont_snap%
+ps::insert_ps_cells_around_macro%-get_ps_config -macro_names -va%
+ps::pull_point_into_va%-direction -increment -point -va%
+ps::snap_to_nearest_locn%-around_ebb -ceil -coord -direction -floor -no_extra_check -nolayersnap -ps_ref_name%
+ps_dfb::calculate_single_start_location%-start_direction -switch_list -voltage_area_name%
+ps_dfb::calculate_start_location%-start_direction -switch_control_signal_daisy_chain0 -switch_list -voltage_area_name%
+ps_dfb::create_power_switch_array_pattern_wa%-bbox -orient -pattern -power_switch -prefix -snap_to_site_row -voltage_area -x_offset -x_pitch -y_offset -y_pitch%
+ps_dfb::insert_ps_stitch_hfn%-native_snap_to_site_row -power_domain%
+ps_dfb::replace_fishbone_with_daisy%-cells -coords -start_switch -voltage_areas%
+ps_dfb::report_long_switch_nets%-only_voltage_area%
+ps_dfb::show_daisy_chain%-domain -remove%
+ps_dfb::show_main_chain%-domain -remove%
+ps_dfb::show_power_switch_chain%-domain -remove -type%
+ps_dfb::stitching_daisy_fb%-no_rpts -only_voltage_area -search_box_diameter%
+pwr::add_pg_in_polygon%-layers -polygon_list%
+pwr::convert_pwr_shapes_to_terminals%-layers%
+pwr::get_power_layers%-custom_only -net_tag -verbose%
+pwr::remove_pg_in_polygon%-layers -polygon_list%
+pwr::remove_power_grid%-dont_remove_terminal -layer -nets%
+pwr::stdcell_hookup_via1%-m1_pitch -output -start_track -via_master -via_track_pitch%
+pwr::write_power_grid%-outfile%
+pwr_hookup::create_stdcell_powerhookup%-allowed_via_master_overrides -check_hookup_integrity -post_route_hookup -powerhookup_all_segments -powerhookup_avoid_drv -powerhookup_cells_area -powerhookup_empty_area -powerhookup_grid_count -vcc_name -via_master_overrides -vss_name -within%
+pwr_hookup::find_flexfill_pwr_hookup_options%-optname_only%
+pwr_hookup::get_first_gnd_rail%-core_lly -tile_name -y_first_gnd -y_gnd%
+pwr_hookup::get_hookup_layer_vias_and_shapes%-shapes -vias%
+pwr_hookup::get_pwr_gnd_regions%-aon_area -gnd_area -pwr_area%
+pwr_hookup::get_pwr_hookup_process_settings%-clear -no_via_query%
+pwr_hookup::get_pwr_hookup_ref_cell_info%-cell_ref_pattern -exclude_macros -possible_hookup_refs -strict_exclude_refs -within%
+pwr_hookup::hookup_convert_cell_wildcards%-within%
+pwr_hookup::modify_def_vias_section%-user_shape_file%
+pwr_hookup::print_via_shape_summary%-remove -shapes -vias%
+pwr_hookup::remove_stdcell_powerhookup%-net_names -within%
+pwr_hookup::set_hookup_via_type%-layer_name -type%
+q::get_highest_layer%-attribute -template%
+q::get_logic_between_pins%-add_end -add_start -end -start%
+q::get_macros%-filter -of_objects%
+q::get_next_size%-allow_dont_use -levels%
+q::get_power_domain_info%-domain_name -no_gas_stations%
+q::get_prev_size%-allow_dont_use -levels%
+q::get_techfile_info%-tech_dump%
+q::get_voltage_area_of_cell_location%-cell -smallest_va%
+q::is_nested_va%-domain_name%
+q::is_vertical_layer%-layer%
+refresh::dump_refresh%-blocks -collateral_type -filter -objects%
+refresh::dump_rptr_connectivity%-cells -output_file%
+refresh::hier_sort_bottom_up%-cells%
+refresh::write_eco_files%-golden_block -golden_lib -outdir -pre_golden_lib%
+rolluplib::main%-rollup_block -rollup_lib -source_lib%
+route::get_net_wirelength%-net%
+route::get_routing_layers%-above_layer -below_layer -next_layer -no_metal -no_via -prev_layer%
+route::reroute_shorts%-loop -remove_all -remove_constraints -shorts_thresold%
+route::set_via_color%-color_value -power_net_only -via_layer -via_master%
+route::set_via_ladder_rule%-config_file%
+rpt::check_qor_report%-file%
+rpt::clock_information%-clknets -tag%
+rpt::create_run_summary%-append -report_dir -stage_tag -summary_file%
+rpt::power_domains%-file%
+rpt::pvt%-corner -file%
+rpt::qor%-corner -file%
+rpt::qor_summary%-file%
+rpt::report_custom_powergrid_info%-outfile%
+rpt::route_info_of_paths%-corner -llist -max_path -mode -nand_gate_area -nworst -outfile -pathlist -slack -vlist%
+rpt::route_info_one_path%-corner -epoint -llist -mode -nand_gate_area -spoint -vlist%
+rpt::supply_nets%-file%
+rpt::timing%-corner -file -mode%
+rpt::zero_interconnect_timing%-tag%
+tech::get_techfile_info%-layer -type%
+tech::read_techfile_info%-techfile%
+tm_custom_scripts::insert_tv0%-force -nets -trim -trimfile -via_type -within%
+tm_custom_scripts::rename_shapes%-net%
+tmtd::change_ndm_to_design_view%-create -ndm_ref_name%
+tmtd::check_bu_collaterals%-create_terminal -repair%
+tmtd::create_def%-block -def_file -interface_nets -noports -tcl_file%
+tmtd::delete_older_shapes%-cellname -change_working_design -current_block_name -only_ports -outside_terminals%
+tmtd::process_internal_nets%-current_block_name -delete_blockage -delete_obj -nets -only_shape -only_via -shapes%
+tmtd::process_owner_attribute%-current_block_name -force -objects -remove%
+tmtd::tm_collateral_diff%-compare_coll_format -compare_collateral -ref_block -ref_coll_format -ref_collateral -ref_lib%
+tmtd::tm_consume_td_tm_file%-block -lib -td_tm_collateral%
+tmtd::tm_validate_bu_with_original%-bu_collateral -bu_file_format -oas -ref_block -ref_lib%
+tmtd::transform_objects_parent_2_child%-child_orientation -child_points -object%
+tmtd::transform_points_child_2_parent%-child_orientation -child_origin -from_points%
+tmtd::transform_points_parent_2_child%-child_orientation -child_origin -from_points%
+tmtd::write_blockages%-objects -output%
+tmtd::write_mims%-objects -output%
+tmtd::write_terminals%-convert_to_shape -objects -output%
+tspec::clipper%-nets -reset%
+tspec::create_bbt%-filename%
+tspec::timing_path_analyze%-corner -max_paths -net_delay_limit -tpaths%
+utils::add_header_to_file%-comment_char -file_name -msg -runtime%
+utils::convert_units%-from -to -value%
+utils::get_design_info%-stages_done%
+utils::get_tmp_dir_name%-group%
+utils::port_up_terminals%-cells -layer -pins -snap_to_boundary_edge%
+utils::print_header%-comment_char -file_name -msg -runtime%
+utils::print_histogram%-count_label -key_label -lower_bound -max_star_length -percentage -title -type -unit -upper_bound%
+utils::snap_terminals_to_boundary_edge%-edge -terminals%
+utils::trace_driver_pin%-pin%
+utils::trace_net_topology%-pins -return_all%
+via_ladder::add_via_ladder%-allow_drcs -cells -constraints_only -incremental -nets -report_tag -via_ladder_constraint%
+via_ladder::assign_via_ladder_constraints%-cells -nets -pin_name -report_tag -via_ladder_constraint%
+via_ladder::remove_via_ladder%-cells -dont_remove_constraint -nets%
+via_ladder::set_via_ladder_rule%-config_file%
+via_ladder::update_techfile_for_via_ladder_rule%-outfile -rule_file -techfile%
+vs::vector_swap%-bbox -check_only -cmax_percent_cluster -merge_lces -swap%
+zndp::add_new_module%-cells -instances -no_save -reference%
+zndp::connect%-net_type -netbus -pinbus%
+zndp::create_bbox_library%-lib%
+zndp::create_bbox_topblock%-block -boundary%
+zndp::create_boundaries_file%-filename%
+zndp::create_interface%-busname -cells -direction -net_type%
+zndp::disconnect%-all -netbus -pinbus%
+zndp::floorplan_block%-cells -no_backoff -no_tracks_under_rails -top%
+zndp::remove_interface%-busname -cells%
+zndp::snap_terminal2selectedshapes%-objects%
