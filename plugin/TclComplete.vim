@@ -12,9 +12,9 @@
 "     3) $WARD/dp/inputs/TclComplete
 "     4) The location of this plugin.
 if !exists("g:TclComplete#dir")
-    if isdirectory("$WARD/TclComplete")
+    if isdirectory($WARD."/TclComplete")
         let g:TclComplete#dir = $WARD."/TclComplete"
-    elseif isdirectory("$WARD/dp/inputs/TclComplete")
+    elseif isdirectory($WARD."/dp/inputs/TclComplete")
         let g:TclComplete#dir = $WARD."/dp/inputs/TclComplete"
     else
         let g:TclComplete#dir = expand("<sfile>:p:h:h")."/sample"
