@@ -51,7 +51,7 @@ lset%%
 lsort%-ascii -command -decreasing -dictionary -increasing -index -indices -integer -nocase -real -stride -unique%
 namespace%children code current delete ensemble eval exists export forget import inscope origin parent path qualifiers tail unknown upvar which%
 open%-handshake -lasterror -mode -pollinterval -queue -sysbuffer -timeout -ttycontrol -ttystatus -xchar%
-package%ifneeded names present provide require unknown vcompare versions vsatisfies prefer%
+package%ifneeded names prefer present provide require unknown vcompare versions vsatisfies%
 pid%%
 proc%%
 puts%-translation%

@@ -115,10 +115,12 @@ TclOO
 Tclx
 Tix
 Tixsam
+Tk
 Tkhtml
 Tktable
 Tkx
 Trf
+Ttk
 UDMTcl
 UbmCacheTcl
 UbmNoNflTcl
@@ -354,7 +356,6 @@ iccpp_cr
 iccpp_hc
 iccpp_iccpp
 iccpp_ns
-iccpp_pp
 ident
 imap4
 img::base
@@ -383,6 +384,8 @@ ip
 irc
 ism
 itcl
+itk
+iwidgets
 javascript
 jpeg
 jpegtcl
@@ -616,6 +619,7 @@ qualifier_mgr
 quantify_tcl
 rc4
 rcs
+rdt_mcmm_utils
 refresh
 reorder
 report
@@ -627,7 +631,6 @@ ripemd160
 route
 rpGUI
 rumba
-rumba_spacing_rules
 samprof
 sd_mcmm
 segment
@@ -909,6 +912,10 @@ transparent
 treeql
 trsync
 tspec
+ttk::theme::alt
+ttk::theme::clam
+ttk::theme::classic
+ttk::theme::default
 ubm
 ubm_gui
 udm_extras
