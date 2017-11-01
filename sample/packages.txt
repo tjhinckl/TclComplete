@@ -356,6 +356,7 @@ iccpp_cr
 iccpp_hc
 iccpp_iccpp
 iccpp_ns
+iccpp_pp
 ident
 imap4
 img::base
@@ -619,7 +620,6 @@ qualifier_mgr
 quantify_tcl
 rc4
 rcs
-rdt_mcmm_utils
 refresh
 reorder
 report
@@ -631,6 +631,7 @@ ripemd160
 route
 rpGUI
 rumba
+rumba_spacing_rules
 samprof
 sd_mcmm
 segment

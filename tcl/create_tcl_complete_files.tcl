@@ -64,8 +64,8 @@ proc get_options_from_help {cmd} {
 
         # Now get the command options.  They might be surround by [ and ].
         if {$looking_for_option} {
-            if {[regexp {^\s+\[?(-[a-zA-Z0-9_]+)} $line -> opt] } {
-                lappend result $opt
+            if {[regexp {^\s+\[?(-[a-zA-Z0-9_]+)[^(]*(.*$)} $line -> opt detail] } {
+                lappend result "$opt $detail"
             }
             # Exit loop if there is an empty line.
             if {[regexp {^\s*$} $line]} {
@@ -93,10 +93,23 @@ proc get_options_from_man {cmd} {
 # Ask the synopsys tool for commands, procs, packages, and functions
 ####################################################################
 # Form a list of all commands (and remove the . command at the beginning.
-redirect -variable command_list {lsort -u [info command]}
-if {[lindex $command_list 0]=="."} {
-    set command_list [lrange $command_list 1 end]
-    set command_list [string trim $command_list]
+redirect -variable all_command_list {lsort -u [info command]}
+if {[lindex $all_command_list 0]=="."} {
+    set all_command_list [lrange $all_command_list 1 end]
+    set all_command_list [string trim $all_command_list]
+}
+
+# Divide all_command_list into builtin and regular commands
+# The first uses the 'man' command, the other uses the 'help -v' 
+# command to list the options.
+set builtin_list {} 
+set command_list {}
+foreach cmd $all_command_list {
+    if {[regexp "Builtin" [get_description_from_help $cmd]]} {
+        lappend builtin_list $cmd
+    } else {
+        lappend command_list $cmd
+    }
 }
 
 # Form a list of namespace children relative to ::
@@ -123,43 +136,45 @@ set func_list [string trim $func_list]
 redirect -variable package_list {lsort -u [package names]}
 set package_list [string trim $package_list]
 
-
-# Initialize the builtin_list.  Built-ins respond to help
-# with "<command> # Builtin" and need to use "man <command"
-set builtin_list {} 
-
+# Form a list of aliases
+redirect -variable alias_list {alias}
+set alias_list [string trim $alias_list]
 
 ######################################################################
-# Now that we have all the commands and stuff, let's find the options!
+# Now that we have all the commands and stuff, let's write it all out.
 ######################################################################
 # 1)  Setup the output directory
 set outdir $::env(WARD)/TclComplete
 mkdir_fresh $outdir
 
-# 2)  Write out the list of commands.
-#      (but save the builtins for later)
+
+# 2)  Write out the list of commands with options.
 set f [open $outdir/commands.txt w]
 foreach cmd $command_list {
-    set opts        [get_options_from_help $cmd]
-    set description [get_description_from_help $cmd]
-    if {[regexp "Builtin" $description]} {
-        lappend builtin_list $cmd
-        continue
+    foreach opt [get_options_from_help $cmd] {
+        puts $f "$cmd $opt"
     }
-    puts $f "$cmd%$opts%$description"
 }
 close $f
 
-# 3)  Write out the list of procs as csv
+# 3)  Write out the list of procs with options.
 set f [open $outdir/procs.txt w]
 foreach proc $proc_list {
-    set opts        [get_options_from_help $proc]
-    set description [get_description_from_help $proc]
-    puts $f "$proc%$opts%$description"
+    foreach opt [get_options_from_help $proc] {
+        puts $f "$proc $opt"
+    }
 }
 close $f
 
-# 4)  Write out the list of builtins.  "help" shows no options for builtins,
+# 4)  Write out all the descriptions (only applies to non-builtin commands and procs)
+set f [open $outdir/descriptions.txt w]
+foreach cmd [concat $command_list $proc_list] {
+    set description [get_description_from_help $cmd]
+    puts $f "$cmd $description"
+}
+close $f
+    
+# 5)  Write out the list of builtins.  "help" shows no options for builtins,
 #       so "man" or namespace ensembles are used.
 set f [open $outdir/builtins.txt w]
 foreach bi $builtin_list {
@@ -177,12 +192,13 @@ foreach bi $builtin_list {
         set opts [lsort "ifneeded names present provide require unknown vcompare versions vsatisfies prefer"]
     }
 
-    puts $f "$bi%$opts%"
-
+    foreach opt $opts {
+        puts $f "$bi $opt"
+    }
 }
 close $f
 
-# 5)  Write out the list of packages
+# 6)  Write out the list of packages
 set f [open $outdir/packages.txt w]
 foreach pack $package_list {
     puts $f "$pack"
@@ -190,9 +206,14 @@ foreach pack $package_list {
 close $f
 
 
-# 6)  Write out the list of namespaces
+# 7)  Write out the list of namespaces
 set f [open $outdir/namespaces.txt w]
 foreach namespace $namespace_list {
-    puts $f "$namespace%[namespace children $namespace]%"
+    puts $f "$namespace [namespace children $namespace]"
 }
+close $f
+
+# 8)  Write out the list of aliases
+set f [open $outdir/aliases.txt w]
+puts $f $alias_list
 close $f
