@@ -146,9 +146,7 @@ foreach cmd $command_list {
         lappend builtin_list $cmd
         continue
     }
-    if {[llength $opts]>0} {
-        puts $f "$cmd%$opts%$description"
-    }
+    puts $f "$cmd%$opts%$description"
 }
 close $f
 
@@ -157,9 +155,7 @@ set f [open $outdir/procs.txt w]
 foreach proc $proc_list {
     set opts        [get_options_from_help $proc]
     set description [get_description_from_help $proc]
-    if {[llength $opts]>0} {
-        puts $f "$proc%$opts%$description"
-    }
+    puts $f "$proc%$opts%$description"
 }
 close $f
 
