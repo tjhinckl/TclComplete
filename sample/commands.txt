@@ -1,3 +1,17 @@
+CmdSpec
+LoadBLT
+LoadLib
+LoadLib_high
+LoadNewFlowManagerBuilder
+NBDumpControl
+NBFileSelectionDialog
+NBMiscControl
+NBToolTip
+NBZeroNetlist
+NflTclFindTheFullPath
+POST_all_steps
+P_all_inputs_minus_clocks
+P_apply_scon
 P_astro_upsize_script -fix_ratio (Ratio)
 P_astro_upsize_script -out (Output file name)
 P_astro_upsize_script -vio_report (Violation report from PrimeTime )
@@ -7,16 +21,23 @@ P_connect_net_to_pin_of_cell -net (Name of net of the current design to be conne
 P_connect_net_to_pin_of_cell -pin (Name of pin of a cell)
 P_continue -scr (Name of procedure or absolute path & filename of script)
 P_continue -snapshot (Take a snapshot of the calling script/procedure)
+P_create_port
 P_create_unique_object_name -basename (Base name of the object, this will be cat'ed with an integer to make the object name)
 P_create_unique_object_name -max_integer (The integer will be incremented to this limit, if a unique object name is not found by then, an empty string will be returned (default: 1000000))
 P_create_unique_object_name -no_warning (Suppress warning message if '-max_integer' limit was reached without creating a unique object name)
 P_create_unique_object_name -object (Object for which the unique name will be used: 
 P_create_unique_object_name -start_integer 
+P_debug
+P_drv_cell
+P_echo
 P_elapsed_time -end (End task tag)
 P_elapsed_time -mesg (message)
 P_elapsed_time -quiet (Do not echo any messages)
 P_elapsed_time -start (Start task tag)
 P_elapsed_time -timestamp (Execute P_timestamp before calculating time)
+P_error
+P_fatal
+P_find_common_collection
 P_find_file_ext -ext (List of extensions)
 P_find_file_ext -only (Look for tag file only)
 P_find_file_ext -tag (Tag for the file)
@@ -25,14 +46,60 @@ P_find_proc -tag (Tag for the procedure)
 P_get_best_driver -load (load)
 P_get_best_driver -ref (Reference name)
 P_get_best_driver -ref_pin (Reference pin name)
+P_get_cells
+P_get_children
+P_get_clock_pins
+P_get_clockgate_clock_pins
+P_get_clockgate_enable_pins
+P_get_clockgate_output_pins
+P_get_clocks
+P_get_data_pins
+P_get_design_name
+P_get_enable_pins
+P_get_hier_scon
+P_get_lib
+P_get_libcells
+P_get_libpins
+P_get_license
+P_get_makevars
+P_get_nets
+P_get_object_pins
+P_get_objects
+P_get_output_pins
+P_get_pins
+P_get_ports
+P_get_preset_pins
+P_get_ref_name
+P_get_reset_pins
 P_get_scon_from_rtl -latest (To copy to latest tree also)
 P_get_scon_from_rtl -rtlm (RTL Model Name)
 P_get_scon_from_rtl -rtlp (Path to Local RTL)
 P_get_scon_from_rtl -sdm (SD Model)
+P_get_scr_proc_name
+P_get_si_pins
+P_get_so_pins
+P_get_variable_val
 P_hookup_port -no_hier (Dont connect ports to pins on sub designs of current design)
 P_hookup_port -pin (Name of pin of the cell to be hooked up)
 P_hookup_port -port (Name of port to be hooked up)
+P_info
 P_interrupt -scr (Script file to use)
+P_is_DC
+P_is_ENCOUNTER
+P_is_FE
+P_is_ICC
+P_is_ICC2
+P_is_MAGMA
+P_is_MG
+P_is_PC
+P_is_PSYN
+P_is_PT
+P_is_SNPS
+P_is_collection
+P_is_synopsys_tool
+P_lminus
+P_process_high_fanout_signal
+P_process_synchronizer_cells
 P_proj_analyze -base (Base Name)
 P_proj_analyze -design (Design Name)
 P_proj_analyze -hier (Relace all occurences throughout hier)
@@ -44,9 +111,18 @@ P_proj_analyze -type (Source format:
 P_proj_change_names -nohier (Apply rule only to this design, not hierarchical.)
 P_proj_change_names -rule (Name of the rule, all rules are applied by default)
 P_proj_change_names -verbose (Apply rule only to this design, not hierarchical.)
+P_put_scan_attributes
+P_read_lib_db
 P_rename_soft_macro -prefix (Prefix to use when changing name, default is G_DESIGN_NAME)
+P_report_logic_levels
 P_rpt_unmapped -output (Name of output file)
+P_run_cmd
+P_save_tmp_db
+P_seal_cmd
+P_set_disable
 P_set_fix_multiple_port_nets -nohier (Apply rule only to this design, not hierarchical.)
+P_set_fp
+P_set_maxdelay
 P_set_mcp -edge (Apply to edge: 
 P_set_mcp -fall_from (Apply to paths falling from only)
 P_set_mcp -fall_through 
@@ -59,6 +135,9 @@ P_set_mcp -rise_to (Apply to paths rising to only)
 P_set_mcp -through (Apply to paths through)
 P_set_mcp -to (Apply to paths to)
 P_set_mcp -type (Analysis type: 
+P_set_mindelay
+P_sid
+P_sod
 P_source_proj_setup -before (Works with 'default_setup'. Source 'default_setup' BEFORE project setup)
 P_source_proj_setup -force (Works with 'default_setup'. Source it AFTER project setup)
 P_split -char (Character at which to split at)
@@ -72,8 +151,86 @@ P_swap_srflop -log (File to write which contains a list of all cells which were 
 P_swap_srflop -srflop_list 
 P_timestamp -prefix (String to print before the date)
 P_timestamp -quiet (Do not echo the timestamp)
+P_true
+P_unloaded_regs
+P_warning
+T_absName
+T_check_vars
+T_chmod
+T_closeLog
+T_cp
+T_debug
+T_debugF
+T_debugS
+T_diff
+T_dumpState
+T_error
+T_errorF
+T_eval
+T_existSet
+T_fatal
+T_fatalF
+T_fileCheck
+T_fileCheckP
+T_fstring
+T_fstring_add_index
+T_fstring_det_range
+T_getLineCount
+T_getScrDir
+T_getScrName
+T_getSubName
+T_gets
+T_info
+T_isNumber
+T_lcommon
+T_lminus
+T_ln
+T_lreverse
+T_lsearch
+T_lunique
+T_mkdir
+T_mputs
+T_openLog
+T_parseArgs
+T_parseStatus
+T_printUsage
+T_printVar
+T_printVarDebug
+T_puts
+T_readWriteStatus
+T_remove_start_end_spaces
+T_reset_T_Quiet
+T_rm
+T_sel2list
+T_set_T_Quiet
+T_setarr
+T_singleList
+T_spin
+T_split
+T_touch
+T_true
+T_unset
+T_unsetIndex
+T_warning
+T_warningF
+__h2t_create_shape_icc2
+__h2t_create_trunk_snps
+__h2t_get_pin_port_layer_width
+__h2t_get_port_pin_layer_width
+__h2t_process_layerless_pin_port
+__h2t_set_custom_attr
+_h2t_apply_nets_order
+_h2t_format_bbox
+_h2t_process_opts
+_load_Oratcl
+_load_tclreadline
+_tixDeleteFlags
+_tixRecordFlags
+aH
+aV
 add_attachment -file_name (name of the file to be attached)
 add_attachment -object (Object that will have this attachment)
+add_attribute
 add_buffer -inverter_pair (Add a pair of inverter cells instead of a buffer)
 add_buffer -lib_cell 
 add_buffer -new_cell_names 
@@ -115,6 +272,10 @@ add_eco_repeater -input_net_name (repeater input net name)
 add_eco_repeater -lib_cell 
 add_eco_repeater -load (List of load ports or pins)
 add_eco_repeater -output_net_name (repeater output net name)
+add_exception_clm_from_fifoentry
+add_exception_on_gasket_flops
+add_exception_on_lane_in_flops
+add_exception_on_stepdown_flops
 add_feedthrough_buffers -buffer_side (add buffer on input side or output side or both, default is output)
 add_feedthrough_buffers -logical (eliminate logical feedthroughs (that can lead to assign statement) on all blocks default false)
 add_feedthrough_buffers -nets (collection of nets)
@@ -128,6 +289,11 @@ add_port_protection_diodes -ignore_dont_touch (ignore dont_touch net)
 add_port_protection_diodes -port (list of ports)
 add_port_protection_diodes -prefix (prefix name of the inserted diode)
 add_port_state -state 
+add_post_stage
+add_post_step
+add_power_state
+add_pre_stage
+add_pre_step
 add_pst_state -pst (Name of the pst)
 add_pst_state -state (List of supply net or port states)
 add_redundant_vias -effort (redundant via effort, default is medium : 
@@ -136,6 +302,7 @@ add_redundant_vias -nets (the nets for redundant via insertion (default all))
 add_redundant_vias -timing_preserve_hold_slack_threshold 
 add_redundant_vias -timing_preserve_nets 
 add_redundant_vias -timing_preserve_setup_slack_threshold 
+add_set_sense_to_bypass_mux
 add_shield_association -nets (Shielded nets to add to shield association)
 add_shield_association -objects 
 add_spare_cells -boundary (boundary)
@@ -151,13 +318,25 @@ add_spare_cells -voltage_areas
 add_tie_cells -objects (Ports, pins, cells or lib_cells for tie-cell insertion)
 add_tie_cells -tie_high_lib_cells 
 add_tie_cells -tie_low_lib_cells 
+add_to_bound
 add_to_bundle -before_object 
 add_to_bundle -bundle 
 add_to_bundle -prepend (Add object as the first object in the bundle, default is to append)
 add_to_collection -unique (Remove duplicates from the result)
+add_to_edit_group
+add_to_group
 add_to_io_guide -before (Add pad cells before this cell)
+add_to_io_ring
+add_to_matching_type
 add_to_multisource_clock_sink_group -name (group name of a set of sinks)
 add_to_multisource_clock_sink_group -sinks (list of clock sinks to be added)
+add_to_must_join_ports
+add_to_net
+add_to_net_bus
+add_to_pin_blockage
+add_to_pin_guide
+add_to_port_bus
+add_to_routing_corridor
 add_to_rp_group -allow_overlap (allow RP blockage to be overlapped with other fixed objects)
 add_to_rp_group -blockage 
 add_to_rp_group -cells (Cells to be added in RP Group)
@@ -178,6 +357,7 @@ add_via_mapping -from_icc_file
 add_via_mapping -to (To via pattern)
 add_via_mapping -transform 
 add_via_mapping -weight (Weight of the mapping, 30 is the highest priority: 
+alias
 align_objects -anchor (names or collection of anchor objects)
 align_objects -anchor_side 
 align_objects -group (align as group)
@@ -247,13 +427,22 @@ all_transitive_fanout -flat (Hierarchy is ignored)
 all_transitive_fanout -from (List of source ports, pins and/or nets)
 all_transitive_fanout -levels (Maximumum number of cell levels to traverse: 
 all_transitive_fanout -only_cells (Return cells rather than pins)
+als_add_to_last_command
 als_change_highlight -add (Add)
 als_change_highlight -color (Color)
 als_change_highlight -remove (Remove)
 als_get_highlight -color (Color)
+als_history_grep
+als_list_attributes_grep
+als_load_aliases
+als_pop_from_cell
+als_print_all_connected
 als_print_collection -annotate (Annotate driver/receiver. Default: None)
 als_print_collection -attribute (Name of attribute. Default: full_name)
 als_print_list -range (Range list to print)
+als_push_to_cell
+als_stages
+als_steps
 analyze_design_violations -drc_nets (a list of nets with violations to be analyzed)
 analyze_design_violations -endpoints (a list of endpoints with violations to be analyzed)
 analyze_design_violations -fanout (the fanout threshold that the high-fanout is defined, default is 30)
@@ -317,12 +506,33 @@ analyze_timing_correlation -verbose (Show more details about command execution)
 analyze_timing_correlation -waveform_analysis_mode 
 analyze_timing_correlation -work_dir (Directory for output files, Reuse existing data if directory already exists)
 append_to_collection -unique (Remove duplicates from the result)
+append_var
+apr_define_user_attributes
+apr_duplicate_slos_return_hfn
+apr_gen_latest_nlib_manifest
+apr_get_aocvm_voltage_for_corner
+apr_icc_ctsizer_run_flow
+apr_icc_lr_run_flow
+apr_icc_lrdp_run_flow
+apr_lr_check_env_vars
+apr_lr_overrride_tool_versions
+apr_lr_ovr_tools
+apr_lr_restore_saved_vars_and_tool_versions
+apr_lr_setup_run_dir
+apr_netlist
+apr_pt_ctsizer_run_flow
+apr_pt_lr_run_flow
+apr_pt_lrdp_run_flow
 apr_read_aocvm -corner (Name of corner, usually max or min)
 apr_read_aocvm -table (Pointer to AOCVM file)
+apr_reports
+apr_run_rumba_flow
+apr_save_stage
 apropos -symbols_only (Search command/option names only)
 assign_3d_interchip_nets -bumps 
 assign_3d_interchip_nets -matching_types 
 assign_3d_interchip_nets -nets 
+assign_track_in_bin
 associate_mv_cells -all (associate isolation cells, level shifters, retention cells and power switch cells)
 associate_mv_cells -isolation_cells (associate isolation cells)
 associate_mv_cells -level_shifters (associate level shifter cells)
@@ -333,6 +543,31 @@ attach_drc_error_data -keep (Keep the original exported data)
 attach_drc_error_data -name (Name of the attachment)
 audit_scripts -input (location of scripts to be audited)
 audit_scripts -skip_hidden (skip hidden app_options and tcl commands reporting)
+auto_execok
+auto_import
+auto_load
+auto_load_index
+auto_mkindex
+auto_mkindex_old
+auto_proc
+auto_qualify
+auto_reset
+bab_create_new_mw_cell
+balance_clock_groups
+bell
+bind
+bindtags
+block_grid
+bound_to_lego
+build_trunking_bboxes_for_fivr_dt62_right_fp
+button
+cP
+cPx
+cPy
+calc_area
+calculate_tracks
+canvas
+cd
 change_abstract -cells (Cells of physical hierarchy)
 change_abstract -force (Change the reference even if the ports are different)
 change_abstract -label (Block label or "")
@@ -418,6 +653,7 @@ check_feedthroughs -topo_constraints (Checks per net, topological constraints)
 check_feedthroughs -unused_feedthroughs (Checks the feedthroughs that are unused (no top level connections))
 check_finfet_grid -hierarchical (Check level-by-level in current design)
 check_finfet_grid -objects (List of objects to check)
+check_freeze_silicon
 check_hier_design -references (Name of design to be checked)
 check_hier_design -stage 
 check_host_options -host_options 
@@ -442,6 +678,7 @@ check_legality -cells (List of cells to be checked)
 check_legality -check_distance 
 check_legality -output_tcl (Write out a tcl file with all violated cells. This file can be customized and sourced later.)
 check_legality -verbose (Print verbose messages.)
+check_license
 check_lvs -check_child_cells (false|true)]
 check_lvs -check_top_level_blockages (true|false)]
 check_lvs -check_zero_spacing_blockages (false|true)]
@@ -499,6 +736,7 @@ check_pg_missing_vias -nets (List of power or ground nets)
 check_pg_missing_vias -output_file 
 check_pg_missing_vias -via_rule_file 
 check_pg_missing_vias -write_default_via_rule_file 
+check_physical_constraints
 check_pin_placement -alignment (false|true)]
 check_pin_placement -alignment_histogram (false|true)]
 check_pin_placement -alignment_report_file 
@@ -541,6 +779,8 @@ check_pin_placement -synthesized_pins (false|true)]
 check_pin_placement -technology_spacing_rules (false|true)]
 check_pin_placement -wide_track (false|true)]
 check_pin_placement -wire_track (false|true)]
+check_placement_constraints
+check_pre_pin_placement
 check_routability -access_edge_whole_side (false|true)]
 check_routability -allow_via_rotation (false|true)]
 check_routability -blocked_range (Number of pitches for same-layer accessibility check of macro and top-level ports. Default is 10)
@@ -574,6 +814,7 @@ check_routes -nets (collection of nets to check for opens, antenna rules, voltag
 check_routes -open_net (false|true)]
 check_routes -report_all_open_nets (false|true)]
 check_routes -voltage_area (false|true)]
+check_routing_corridors
 check_rp_constraints -analyze_placement (Perform placement analysis on RP Group)
 check_rp_constraints -no_adv (Do not perform Adv Rules Checks)
 check_rp_constraints -no_pdc (Do not perform PDC Checks)
@@ -582,6 +823,7 @@ check_rp_constraints -region (Perform placement analysis within this region)
 check_rp_constraints -threshold (Report RP Groups with pass rate below the threshold: 
 check_rp_constraints -trials 
 check_rp_constraints -verbose (Report failures in detail)
+check_sadp_tracks
 check_scan_chain -chain_name 
 check_supply_equivalence -functional (functional equivalence)
 check_supply_equivalence -pst (PST equivalence)
@@ -598,6 +840,13 @@ check_timing -modes (check scenarios of these modes (default is all modes))
 check_timing -override_defaults 
 check_timing -scenarios 
 check_wires_for_pushdown -nets (Nets to run push-down on for testing)
+checkbutton
+checkerboard_horizontal
+checkerboard_vertical
+cips_source
+clean_floorplan
+clipboard
+clock
 clock_opt -from (Run subset of clock_opt flow starting with specified step)
 clock_opt -list_only (List sub-steps of clock_opt flow [ build_clock route_clock final_opto ])
 clock_opt -to (Run subset of clock_opt flow ending with specified step)
@@ -612,6 +861,8 @@ close_lib -compress (Save modified data and designs in comperssed format)
 close_lib -force (Force library closed regardless of un-saved data or designs)
 close_lib -purge (Purge library from memory regardless of reference count)
 close_lib -save_designs (Save modified data and designs)
+clp
+col_release_data
 collection_to_list -brace_with_quotes (use " to enclose results, not {})
 collection_to_list -name_only (do not display type of each object)
 collection_to_list -newline (use newlines to separate names in output)
@@ -619,6 +870,7 @@ collection_to_list -no_braces (do not enclose results in {})
 collection_to_list -no_sort (do not sort the data)
 collection_to_list -objects (Collection of object(s) to display)
 collection_to_list -truncate (Truncate display to n elements)
+color_macro_pins
 commit_blackbox_timing -convert_placement_abstract 
 commit_block -library (Library in which the design is to be created)
 commit_block -verbose (Show detailed information)
@@ -703,9 +955,11 @@ connect_supply_net -ports
 connect_supply_net -vct (vct name: 
 convert_aocv_pocv -corners (List of corners)
 convert_aocv_pocv -depth 
+convert_nets_for_swizzle
 copy_block -force (override a modified destination block)
 copy_block -from_block (Source block object or name)
 copy_block -to_block (Destination block name [libName:]blockName[/labelName][.viewName])
+copy_collection
 copy_lib -force (Override the destination library even if it is modified)
 copy_lib -from_lib (Name of source library)
 copy_lib -merge (Merge the source library into the destination)
@@ -730,6 +984,7 @@ copy_to_layer -geo_masks (Use as input geometry)
 copy_to_layer -layer (Layer on which to copy the shapes)
 copy_to_layer -net (Net of the shape)
 copy_to_layer -shape_use (Usage of the shape: 
+cp_block
 cputime -all (Get cpu time for this process and children)
 cputime -format (Format for returned value)
 cputime -verbose (Report cpu and elapsed time)
@@ -737,6 +992,9 @@ cr_align_repeaters_to_trunks -layer (layer name of trunks)
 cr_align_repeaters_to_trunks -move_repeater_routing 
 cr_align_repeaters_to_trunks -nets (list of nets to extract shapes)
 cr_align_repeaters_to_trunks -repeater_name (repeater cell name pattern)
+cr_boolean
+cr_check_ports
+cr_check_terminals
 cr_checkerboard_repeaters -nets (nets to drop repeaters)
 cr_checkerboard_repeaters -preview (do not create shapes, just annotate)
 cr_checkerboard_repeaters -repeater_collection 
@@ -750,6 +1008,8 @@ cr_complete_nets_detail -shield_name (shield name)
 cr_complete_track_region -fill_trunk_name (net name assigned to fill trunk)
 cr_complete_track_region -pattern (track pattern name/s)
 cr_complete_track_region -track_region (track region)
+cr_create_boundary_route_guide
+cr_create_cover_routing_blockage
 cr_create_finish_metal -backoff (backoff)
 cr_create_finish_metal -backoff_multiplier (need more than winWidth backoff, pass multiplier like (2) to get 2x minWidth)
 cr_create_finish_metal -backoff_override_value 
@@ -1088,6 +1348,7 @@ cr_get_agressor_locations -get_rid_of_min_width
 cr_get_agressor_locations -layer (layer name for pin trunks to be on)
 cr_get_agressor_locations -preview (do not create shapes, just annotate)
 cr_get_agressor_locations -width (width of the track for layer name for pin trunks to be on)
+cr_is_odd
 cr_place_repeaters -append_suffix (appends a unique suffix to the post-repeater nets in addition to the auto-generated suffix)
 cr_place_repeaters -do_not_stagger (do not stagger or checkerboard placed repeaters)
 cr_place_repeaters -exclude_cells (instances of cells to be excluded from calculation of repeater net connections, cell_name_expr)
@@ -1311,6 +1572,7 @@ create_busplans -rule (Create the bus or buses with this net wire estimation rul
 create_busplans -to (Create a bus ending at the given pins or ports)
 create_busplans -verbose (Command outputs more information)
 create_cell -design (Top design for finding objects)
+create_cell_pin_fingers
 create_channel_congestion_map -boundary (areas that users want to check for congestions)
 create_channel_congestion_map -channel_width_threshold 
 create_check_design_strategy -define_check (create an user-defined atomic-check)
@@ -1377,7 +1639,9 @@ create_clock_straps -spine_direction
 create_clock_straps -types 
 create_clock_straps -widths 
 create_command_group -info (Help string for the group)
+create_constraint_file_header
 create_corner -copy (Corner to copy from)
+create_ctp_block_constraints
 create_custom_shields -keep_session (false|true)]
 create_custom_shields -nets (collection of nets)
 create_density_rule -layer (The layer name with which this density rule is associated with)
@@ -1451,12 +1715,14 @@ create_edit_group -cell (Specifies the physical cell where the edit group is to 
 create_edit_group -group_use (Specifies the usage context of the edit group: 
 create_edit_group -name 
 create_edit_group -ungroup_on_remove 
+create_ems_database
 create_ems_message -parameters (Sequence of parameter name and value pairs)
 create_ems_message -rule (Rule name for which message needs to be created)
 create_ems_rule -message (Message template text)
 create_ems_rule -name (Name of the rule)
 create_ems_rule -parameters (Definition of parameters)
 create_ems_rule -severity (Type of the rule - Error, Warning or Information)
+create_fib_con_vias
 create_frame -block_all (auto|true|false|used_layers|topBlockedLayerName)]
 create_frame -block_core_margin 
 create_frame -color_based_dpt_flow (auto|true|false)]
@@ -1510,6 +1776,7 @@ create_generated_clock -name (Generated clock name)
 create_generated_clock -source (Master clock source object pin/port)
 create_geo_mask -merge (Merge resulting geo_mask)
 create_geo_mask -objects (Objects to use as input geometry)
+create_gigfig_from_ply
 create_grid -layers (Specify the routing layers to consider within the PG strategy)
 create_grid -orientations 
 create_grid -pg_strategy 
@@ -1591,6 +1858,7 @@ create_lib -ref_libs (Reference library paths)
 create_lib -scale_factor 
 create_lib -technology 
 create_lib -use_technology_lib 
+create_logic_net
 create_logic_port -direction (direction of the logic port; default is 'in': 
 create_macro_array -align 
 create_macro_array -create_group 
@@ -1624,6 +1892,7 @@ create_mim_capacitor_array -prefix (prefix to be used for names of new cells)
 create_mim_capacitor_array -x_increment (x increment)
 create_mim_capacitor_array -y_increment (y increment)
 create_mismatch_config -ref_config 
+create_mode
 create_module -design (Top design for finding objects)
 create_multibit -lib_cell (library cell name)
 create_multibit -name (multibit cell name)
@@ -1666,6 +1935,7 @@ create_net_shielding -shield_net (First shield net)
 create_net_shielding -shield_net_2 (Second shield net)
 create_net_shielding -via_defs (Vias to be used)
 create_net_shielding -width (Default width)
+create_offgrid_tracks_for_hip_pin
 create_pad_rings -create 
 create_pad_rings -drc (DRC option of the PG strap: 
 create_pad_rings -max_shrink_routing_boundaries_for_all_boundary_pads 
@@ -1676,6 +1946,7 @@ create_pad_rings -nets (Nets to create pad rings; required for -create_specified
 create_pad_rings -route_pins_on_layer 
 create_pad_rings -sides 
 create_pad_rings -undo (remove the most recently created PG)
+create_partition_tcon
 create_pg_composite_pattern -add_patterns 
 create_pg_composite_pattern -nets (net name list of the PG composite pattern)
 create_pg_composite_pattern -parameters 
@@ -1846,6 +2117,7 @@ create_power_domain -include_scope (Include the scope of domain in the extent)
 create_power_domain -scope (Create the power domain within this logic hierarchy)
 create_power_domain -supply 
 create_power_domain -update (Update the previously defined power domain)
+create_power_state_group
 create_power_switch -ack_delay 
 create_power_switch -ack_port 
 create_power_switch -control_port 
@@ -2179,6 +2451,7 @@ create_track -mask_pattern
 create_track -reserved_for_width (Indicates if the track is reserved)
 create_track -space (Space between tracks)
 create_track -width (Wire width associated with this track)
+create_undo_marker
 create_utilization_configuration -as_user_default (Creates user defined default configuration for utilization reporting)
 create_utilization_configuration -capacity 
 create_utilization_configuration -exclude 
@@ -2272,11 +2545,20 @@ create_wire_matching -force (Overwrite existing constraint)
 create_wire_matching -match_type 
 create_wire_matching -relative (Tolerance is percentage or absolute)
 create_wire_matching -tolerance (Tolerance value: 
+crfm
+cs
+cul
 current_block -quiet (Suppress all messages)
+current_corner
 current_design -quiet (Suppress all messages)
+current_instance
 current_lib -quiet (Suppress all messages)
+current_mode
+current_scenario
 cut_rows -all (To remove all site rows)
 cut_rows -within (Coordinates of the boundary of the rectilinear shape)
+date
+decode_snps_version
 define_antenna_accumulation_mode -cut_to_metal (Accumulation cut to metal mode)
 define_antenna_accumulation_mode -metal_to_cut (Accumulation metal to cut mode)
 define_antenna_area_rule -diode_distance 
@@ -2348,6 +2630,10 @@ define_user_attribute -quiet (Do not print any messages)
 define_user_attribute -range_max (Max value for numeric ranges)
 define_user_attribute -range_min (Min value for numeric ranges)
 define_user_attribute -type (Data type of the attribute: 
+delete_all_tables
+delete_dice_diff_record_iter
+delete_dice_key_iter
+delite_save_stage
 derive_cell_snap_data -force ()
 derive_clock_balance_constraints -slack_less_than 
 derive_clock_balance_points -clocks (List of clocks)
@@ -2364,6 +2650,7 @@ derive_macro_relative_location -hierarchical (Derive macro relative location con
 derive_macro_relative_location -offset_type 
 derive_macro_relative_location -output_file (Specifies the output file name)
 derive_macro_relative_location -use_bbox (Indicates that BBoxes would be used when encountering rectlinear block shape)
+derive_mask_constraint
 derive_pg_mask_constraint -derive_cut_mask (derive cut masks)
 derive_pg_mask_constraint -nets (List of power or ground nets)
 derive_pg_mask_constraint -overwrite (overwrite)
@@ -2371,6 +2658,203 @@ derive_pg_mask_constraint -verbose (show error message)
 derive_placement_blockages -force (create of blockages even if utilization may be high)
 derive_placement_blockages -hierarchical ( level-by-level in current design)
 derive_preferred_macro_locations -file (write the constraints to the given file)
+derive_route_connection
+destroy
+diceTclLoadHelper
+dice_annotation_get_allowed_values
+dice_annotation_get_category
+dice_annotation_get_changed_time_from_file
+dice_annotation_get_choice_info
+dice_annotation_get_choice_label
+dice_annotation_get_default_sub_value
+dice_annotation_get_default_value
+dice_annotation_get_description
+dice_annotation_get_html_description
+dice_annotation_get_keys
+dice_annotation_get_keys_with_value
+dice_annotation_get_label
+dice_annotation_get_last_changed_time
+dice_annotation_get_name
+dice_annotation_get_previous_value
+dice_annotation_get_sub_value
+dice_annotation_get_sub_value_allowed_values
+dice_annotation_get_sub_value_data_type
+dice_annotation_get_sub_value_info
+dice_annotation_get_sub_value_label
+dice_annotation_get_sub_value_tags
+dice_annotation_get_type
+dice_annotation_get_value
+dice_annotation_get_value_from_file
+dice_annotation_get_value_source
+dice_annotation_get_value_source_from_file
+dice_annotation_has_restricted_values
+dice_annotation_has_strict_value_enforcement
+dice_annotation_has_value
+dice_annotation_has_value_from_file
+dice_annotation_last_result_was_local
+dice_annotation_remove_data
+dice_annotation_revert_to_file
+dice_annotation_set_default_value
+dice_annotation_set_sub_value
+dice_annotation_set_value
+dice_clone_key
+dice_constraint_get_allowed_values
+dice_constraint_get_category
+dice_constraint_get_changed_time_from_file
+dice_constraint_get_choice_info
+dice_constraint_get_choice_label
+dice_constraint_get_default_sub_value
+dice_constraint_get_default_value
+dice_constraint_get_description
+dice_constraint_get_html_description
+dice_constraint_get_keys
+dice_constraint_get_keys_with_value
+dice_constraint_get_label
+dice_constraint_get_last_changed_time
+dice_constraint_get_name
+dice_constraint_get_previous_value
+dice_constraint_get_sub_value
+dice_constraint_get_sub_value_allowed_values
+dice_constraint_get_sub_value_data_type
+dice_constraint_get_sub_value_info
+dice_constraint_get_sub_value_label
+dice_constraint_get_sub_value_tags
+dice_constraint_get_type
+dice_constraint_get_value
+dice_constraint_get_value_from_file
+dice_constraint_get_value_source
+dice_constraint_get_value_source_from_file
+dice_constraint_has_restricted_values
+dice_constraint_has_strict_value_enforcement
+dice_constraint_has_value
+dice_constraint_has_value_from_file
+dice_constraint_last_result_was_local
+dice_constraint_remove_data
+dice_constraint_revert_to_file
+dice_constraint_set_default_value
+dice_constraint_set_sub_value
+dice_constraint_set_value
+dice_data_type_get
+dice_data_type_get_compressed_value
+dice_data_type_get_name
+dice_data_type_get_uncompressed_value
+dice_data_type_is_valid_format
+dice_data_type_is_valid_value
+dice_diff_record_accept_candidate_info
+dice_diff_record_accept_file_info
+dice_diff_record_do_comparison
+dice_diff_record_finish_comparison
+dice_diff_record_get_annotation
+dice_diff_record_get_constraint
+dice_diff_record_get_diff_records
+dice_diff_record_get_diff_records_iter
+dice_diff_record_get_key
+dice_diff_record_get_new_change_time
+dice_diff_record_get_new_user_name
+dice_diff_record_get_new_value
+dice_diff_record_get_new_value_source
+dice_diff_record_get_old_change_time
+dice_diff_record_get_old_user_name
+dice_diff_record_get_old_value
+dice_diff_record_get_old_value_source
+dice_diff_record_get_type
+dice_diff_record_iter_add_filter_to_include_record
+dice_diff_record_iter_clear_filters
+dice_diff_record_iter_count
+dice_diff_record_iter_empty
+dice_diff_record_iter_get_next
+dice_diff_record_iter_reset
+dice_discard_cell
+dice_get_annotation
+dice_get_annotations
+dice_get_configuration
+dice_get_configurations
+dice_get_constraint
+dice_get_constraints
+dice_get_data_type
+dice_get_key
+dice_get_key_types
+dice_get_records
+dice_key_add_key
+dice_key_add_to_group
+dice_key_attach_configuration
+dice_key_clear_configuration
+dice_key_get_alias
+dice_key_get_all_keys
+dice_key_get_attached_configuration
+dice_key_get_attached_configuration_from_file
+dice_key_get_cell_name
+dice_key_get_configuration_name
+dice_key_get_description
+dice_key_get_file_keys_in_group
+dice_key_get_groups
+dice_key_get_keys_in_group
+dice_key_get_keys_in_group_iter
+dice_key_get_name
+dice_key_get_type
+dice_key_group_get_keys
+dice_key_group_get_keys_of_type
+dice_key_group_get_types
+dice_key_group_has_type
+dice_key_isa_key_group
+dice_key_iter_count
+dice_key_iter_empty
+dice_key_iter_get_next
+dice_key_iter_reset
+dice_key_remove_all_keys
+dice_key_remove_from_group
+dice_key_remove_key
+dice_key_set_alias
+dice_key_set_configuration
+dice_key_set_description
+dice_key_set_name
+dice_needs_to_save
+dice_read_file
+dice_record_get_allowed_values
+dice_record_get_category
+dice_record_get_changed_time_from_file
+dice_record_get_choice_info
+dice_record_get_choice_label
+dice_record_get_default_sub_value
+dice_record_get_default_value
+dice_record_get_description
+dice_record_get_html_description
+dice_record_get_keys
+dice_record_get_keys_with_value
+dice_record_get_label
+dice_record_get_last_changed_time
+dice_record_get_name
+dice_record_get_previous_value
+dice_record_get_sub_value
+dice_record_get_sub_value_allowed_values
+dice_record_get_sub_value_data_type
+dice_record_get_sub_value_info
+dice_record_get_sub_value_label
+dice_record_get_sub_value_tags
+dice_record_get_type
+dice_record_get_value
+dice_record_get_value_from_file
+dice_record_get_value_source
+dice_record_get_value_source_from_file
+dice_record_has_restricted_values
+dice_record_has_strict_value_enforcement
+dice_record_has_value
+dice_record_has_value_from_file
+dice_record_isa_annotation
+dice_record_isa_constraint
+dice_record_last_result_was_local
+dice_record_remove_data
+dice_record_revert_to_file
+dice_record_set_default_value
+dice_record_set_sub_value
+dice_record_set_type
+dice_record_set_value
+dice_revert_to_file
+dice_save_file
+dice_write_copy_of_file
+dice_write_file
+dice_write_local_settings
+disable_debug_msg
 disconnect_3d_bumps -nets 
 disconnect_net -all (Disconnect all objects from net)
 disconnect_net -design (Top design for finding objects)
@@ -2385,6 +2869,19 @@ distribute_objects -side
 distribute_objects -spacing (distribute spacing)
 distribute_objects -to (distribute to point)
 distribute_objects -to_box (distribute to box)
+does_it_collide
+dp_fn_eco_create_net_shape
+dp_fn_eco_create_rename_eco_file
+dp_fn_eco_create_terminal
+dp_reports
+dp_save_stage
+dump_floorplan
+duplicate_blockages_from_hard_type_to_hard_macro_type
+eB
+eL
+eR
+eT
+ebb_bbox_poly
 echo -n (Suppress newline)
 eco_netlist -by_block 
 eco_netlist -by_verilog_file 
@@ -2401,10 +2898,17 @@ eco_netlist -write_changes
 eco_netlist -write_changes_per_module 
 eco_netlist -write_summary 
 eco_update_supply_net -cells (List of cells)
+edit_block
 edit_ems_rule -message (Message template text)
 edit_ems_rule -name (Name of the rule)
 edit_ems_rule -parameters (Definition of parameters)
 edit_ems_rule -severity (Type of the rule - Error, Warning or Information)
+edit_module
+edm
+enable_debug_msg
+ensemble
+entry
+error_info
 estimate_timing -force_user_corner (Use current corner delays for back-annotation)
 estimate_timing -host_options 
 estimate_timing -nets (List of nets for incremental timing estimation)
@@ -2412,6 +2916,12 @@ estimate_timing -optimized_blocks
 estimate_timing -pins (List of pins or ports for incremental timing estimation)
 eval_with_undo -atomic (Name to assign to this set of commands)
 eval_with_undo -disable (Disable undo for this set of commands)
+even_or_odd
+event
+exec_cp
+exit
+expand_bus
+expand_if_gvar_is_array
 expand_objects -offset (expand offset)
 expand_objects -side (expand side (default is all): 
 expand_outline -design (Top design for finding objects)
@@ -2436,8 +2946,16 @@ explore_logic_hierarchy -utilization
 explore_logic_hierarchy -virtual_group 
 explore_logic_hierarchy -virtual_ungroup 
 export_advanced_technology_rules -exclude_lib_cells 
+exprs
+extract_post
+extract_pre
+extract_star
+fclego
+fclego_hier
+fcommand
 filter_collection -nocase (Case insensitive string match)
 filter_collection -regexp (Operators =~ and !~ use regular expressions)
+find_clock_name_and_frequency
 find_objects -direction (port direction: 
 find_objects -exact (disable pattern match mode)
 find_objects -leaf_only (only leaf elements)
@@ -2445,11 +2963,27 @@ find_objects -non_leaf (only non-leaf elements)
 find_objects -object_type (object type: 
 find_objects -pattern (pattern to search)
 find_objects -transitive (applies to descendants of the elements)
+fix_bs_nlib
+fix_min_libraries
+fix_module_name
+fix_placement_color_mask
 fix_signal_em -nets (List of nets)
+flatLappend
+flatLinsert
 flip_objects -anchor (anchor point: 
 flip_objects -flip (flip axis: 
 flip_objects -x (x coordinate of vertical line to flip about)
 flip_objects -y (y coordinate of horizontal line to flip about)
+flow_checker
+flow_lib_setup
+focus
+font
+foreach_in_collection
+frame
+fs
+fusion_reports
+fusion_save_stage
+ga
 generate_net_pattern -apply (apply net pattern to the design)
 generate_net_pattern -output (output net pattern to a file)
 generate_net_pattern -route_mode (route mode)
@@ -2463,6 +2997,11 @@ generate_sadp_tracks -pitch
 generate_sadp_tracks -rule_name 
 generate_sadp_tracks -start (Specifies the location of the first track may start)
 generate_sadp_tracks -stop (Specifies the location of the last track must stop)
+generate_structural_raw_rpt
+generate_structural_raw_rpt_for_unit
+getTerminatedProcess
+get_abstract_type
+get_abutted_clock_nets
 get_antenna_rule_names -library (The library to get the antenna rules from)
 get_antenna_rule_names -mode (Get the antenna rules with the given mode set: 
 get_app_option_value -block (Get options on this block)
@@ -2608,6 +3147,9 @@ get_clock_balance_groups -nocase (Perform case-insensitive matching)
 get_clock_balance_groups -of_objects 
 get_clock_balance_groups -quiet (Suppress all messages)
 get_clock_balance_groups -regexp (Patterns are full regular expressions)
+get_clock_boundary_cell
+get_clock_driving_cell
+get_clock_group_groups
 get_clock_groups -design (Top design for finding objects)
 get_clock_groups -exact (Wildcards are considered as plain characters)
 get_clock_groups -expect (Expect exactly this many matching objects: 
@@ -2666,6 +3208,7 @@ get_clocks -regexp (Patterns are full regular expressions)
 get_command_option_values -command (get option values for this command)
 get_command_option_values -current (get current option values if available)
 get_command_option_values -default (get default option values if available)
+get_constraint_file_by_keyword
 get_constraint_groups -design (Top design for finding objects)
 get_constraint_groups -exact (Wildcards are considered as plain characters)
 get_constraint_groups -expect (Expect exactly this many matching objects: 
@@ -2691,6 +3234,9 @@ get_corners -regexp (Patterns are full regular expressions)
 get_cputime -all (Get cpu time for this process and children)
 get_cputime -format (Format for returned value)
 get_cputime -verbose (Report cpu and elapsed time)
+get_current_ems_database
+get_current_mismatch_config
+get_date
 get_defined_attributes -application (Only display application defined attributes)
 get_defined_attributes -class (Get attributes for this class: 
 get_defined_attributes -details (Get detailed information on a specific attribute)
@@ -2709,6 +3255,7 @@ get_density_rules -of_objects
 get_density_rules -quiet (Suppress all messages)
 get_density_rules -regexp (Patterns are full regular expressions)
 get_density_rules -tech (Tech for finding objects, default is current library's tech)
+get_description_from_help
 get_design_checks -exact (Wildcards are considered as plain characters)
 get_design_checks -expect (Expect exactly this many matching objects: 
 get_design_checks -expect_at_least 
@@ -2738,6 +3285,9 @@ get_designs -hierarchical (Search level-by-level in current design)
 get_designs -nocase (Perform case-insensitive matching)
 get_designs -quiet (Suppress all messages)
 get_designs -regexp (Patterns are full regular expressions)
+get_die_area
+get_die_area2
+get_domain_elements
 get_drc_error_data -all (Match open and closed error data)
 get_drc_error_data -exact (Wildcards are considered as plain characters)
 get_drc_error_data -expect (Expect exactly this many matching objects: 
@@ -2769,6 +3319,7 @@ get_drc_errors -nocase (Perform case-insensitive matching)
 get_drc_errors -of_objects 
 get_drc_errors -quiet (Suppress all messages)
 get_drc_errors -regexp (Patterns are full regular expressions)
+get_eco_bus_buffer_patterns
 get_edit_groups -at (Search point)
 get_edit_groups -design (Top design for finding objects)
 get_edit_groups -exact (Wildcards are considered as plain characters)
@@ -2866,6 +3417,7 @@ get_fill_cells -hierarchical (Get fillCells in the full hierarchy below)
 get_fill_cells -nocase (Perform case-insensitive matching)
 get_fill_cells -quiet (Suppress all messages)
 get_fill_cells -regexp (Patterns are full regular expressions)
+get_filler_cell_from_icv_def
 get_flat_cells -all (Include physical only cells)
 get_flat_cells -design (Top design for finding objects)
 get_flat_cells -exact (Wildcards are considered as plain characters)
@@ -2945,6 +3497,8 @@ get_groups -nocase (Perform case-insensitive matching)
 get_groups -of_objects 
 get_groups -quiet (Suppress all messages)
 get_groups -regexp (Patterns are full regular expressions)
+get_hier
+get_info
 get_input_delays -corners (get input delays for scenarios of these corners (default is all corners, or current scenario if neither mode nor corner are specified))
 get_input_delays -expect (Expect exactly this many matching objects: 
 get_input_delays -expect_at_least 
@@ -3007,6 +3561,7 @@ get_layers -nocase (Perform case-insensitive matching)
 get_layers -of_objects 
 get_layers -quiet (Suppress all messages)
 get_layers -regexp (Patterns are full regular expressions)
+get_leaf
 get_lib -all (Get both implicitly and expliclty opened libraries)
 get_lib -exact (Wildcards are considered as plain characters)
 get_lib -expect (Expect exactly this many matching objects: 
@@ -3102,6 +3657,7 @@ get_matching_types -nocase (Perform case-insensitive matching)
 get_matching_types -of_objects 
 get_matching_types -quiet (Suppress all messages)
 get_matching_types -regexp (Patterns are full regular expressions)
+get_mem
 get_message_ids -type (Filter ids based on type: 
 get_message_info -error_count (Return error count)
 get_message_info -id (Get information about a message in list format)
@@ -3208,6 +3764,8 @@ get_nets -regexp (Patterns are full regular expressions)
 get_nets -segments (Return all global segments for given nets)
 get_nets -shielded_only (Return shielded nets only in search with -of_object with shapes input)
 get_nets -top_net_of_hierarchical_group 
+get_non_abutted_clock_pins
+get_object_name
 get_object_occurrences -quiet (Suppress all messages)
 get_objects_by_location -at (Search point)
 get_objects_by_location -classes 
@@ -3221,6 +3779,8 @@ get_objects_by_location -intersect (Search intersecting Rect or 	          polyg
 get_objects_by_location -quiet (Suppress all messages)
 get_objects_by_location -touching (Search within and touching Rect or 	          polygon)
 get_objects_by_location -within (Search within Rect or polygon)
+get_options_from_help
+get_options_from_man
 get_output_delays -corners (get output delays for scenarios of these corners (default is all corners, or current scenario if neither mode nor corner are specified))
 get_output_delays -expect (Expect exactly this many matching objects: 
 get_output_delays -expect_at_least 
@@ -3413,6 +3973,7 @@ get_power_derate -leakage (Get derate for leakage power)
 get_power_derate -scenarios 
 get_power_derate -switching (Get derate for switching power)
 get_power_derate -user (Get explicitly set derates)
+get_power_domain_elements
 get_power_domains -exact (Wildcards are considered as plain characters)
 get_power_domains -expect (Expect exactly this many matching objects: 
 get_power_domains -expect_at_least 
@@ -3425,6 +3986,7 @@ get_power_domains -quiet (Suppress all messages)
 get_power_domains -regexp (Patterns are full regular expressions)
 get_power_group -default (to query default power group)
 get_power_group -user (to query user-specified power group)
+get_power_group_objects
 get_power_strategies -domain (Name of the power domain)
 get_power_strategies -exact (Wildcards are considered as plain characters)
 get_power_strategies -expect (Expect exactly this many matching objects: 
@@ -3453,6 +4015,8 @@ get_pr_rules -of_objects
 get_pr_rules -quiet (Suppress all messages)
 get_pr_rules -regexp (Patterns are full regular expressions)
 get_pr_rules -tech (Tech for finding objects, default is current library's tech)
+get_proc_source
+get_proc_source_history
 get_purposes -exact (Wildcards are considered as plain characters)
 get_purposes -expect (Expect exactly this many matching objects: 
 get_purposes -expect_at_least 
@@ -3569,6 +4133,7 @@ get_rp_groups -of_objects
 get_rp_groups -quiet (Suppress all messages)
 get_rp_groups -regexp (Patterns are full regular expressions)
 get_rp_groups -top (Get top Level RP Group Only)
+get_scan_chain_count
 get_scenarios -corners (Get scenarios of these corners)
 get_scenarios -exact (Wildcards are considered as plain characters)
 get_scenarios -expect (Expect exactly this many matching objects: 
@@ -3715,6 +4280,7 @@ get_supply_sets -nocase (Perform case-insensitive matching)
 get_supply_sets -of_objects 
 get_supply_sets -quiet (Suppress all messages)
 get_supply_sets -regexp (Patterns are full regular expressions)
+get_svf
 get_switching_activity -corners (Get activity for specified corners)
 get_switching_activity -fall (Fall toggle rate)
 get_switching_activity -modes (Get activity for specified modes)
@@ -3783,6 +4349,7 @@ get_timing_paths -sort_by (Sorting criteria:
 get_timing_paths -start_end_pair (List worst path per start-endpoint pair)
 get_timing_paths -through 
 get_timing_paths -to (List of path endpoints or clocks)
+get_tmp_var
 get_topological_constraints -exact (Wildcards are considered as plain characters)
 get_topological_constraints -expect (Expect exactly this many matching objects: 
 get_topological_constraints -expect_at_least 
@@ -3815,6 +4382,7 @@ get_topology_nodes -nocase (Perform case-insensitive matching)
 get_topology_nodes -of_objects 
 get_topology_nodes -quiet (Suppress all messages)
 get_topology_nodes -regexp (Patterns are full regular expressions)
+get_track_capacity
 get_tracks -at (Search point)
 get_tracks -design (Top design for finding objects)
 get_tracks -exact (Wildcards are considered as plain characters)
@@ -3837,6 +4405,7 @@ get_undo_info -details (Return detailed information)
 get_undo_info -name (Marker to return information on)
 get_undo_info -system (Return information on system-created markers)
 get_undo_info -user (Return information on user-created markers)
+get_unix_variable
 get_user_units -input (Get the user unit for data input)
 get_user_units -numeric (Return numeric value; default is number plus symbol)
 get_user_units -output (Get the user unit for data output)
@@ -3912,6 +4481,7 @@ get_view_switch_list -explicit (To get the view switch list that was explicitly 
 get_view_switch_list -global (To get the global view switch list)
 get_view_switch_list -library (Library to get view switch list of)
 get_virtual_connections -of_objects 
+get_visa_clock_stamp_pin
 get_voltage_area_rules -design (Top design for finding objects)
 get_voltage_area_rules -exact (Wildcards are considered as plain characters)
 get_voltage_area_rules -expect (Expect exactly this many matching objects: 
@@ -3951,10 +4521,21 @@ get_voltage_areas -quiet (Suppress all messages)
 get_voltage_areas -regexp (Patterns are full regular expressions)
 get_voltage_areas -touching (Search within and touching Rect or 	          polygon)
 get_voltage_areas -within (Search within Rect or polygon)
+get_vsdc
 get_working_design_stack -instance (Get current block instance within top hierarchy)
+getenv
+getsome_buffers
 getvar -names (Returns the array indexes (similar to array names)
 getvar -nosubst (Does not run subst on the return value)
 getvar -quiet (Does not error when the var is not defined)
+gh2
+gh_cjb
+glist_search_and_insert
+gnb
+gnnl
+grab
+greph
+grid
 group_cells -cell_name (Name of the cell created for the new hierarchy)
 group_cells -module_name 
 group_cells -phys_wrapper (Create wrapper around one hierarchical cell for design planning)
@@ -3973,6 +4554,8 @@ group_path -rise_to
 group_path -through 
 group_path -to (List of path endpoints or clocks)
 group_path -weight (Cost function weight: 
+gs
+gsn
 gui_add_missing_vias -max_layer (maximum layer on which to create missing vias)
 gui_add_missing_vias -min_layer (minimum layer on which to create missing vias)
 gui_bin -attr (Attribute used for binning)
@@ -4073,6 +4656,7 @@ gui_create_vm -show_only_pins_of_nets
 gui_create_vm -title (String for title)
 gui_create_vm -top_exaggeration 
 gui_create_vm -update_cmd (Tcl command string to update vm contents)
+gui_create_vm_objects
 gui_create_vmbucket -above (Render bucket above this bucket)
 gui_create_vmbucket -at (Render bucket at top or bottom: 
 gui_create_vmbucket -below (Render bucket below this bucket)
@@ -4117,6 +4701,7 @@ gui_get_bucket_option_list -map (Visual/Map Mode name)
 gui_get_clock_tree -clocks (clocks whose fanout or fanin cone is calculated.)
 gui_get_clock_tree -from (the starting points of fanout or fanin cone.)
 gui_get_clock_tree -trace_direction (trace direction must be one of 'forward' 'backward' or 'both'.)
+gui_get_current_task
 gui_get_highlight -all_colors (Get all highlighted objects.)
 gui_get_highlight -color (Get only objects of this color.)
 gui_get_highlight -more_than (Return 1 if more than specified number of objects.)
@@ -4128,6 +4713,7 @@ gui_get_layer_widths -current (get current layer values)
 gui_get_layer_widths -default (get default layer values)
 gui_get_layer_widths -layer (layer name)
 gui_get_layer_widths -user (get user defined layer values)
+gui_get_map_list
 gui_get_map_option -default (Get the default value of the option)
 gui_get_map_option -map (Visual/Map Mode name)
 gui_get_map_option -option (Name of the option to be retrieved)
@@ -4138,6 +4724,7 @@ gui_get_pref_value -key (name of key)
 gui_get_setting -list (When specified the list of settings is returned.)
 gui_get_setting -setting (The name of the setting to get.)
 gui_get_setting -window (The target window to apply this setting.)
+gui_get_task_list
 gui_get_vm -bot_exaggeration (Return the bottom bucket exaggeration)
 gui_get_vm -buckets (Return bucket name list)
 gui_get_vm -discrete (Return whether visual mode is discrete)
@@ -4192,6 +4779,7 @@ gui_load_hierarchy_vm -objects (color the collection of hierarchical cells)
 gui_load_imported_path_pins_vm -clear (clear all buckets before importing)
 gui_load_imported_path_pins_vm -timing_report 
 gui_load_imported_path_pins_vm -timing_text (timing report text)
+gui_load_path_analyzer_flylines
 gui_load_pin_density_mm -area (region area the density is analysed.)
 gui_load_rp_group_net_connectivity_vm -clct 
 gui_load_rp_group_net_connectivity_vm -type (type of nets)
@@ -4199,6 +4787,7 @@ gui_load_rp_vm -cell_only (color cells in each RP group only)
 gui_load_rp_vm -color (enum of color mode of RP Groups visual mode)
 gui_load_rp_vm -num_colors (maximum number of colors, range: 5 to 20, default: 10)
 gui_load_scan_chain_vm -chains 
+gui_load_voltage_area_vm
 gui_overlay_layout -add (Add this design as an overlay.)
 gui_overlay_layout -brightness (Set the brightness for this overlay.)
 gui_overlay_layout -design (The name of the design to overlay.)
@@ -4265,14 +4854,48 @@ gui_schematic_add_logic -new (Create new schematic.)
 gui_schematic_add_logic -schematic (Schematic view to update (default: most recently active schematic).)
 gui_schematic_add_logic -window (Top level window name to place new schematic (default: current window).)
 gui_schematic_remove_logic -schematic (Schematic view to update (default: most recently active schematic).)
+gui_select_bounds_of_selected
+gui_select_bundles_of_selected
+gui_select_cells_of_selected
 gui_select_connected_net_shapes -cross_net (trace shapes across different nets)
 gui_select_connected_net_shapes -hierarchical (trace nets across block boundaries)
+gui_select_connected_rdl_net_shapes
+gui_select_connections_of_selected
+gui_select_constraint_groups_of_selected
+gui_select_input_connections_of_selected
+gui_select_macros_of_selected
+gui_select_matching_types_of_selected
+gui_select_mib_cells_of_selected
+gui_select_mib_connections_of_selected
+gui_select_net_buses_of_selected
+gui_select_net_routing_of_selected
+gui_select_net_shapes_of_selected
+gui_select_net_vias_of_selected
 gui_select_nets_of_selected -hierarchical (trace nets across block boundaries)
+gui_select_objects_of_selected_edit_group
+gui_select_output_connections_of_selected
+gui_select_port_buses_of_selected
+gui_select_ports_of_selected_power_supply_nets
+gui_select_power_domains_of_selected
+gui_select_primary_power_supply_nets_of_selected
+gui_select_routing_corridors_of_selected
+gui_select_rp_blockages_of_selected
+gui_select_rp_groups_of_selected
+gui_select_shapes_of_selected
+gui_select_site_arrays_of_selected
+gui_select_site_rows_of_selected
+gui_select_supernets_of_selected
+gui_select_terminals_of_selected
+gui_select_topology_edges_of_selected
+gui_select_topology_nodes_of_selected
+gui_select_topology_of_selected
+gui_select_tracks_of_selected
 gui_select_vmbucket -add (Add vmbucket content to global selection)
 gui_select_vmbucket -name (Name of visual mode bucket)
 gui_select_vmbucket -remove (Remove vmbucket content from global selection)
 gui_select_vmbucket -replace (Replace global selection with vmbucket content)
 gui_select_vmbucket -vmname (Name of the visual mode)
+gui_select_voltage_areas_of_selected
 gui_set_bucket_option -bucket (Bucket name)
 gui_set_bucket_option -default (Set the option to its default)
 gui_set_bucket_option -map (Visual/Map Mode name)
@@ -4343,6 +4966,8 @@ gui_show_map -show (Shows/Hides the map)
 gui_show_map -window (Window in which to show/hide the map)
 gui_start -file (file to source on gui_start)
 gui_start -no_windows (set flag not to load windows for this cmd)
+gui_stop
+gui_trim_dangling_wires
 gui_update_attrgroup -add (add new attribute to the group)
 gui_update_attrgroup -anchor (anchor attribute)
 gui_update_attrgroup -attr (single attribute)
@@ -4370,6 +4995,7 @@ gui_write_timing_paths -comment (User comment for paths file.)
 gui_write_timing_paths -file (Name of the output file to which to write the timing paths)
 gui_write_timing_paths -overwrite (Overwrite existing output file)
 gui_write_timing_paths -tag (User can tag paths file with some arbitrary string.)
+gui_zoom_all_layouts_to_current_view
 h2t -avoid_area (list cells/absolte bbox-es/relative (to cells) bboxes to avoid, 'mdf* 18694.8000:0.0000:19595.5200:1184.8320 sprtile33,0:0:200:200 sprtile43,0:0:200:200' any track within these bboxes will be skipped )
 h2t -avoid_layers (list of ,-separated layers per each element of -avoid_area list. Any track for these layers within -avoid_area bboxes will be skipped )
 h2t -bloat_channel (THIS GOT RETIRED, use -bloat_zone: inflates bbox of net(s) member of  the channel: 'ch,10.06,-2.6' bloats ch1 bbox 10.06 micron in X direction and -2.6 micron in Y direction)
@@ -4422,6 +5048,7 @@ h2t -v_track_freedom (expands the X-direction search distance outside net bbox i
 h2t -verbose (turn on printing of display_channel capacities)
 h2t -wrong_way_metal (allow wrong way metal, value is list of layer names for which wrong direction shapes are generated)
 h2t -zone (THIS IS REPLACING -channel: list of named trunking zones, e.g. 'ch1:my_cell_1 ch2:slice/right_cell', channel is absolute bbox (or cell_name) or  net(s) bbox))
+heal_bboxes_after_convert_from_polygon
 help -groups (Display command groups only)
 help -verbose (Display options like -help)
 help_app_options -category (Category of application option)
@@ -4432,13 +5059,19 @@ help_attributes -user (Only display user defined attributes)
 help_attributes -verbose (Display attribute properties)
 history -h (Display history without leading numbers)
 history -r (Display history in reverse order)
+hlb
+hnb
+ib
 icc2_dump_icc_mcmm_config -outdir (output file name)
 icc2_dump_icc_mcmm_config -regsub_from_to_file 
+iccpp_adjust_bbox_to_min_length
 iccpp_com_annotate_rule_based_track_info -bbox (bounding box to annotabe tracks within)
 iccpp_com_annotate_rule_based_track_info -cutline (cut-line to annotabe tracks crossing)
 iccpp_com_annotate_rule_based_track_info -group (annotation group name)
 iccpp_com_annotate_rule_based_track_info -layer (layer name)
 iccpp_com_annotate_rule_based_track_info -width (track width)
+iccpp_com_display_tracks
+iccpp_com_empty_tracks_in_bbox
 iccpp_com_get_rule_based_track_capacity -bbox (bounding box to get tracks within)
 iccpp_com_get_rule_based_track_capacity -layer (layer name)
 iccpp_com_get_rule_based_track_capacity -width (track width)
@@ -4829,6 +5462,14 @@ iccpp_cr_track_shared_trunks -width (width of the track for layer name for pin t
 iccpp_cr_trim_antennas -interactive (runs in interactive mode only due to issue with error message in route_group cmd)
 iccpp_cr_trim_antennas -nets (nets to trim on)
 iccpp_cr_trim_antennas -user_attr (name of user attribute)
+iccpp_cr_zroute_in_window
+iccpp_create_ladders
+iccpp_get_max_layer
+iccpp_get_max_layer_from_layers_width
+iccpp_get_pins_of_direction_of_cell
+iccpp_launch_gui
+iccpp_lw_2_l
+idb
 identify_channels -cross_area (identify cross areas)
 identify_channels -cross_area_height 
 identify_channels -cross_area_width 
@@ -4847,11 +5488,15 @@ identify_multibit -output_file
 identify_multibit -register (Identify registers for banking)
 identify_multibit -slack_threshold 
 identify_multibit -slack_threshold_file 
+image
+image1
+index_collection
 info_var -defined (Returns 1 if the value was set)
 info_var -history (Returns the history of parameter; )
 info_var -is_array (Returns 1 if the variables is an array)
 info_var -property (Returns user property for parameter)
 info_var -type (Returns type of the parameter; does not work with -property)
+initDuetEnvVars
 initialize_floorplan -boundary (Specifies the shape to be used)
 initialize_floorplan -coincident_boundary 
 initialize_floorplan -control_type 
@@ -4878,6 +5523,7 @@ insert_buffer -lib_cell
 insert_buffer -new_cell_names 
 insert_buffer -new_net_names 
 insert_buffer -no_of_cells (no of buffer to add: 
+insert_clock_boundary_buffer
 insert_via_ladders -allow_drcs (false|true)]
 insert_via_ladders -allow_patching (false|true)]
 insert_via_ladders -clean (false|true)]  (Remove existing via ladders before inserting new via ladders (default false))
@@ -4894,6 +5540,17 @@ insert_via_ladders -shift_vias_on_transition_layers (false|true)]
 insert_via_ladders -strictly_honor_cut_table (false|true)]
 insert_via_ladders -user_debug (false|true)]
 insert_via_ladders -verbose (false|true)]
+interleave_bus
+is_abutting
+is_false
+is_fully_abutted_cell
+is_odd
+is_true
+je_get_boundary_edge_coord
+label
+labelframe
+lappend_var
+ldr_order_list
 legalize_placement -boundary (Legalize the cells within the boundary where its syntax can be {{{llx lly} {urx ury}} | {{x1 y1} {x2 y2} ...}})
 legalize_placement -cells (List of cells to be legalized)
 legalize_placement -incremental (Perform incremental legalization only for illegal cells)
@@ -4901,6 +5558,14 @@ legalize_placement -moveable_distance
 legalize_placement -post_route (Run in post-route mode)
 legalize_placement -priority (Specify priority on cells. Valid string is low, medium, high. Default is low)
 legalize_rp_groups -legalize_over_rp (Specified Relative Placement groups will be legalized over other unspecified Relative placement groups)
+legox
+legoy
+libsetup_build_hip_lib_glob
+libsetup_build_lib_glob
+libsetup_find_relevant_hip_libs
+libsetup_max_to_min_lib_regex
+libsetup_wildcard_hip_voltage
+libsetup_wildcard_voltage
 link -force (Force block to relink)
 link -incremental (Only update unresolved references)
 link -rebind (Rebind all references)
@@ -4922,7 +5587,13 @@ list_commands -options (list of options of the commands will also be shown.)
 list_commands -status 
 list_constraints -nosplit (Don't split lines if column overflows)
 list_constraints -significant_digits 
+list_licenses
+list_of_configulate_gvars
+listbox
+listcomp
 lminus -exact (exact match)
+lminus_var
+loadTpr
 load_block_constraints -all_blocks (Load constraints for all child blocks)
 load_block_constraints -blocks 
 load_block_constraints -host_options 
@@ -4936,10 +5607,23 @@ load_busplans -xml_file (Load busplan details from an XML file)
 load_constraints -auto_clock (automatically associate clocks in blocks: 
 load_constraints -force (don't error out when constraints mismatch with the design)
 load_constraints -promote (attempt to promote constraints from blocks with changed view)
+load_duet
+load_duetX
+load_duet_gui_pkg
+load_duet_splash
+load_duet_tcl
+load_duettclreadline_package
+load_metal_pattern_density
+load_ubm
 load_upf -noecho (Do not echo commands)
 load_upf -scope (Hierarchical instance scope)
 load_upf -strict_check 
 load_upf -supplemental 
+loadvfs
+lower
+lremove_var
+ls
+mO
 magnet_placement -avoid_soft_blockage (dont allow cells to be placed over soft blockages)
 magnet_placement -cells (list of cells to be pulled)
 magnet_placement -exclude_buffers (skip through buffers in levels)
@@ -4980,11 +5664,17 @@ mark_clock_trees -fix_sinks (Mark physical_status attribute of clock sinks as fi
 mark_clock_trees -freeze_routing (Mark physical_status attribute on net as locked)
 mark_clock_trees -routing_rules (propagate NDR and layer lists on clock trees)
 mark_clock_trees -synthesized (mark synthesized attributes on clock trees)
+match_net_delay_custom
+mcmm_set_link_target_lib
+mem
+menu
+menubutton
 merge_abstract -all_blocks (Create abstract view for all blocks)
 merge_abstract -blocks 
 merge_abstract -force (Force merging regardless of the state of the views)
 merge_abstract -host_options 
 merge_clock_gates -clocks (List of clocks)
+merge_objects
 merge_stream -cell_log_file 
 merge_stream -compress_gds (GZIP the output GDSII file)
 merge_stream -format 
@@ -4997,6 +5687,8 @@ merge_stream -rename_conflicting_cell
 merge_stream -top_cell (Set the top cell name)
 merge_stream -units (User defined database-unit)
 merge_stream -verbose (Enable detailed messaging)
+message
+mkdir_fresh
 modify_busplan -add_guide (add a guide element to the busplan)
 modify_busplan -add_register (add a virtual register element to the busplan)
 modify_busplan -after (order or insert elements in the busplan after this one)
@@ -5018,6 +5710,8 @@ modify_rp_groups -remove_columns
 modify_rp_groups -remove_rows 
 modify_rp_groups -swap_columns 
 modify_rp_groups -swap_rows 
+module_list
+module_list_0
 move_block -force (override a modified destination block)
 move_block -from_block (Source block objects or name)
 move_block -to_block (Destination block name [libName:]blockName[/labelName][.viewName])
@@ -5033,6 +5727,11 @@ move_objects -rotate_by (amount to rotate by:
 move_objects -to (move to point)
 move_objects -x (new x-coordinate of the left edge of the object)
 move_objects -y (new y-coordinate of the bottom edge of the object)
+my1272fill
+myevalcmd
+myevalmsg
+new_win
+nypd_toolbox
 open_attachment -mode (mode for opening the file)
 open_attachment -of_object 
 open_block -check (return block if it is already in memory)
@@ -5043,6 +5742,7 @@ open_drc_error_data -checkonly (return error datda if it is already in memory)
 open_drc_error_data -file_name 
 open_drc_error_data -readonly (open error data in read-only mode)
 open_drc_error_data -readwrite (open error data in read-write mode)
+open_ems_database
 open_lib -edit (Open library for edit)
 open_lib -read (Open library for read)
 open_lib -ref_libs_for_edit (Open module ref libs for edit)
@@ -5062,12 +5762,25 @@ optimize_routability -route (Perform eco route)
 optimize_routes -max_detail_route_iterations 
 optimize_routes -nets (the nets to be optimized)
 optimize_routes -reroute_all_shapes_in_nets (false|true)]
+option
+orderBBOX
+origin_to_lego
+pa_create_parade_cmd_file
+pack
+panedwindow
 parallel_execute -commands_only (Only commands are given without log files)
 parallel_execute -list_allowed_commands 
 parallel_execute -max_cores (Maximum number of cores for child processes: 
+parseOptions
 parse_proc_arguments -args (Argument list to be parsed)
+part
+patch_gui_files
 pdintent2spec -blocks (User list of blocks to perform pdintent diff)
 pdintent2spec -pd_intent_file_path 
+pin_order
+pin_order_hor
+pkg_mkIndex
+place
 place_eco_cells -cells (List of cells)
 place_eco_cells -channel_aware (channel_aware)
 place_eco_cells -displacement_threshold 
@@ -5110,16 +5823,30 @@ place_pins -self (Only place pins on current design)
 place_pins -use_existing_routing 
 pop_up_objects -blocks 
 pop_up_objects -cells 
+pp_gcbb
+pre_stamp_stepdown_clock
+print_debug
+print_error
+print_fatal
+print_info
+print_log
+print_log_raw
 print_message_info -ids (List of message ids to report)
 print_message_info -summary (Summarize diagnostics)
+print_suppressed_messages
 print_time -msg (User message)
 print_time -stage (Print header type time stamp for stage)
 print_time -tag (Start/finish type: 
 print_vars -print (Print the result)
 print_vars -regexp (Regular expression filter)
 print_vars -value (Print value too)
+print_warning
+printenv
 printvar -application (Display application variables only)
 printvar -user_defined (Display user-defined variables only)
+proc_args
+proc_body
+process_ptlr_collaterals
 promote_clock_data -auto_clock (automatically associate clocks in blocks: 
 promote_clock_data -balance_points (promote clock balance points)
 promote_clock_data -cells (Cells of physical hierarchy)
@@ -5134,10 +5861,12 @@ propagate_3d_matching_types -force (bool)
 propagate_3d_matching_types -from 
 propagate_3d_matching_types -matching_types 
 propagate_3d_matching_types -to 
+propagate_pin_mask_constraint
 propagate_pin_mask_to_via_metal -block (Block to be processed for via lower-overhang color changes)
 propagate_switching_activity -corners (List of corners in which to propagate)
 propagate_switching_activity -modes (List of modes in which to propagate)
 propagate_switching_activity -scenarios 
+prune_list
 push_down_clock_trunks -clock (Clock)
 push_down_objects -cells 
 push_rdl_routes -bounding_box 
@@ -5148,6 +5877,9 @@ push_rdl_routes -nets
 push_rdl_routes -nets_in_file 
 push_rdl_routes -objects 
 push_rdl_routes -sweep_range 
+pv_import_library_attributes
+pwd
+pwrlite_estimate_power
 pwrlite_gen_saif_all_units -delay_model (optional arg; default: zero; delay model to be used for gate level sim <string>)
 pwrlite_gen_saif_all_units -outdir (required arg; )
 pwrlite_gen_saif_all_units -testname (optional arg; test name to include in testlist )
@@ -5155,6 +5887,15 @@ pwrlite_gen_saif_all_units -verilog (optional arg; default: write out a netlist;
 pwrlite_gen_unit_testlists -outdir (optional arg; )
 pwrlite_gen_unit_testlists -testlist (required arg; )
 pwrlite_gen_unit_testlists -testname (optional arg; test name to include in testlist )
+pwrlite_generate_netattr
+pwrlite_generate_saif
+pwrlite_get_active_power
+pwrlite_get_clock_power
+pwrlite_open_file
+pwrlite_process_testlist_file
+pwrlite_rdt_process_args
+pwrlite_report_power
+pwrlite_saif_est_power
 query_objects -class (If object_spec is a name, this is its class)
 query_objects -truncate (Truncate display to n elements.)
 query_objects -verbose (Display type of each object)
@@ -5168,10 +5909,32 @@ query_qor_snapshot -name (QoR snapshot name )
 query_qor_snapshot -output_file 
 query_qor_snapshot -sort_by (column to sort results by)
 query_qor_snapshot -type (min or max: 
+quit
+quit!
+radiobutton
+raise
+rb
+rdt_add_additional_link_libs
+rdt_add_env_var_to_result
+rdt_add_post_stage
+rdt_add_post_step
+rdt_add_pre_stage
+rdt_add_pre_step
+rdt_add_priority_path
+rdt_add_priority_path_cleanly
+rdt_add_stage
+rdt_add_step
+rdt_all_steps_done
+rdt_apr_generate_pv_cmd_file
 rdt_call_configulate_local -block (Block to search for pv conditions files for. Embedded in name of xml file. Defaults to environment variable block)
 rdt_call_configulate_local -cmdline (Cmd to supply to configulate_local)
 rdt_call_configulate_local -xml (Path o the xml file)
+rdt_call_polaris
+rdt_check_stop_after
 rdt_constrain_visa_logic -scenario (Running for for specific scenario)
+rdt_continue_on_error
+rdt_convert_seconds
+rdt_convert_to_seconds
 rdt_convert_units -from (current unit: 
 rdt_convert_units -to (units to be converted to: 
 rdt_convert_units -value (Value to be converted)
@@ -5180,16 +5943,26 @@ rdt_copy_collateral -file_type (file type (Eg spef,vg,upf)
 rdt_copy_collateral -flow (Flow to copy)
 rdt_copy_collateral -output_dir (outputs directory)
 rdt_copy_collateral -stage (Stage to copy)
+rdt_custom_procs
 rdt_done -stage (stage name, defaults to global var G_CURRENT_STAGE)
+rdt_dont_use
+rdt_dump_xml_files
+rdt_error_handler
+rdt_fail_on_error
+rdt_fix_min_lib_nom_process
+rdt_fix_min_libs_nom_process
+rdt_format_configulate_lib_result
 rdt_gen_parallel_rpts -run_dir (stage name)
 rdt_gen_parallel_rpts -stage (stage name)
 rdt_gen_visa_hier_report -stage (Stage Tag)
+rdt_generate_rdt_log
 rdt_get_all_corners -block (Block to search for pv conditions files for. Embedded in name of xml file. Defaults to environment variable block)
 rdt_get_all_corners -work_dir (Will default to WARD. Add a full path to directory if a new one is required)
 rdt_get_all_modes -block (Block to search for pv conditions files for. Embedded in name of xml file. Defaults to environment variable block)
 rdt_get_all_modes -work_dir (Will default to WARD. Add a full path to directory if a new one is required)
 rdt_get_all_scenarios -block (Block to search for pv conditions files for. Embedded in name of xml file. Defaults to environment variable block)
 rdt_get_all_scenarios -work_dir (Will default to WARD. Add a full path to directory if a new one is required)
+rdt_get_analysis_type_from_corner
 rdt_get_block_data -block (Block to search for block_data files for. Embedded in name of xml file. Defaults to environment variable block)
 rdt_get_block_data -block_name (Blocks to get data for.Eg func_max,max. Default to all. Can give comma separated list)
 rdt_get_block_data -debug (Print out the variables getting set to help debug)
@@ -5200,6 +5973,12 @@ rdt_get_block_data -work_dir (Will default to WARD. Add a full path to directory
 rdt_get_block_list -block (Block to search for pv conditions files for. Embedded in name of xml file. Defaults to environment variable block)
 rdt_get_block_list -fval (Keys to get block data for.Eg stdlib_type. Default to all. Can give comma separated list)
 rdt_get_block_list -work_dir (Will default to WARD. Add a full path to directory if a new one is required)
+rdt_get_corner_default_voltage
+rdt_get_corner_of_scenario
+rdt_get_current_corner
+rdt_get_current_mode
+rdt_get_current_scenario
+rdt_get_default_scenario
 rdt_get_derate_data -alt (Filter list of derate files by alt)
 rdt_get_derate_data -analysis_type 
 rdt_get_derate_data -block (Default block is G_DESIGN if block doesnt exist)
@@ -5213,6 +5992,9 @@ rdt_get_derate_data -view (Filter list of derate files by view)
 rdt_get_derate_data -work_dir (Will default to WARD. Add a full path to directory if a new one is required)
 rdt_get_dont_use_list -groupfile ()
 rdt_get_dont_use_reasons -groupfile ()
+rdt_get_file_history
+rdt_get_flow_status
+rdt_get_g_corner_details_value
 rdt_get_global_voltages -corner (Corners search for rail information from for.Eg vcclow,vcchigh,nominal. Default to all. Can give comma separated list)
 rdt_get_lib_attribute_data -alt (Filter list of library attribute files by alt)
 rdt_get_lib_attribute_data -block (Default block is G_DESIGN if block doesnt exist)
@@ -5221,6 +6003,7 @@ rdt_get_lib_attribute_data -model_type (Filter list of library attribute files b
 rdt_get_lib_attribute_data -variant (Filter list of library attribute files by variant)
 rdt_get_lib_attribute_data -view (Filter list of library attribute files by view)
 rdt_get_lib_attribute_data -work_dir (Will default to WARD. Add a full path to directory if a new one is required)
+rdt_get_lib_basename
 rdt_get_lib_data -alt_type (Filter list on alternate libs. Defaults to alt type default)
 rdt_get_lib_data -block (Default block is G_DESIGN if block doesnt exist)
 rdt_get_lib_data -cell_type (Filter list of libraries by cell_type)
@@ -5252,6 +6035,13 @@ rdt_get_library_list -block (Block to search for pv conditions files for. Embedd
 rdt_get_library_list -work_dir (Will default to WARD. Add a full path to directory if a new one is required.)
 rdt_get_license -max_attempts 
 rdt_get_license -wait (Time to wait between each query (default 60 seconds))
+rdt_get_logfile_length
+rdt_get_logscan_pointer
+rdt_get_min_max_corners_of
+rdt_get_mode_of_scenario
+rdt_get_parallel_rpts_done
+rdt_get_parallel_rpts_pending
+rdt_get_parallel_rpts_running
 rdt_get_pdk_data -fval (Filters to select the file by. Eg -fval view=tf,model_type=icc)
 rdt_get_pdk_data -headers (Data to return from the xml file based on the filters. Defaults to the path and file)
 rdt_get_pdk_data -separator (Separator to use for configulate_local call)
@@ -5287,30 +6077,76 @@ rdt_get_scenario_data -noheaders (Print out/return only the value without the sc
 rdt_get_scenario_data -scenario (Scenarios to get data for.Eg func_max,max. Default to all. Can give comma separated list)
 rdt_get_scenario_data -set_gvars (Set G_SCENARIO_DETAILS for RDT instead of returning data)
 rdt_get_scenario_data -work_dir (Will default to WARD. Add a full path to directory if a new one is required)
+rdt_get_scr_proc_name
+rdt_get_step_metrics
+rdt_get_subflow_load_stage
+rdt_icv_polaris
+rdt_is_parent_stage_complete
+rdt_is_step_done
+rdt_is_valid_stage
 rdt_is_xml_file_empty -xml (XML File to test if empty)
+rdt_kill_parallel_rpts
+rdt_lib_setup
 rdt_list_flow -sources (Prints the source file of the step procedures)
+rdt_list_signoff_stages
+rdt_list_stages
 rdt_list_steps -print (Enable formated printing)
 rdt_list_steps -sources (Prints the source file of the step procedures)
+rdt_logscan_fail
+rdt_lower_scons_with_hier
+rdt_map_LV_syn_clock
 rdt_mark_stage -duration (step duration)
 rdt_mark_stage -memory (step memory used)
 rdt_mark_stage -stage (stage name)
 rdt_mark_stage -step_sequence 
+rdt_mem_diff
+rdt_mem_get_stamp
+rdt_mem_set
+rdt_mem_to_string
+rdt_parse_block_setup
+rdt_print_configulate_calls
+rdt_print_configulate_gvars
+rdt_print_error
+rdt_print_gvar_history
+rdt_print_info
+rdt_print_proc_source
+rdt_print_reports
+rdt_print_scripts_search_path
+rdt_print_step_footer
+rdt_print_step_header
+rdt_print_warn
+rdt_printvar
+rdt_proc_source
+rdt_record_procs
 rdt_remove_stage -flow (The name of the flow to modify (apr, syn, etc))
 rdt_remove_stage -stage (The stage name to remove)
 rdt_remove_step -name (The stage.step to remove)
+rdt_reorder_link_library_with_max_lib_first
+rdt_replace_cornerdetails
+rdt_replace_cornerdetails_dotprocess
 rdt_report_dont_use -cell (Library cell name to report dont_use reason)
+rdt_report_stage_status
 rdt_reset_logscan_pointer -line (Line number to set)
 rdt_reset_logscan_pointer -unset (unset pointer)
+rdt_reset_stage
+rdt_return_lib_vt_type
+rdt_run_CheckDiskSpace
+rdt_run_for_active_scenarios
+rdt_run_for_all_scenarios
 rdt_run_logscan -aux_rules (auxiliary rules file if present, uses ${-aux_rules}.rules)
 rdt_run_logscan -check_only (Only check whether logscan files present)
 rdt_run_logscan -logfiles (logfile(s) to run rule checks on)
 rdt_run_logscan -rules (rules {sets rules file = ${-rules}.rules})
 rdt_run_logscan -skip_logfile_header_lines 
 rdt_run_logscan -summary_file (output summary file {default=${logfiles(0)}.sum})
+rdt_run_lv
 rdt_run_multiple_sessions -bits (Number of bits of Machine (for netbatch): 
 rdt_run_multiple_sessions -mode (ICV jobs can run on local/netbatch: 
 rdt_run_multiple_sessions -os (Machine operating system type(for netbatch): 
 rdt_run_multiple_sessions -rundir (Directory where the fill job will run.  Default is {pwd}/)
+rdt_run_pending_parallel_rpt
+rdt_run_signoff
+rdt_run_step
 rdt_save_attributes -change_stage (set to update with stage_run status)
 rdt_save_attributes -change_step (set to update with step_attr)
 rdt_save_attributes -flow_status (returns the list of executed stages)
@@ -5319,6 +6155,8 @@ rdt_save_attributes -stage (stage name)
 rdt_save_attributes -stage_run (set if stage has run successfully - only used if -change_stage is set)
 rdt_save_attributes -step_attr (value for step attribute - only updated is -change_step is set)
 rdt_scenario_timing_constraints -scenario (Loading timing constraints for specific scenario)
+rdt_sd_scenario_path_care
+rdt_set_mcmm_config
 rdt_signoff_status -stage (Signoff stage to get status for)
 rdt_source_if_exists -display (Displays the list of files with complete paths (without sourcing them) in the order they will be sourced)
 rdt_source_if_exists -inclusive (Enabling this switch will source all the files found in seaach path)
@@ -5331,6 +6169,9 @@ rdt_source_if_exists_in_scenario -local (Sources the file locally, with-in the c
 rdt_source_if_exists_in_scenario -require (Indicates the file is required)
 rdt_source_if_exists_in_scenario -scenario (Scenario name)
 rdt_source_if_exists_in_scenario -silent (Do not print any messages)
+rdt_source_project_if_exists
+rdt_split_text_line
+rdt_start
 rdt_status -leaf (Display leaf level status of the flow)
 rdt_status -par_rpts (Display report information also)
 rdt_status -stage (stage name)
@@ -5339,13 +6180,25 @@ rdt_step_run_status -change_step (set to update with step_attr)
 rdt_step_run_status -stage (stage name)
 rdt_step_run_status -stage_run (set if stage has run successfully - only used if -change_stage is set)
 rdt_step_run_status -step_attr (value for step attribute - only updated is -change_step is set)
+rdt_step_search_and_insert
 rdt_timing_constraints -scenario (Loading timing constraints for specific scenario)
+rdt_update_pv_search_path
+rdt_visa_additional_mco
+rdt_visa_extract_visa_hierarchy
+rdt_visa_extract_visa_level
+rdt_visa_get_probe_signal
+rdt_visa_physical_report
+rdt_visa_rtl_check
+rdt_visa_trace_check_iso_levelshifter
+rdt_visa_trace_connectivity
+rdt_visa_trace_connectivity_return_pin
 rdt_wrap -body (The body of the procedure to create)
 rdt_wrap -disable (This is to disable a pre or post procedure at block level)
 rdt_wrap -post (This is a post procedure)
 rdt_wrap -pre (This is a pre procedure)
 rdt_wrap -stage (The name of the stage to create the pre or post procedure for)
 rdt_wrap -step (The name of the step to create the pre or post procedure for)
+rdt_xml_2_mcmm_config
 rdt_zip_files -logs (enabling this option zips the log files)
 rdt_zip_files -reports (enabling this option zips the reports)
 rdt_zip_files -stage (stage name)
@@ -5365,6 +6218,7 @@ read_drc_error_file -error_data (Specify the name of error data (default: <name 
 read_drc_error_file -file (Specify the name of input file)
 read_lib_package -destination 
 read_lib_package -overwrite (Overwrites the existing library, if the unpacked library has same name)
+read_name_map
 read_net_estimation_rules -filename (name of XML file to read)
 read_ocvm -corners (List of corners)
 read_parasitic_tech -layermap 
@@ -5417,10 +6271,12 @@ read_verilog_outline -sparse_modules
 read_verilog_outline -target_block_size 
 read_verilog_outline -target_cell_count 
 read_verilog_outline -top (Top module name)
+read_virtual_pad_file
 rebind_block -verbose (Verbose messages)
 reconnect_fishbone_style_power_switch -ack_pin_name 
 reconnect_fishbone_style_power_switch -ctrl_pin_name 
 reconnect_fishbone_style_power_switch -sw_cells 
+reconstruct_topo
 record_layout_editing -output (file name to output change)
 record_layout_editing -start (start recording layout editing)
 record_layout_editing -stop (stop recording layout editing)
@@ -5455,7 +6311,9 @@ refine_placement -congestion_effort
 refine_placement -coordinates 
 refine_placement -effort (Placement effort (default medium): 
 refine_placement -perturbation_level 
+refresh_performance_via_ladder_constraints
 refresh_via_ladders -nets (the nets for via ladder verification (default all))
+remove_abstract
 remove_annotated_check -all (Remove all annotated checks)
 remove_annotated_check -clock (Clock rising or falling check: 
 remove_annotated_check -corners (use scenarios of these corners (default is all corners, or current scenario if neither mode nor corner are specified))
@@ -5491,6 +6349,7 @@ remove_attachments -of_object
 remove_attributes -name (Attribute name)
 remove_attributes -objects (List of collections of objects)
 remove_attributes -quiet (Suppress error messages)
+remove_blackbox_timing
 remove_block_pin_constraints -cells (Specifies the collection of blocks to remove pin constraints)
 remove_block_pin_constraints -pin_spacing_control (Remove only the spacing control part of block pin constraints)
 remove_block_pin_constraints -self (Remove pin constraints for current top design)
@@ -5544,7 +6403,9 @@ remove_buffers -net (Net to remove buffers from)
 remove_bundle_pin_constraints -bundles 
 remove_bundle_pin_constraints -cells (Specify  the  block cells on which the constraints are removed.)
 remove_bundle_pin_constraints -self (Specifies that the constraints applied  to the toplevel block are removed.)
+remove_bundles
 remove_busplans -from (Remove part of an existing bus)
+remove_case_analysis
 remove_cell -all (Remove all cells)
 remove_cell -design (Top design for finding objects)
 remove_cell -force (To ignore locked status of the objects)
@@ -5583,6 +6444,7 @@ remove_clock_routing_rules -nets (List of nets)
 remove_clock_routing_rules -rule (non-default routing rules)
 remove_clock_sense -all (Remove all defined clock senses)
 remove_clock_sense -clocks (List of clocks)
+remove_clock_skew_groups
 remove_clock_transition -corners (remove clock transition for scenarios of these corners (default is all corners, or current scenario if neither mode nor corner are specified))
 remove_clock_transition -modes (remove clock transition for scenarios of these modes (default is current mode, or current scenario if neither mode nor corner are specified))
 remove_clock_transition -scenarios 
@@ -5613,6 +6475,7 @@ remove_clock_uncertainty -scenarios
 remove_clock_uncertainty -setup (Clock uncertainty is for setup checks)
 remove_clock_uncertainty -to (List of to clocks)
 remove_clocks -all (Remove all clocks)
+remove_colors
 remove_constraint_groups -all (To remove all constraint groups)
 remove_corners -all (Remove all corners)
 remove_custom_shields -keep_session (false|true)]
@@ -5637,6 +6500,7 @@ remove_dff_trace_filters -all (remove all filters for the specified blocks)
 remove_dff_trace_filters -blocks (List of block names to apply to this filter set)
 remove_dff_trace_filters -patterns (List of patterns to remove)
 remove_dff_trace_filters -type (type of filter: net or pin: 
+remove_disable_clock_gating_check
 remove_disable_timing -from (From pin on cell)
 remove_disable_timing -loop_break (indicate whether constraints coming from tool, not user)
 remove_disable_timing -to (To pin on cell)
@@ -5671,13 +6535,23 @@ remove_fill_cells -all (Remove all cells)
 remove_floorplan_rules -all (removes all the floorplan rules)
 remove_floorplan_rules -lib_cells 
 remove_floorplan_rules -object_types 
+remove_from_bound
 remove_from_bundle -all (Remove all occurences of the object from the bundle)
 remove_from_bundle -bundle 
 remove_from_collection -intersect (removes objects from collection1 not found in object_spec)
+remove_from_edit_group
+remove_from_group
+remove_from_io_guide
+remove_from_io_ring
 remove_from_matching_type -auto_fix (To remove all non-existent objects)
 remove_from_multisource_clock_sink_group -name (group name of a set of sinks)
 remove_from_multisource_clock_sink_group -sinks (list of clock sinks to be removed)
 remove_from_net -force (To ignore locked status of the objects)
+remove_from_net_bus
+remove_from_pin_blockage
+remove_from_pin_guide
+remove_from_port_bus
+remove_from_routing_corridor
 remove_from_rp_group -blockage (Name of the blockage to be removed fromRP group)
 remove_from_rp_group -cells (Cells to be removed from RP Group)
 remove_from_rp_group -rp_group 
@@ -5728,6 +6602,7 @@ remove_io_guides -verbose (To print verbose information)
 remove_io_rings -all (To remove all io_rings)
 remove_io_rings -force (To ignore locked status of the objects)
 remove_io_rings -verbose (To print verbose information)
+remove_keepout_margins
 remove_layer_map_file -format (Layer mapping file format: Values: gds, starrc)
 remove_layer_map_file -library 
 remove_license -keep (Keep)
@@ -5744,6 +6619,8 @@ remove_matching_types -verbose (To print verbose information)
 remove_max_capacitance -corners (remove DRC limit for scenarios of these corners (default is all corners, or current scenario if neither mode nor corner are specified))
 remove_max_capacitance -modes (remove DRC limit for scenarios of these modes (default is current mode, or current scenario if neither mode nor corner are specified))
 remove_max_capacitance -scenarios 
+remove_max_fanout
+remove_max_lvth_percentages
 remove_max_time_borrow -corners (remove max_time_borrow for scenarios of these corners (default is all corners, or current scenario if neither mode nor corner are specified))
 remove_max_time_borrow -modes (remove max_time_borrow for scenarios of these modes (default is current mode, or current scenario if neither mode nor corner are specified))
 remove_max_time_borrow -scenarios 
@@ -5760,6 +6637,7 @@ remove_min_pulse_width -modes (use scenarios of these modes (default is current 
 remove_min_pulse_width -scenarios 
 remove_modes -all (Remove all modes)
 remove_modules -design (Design to remove module(s) from)
+remove_multisource_clock_sink_groups
 remove_multisource_clock_subtree_constraints -cells (list of cells to which constraints need to be applied)
 remove_multisource_clock_subtree_constraints -clocks (remove all constraints from these clocks)
 remove_multisource_clock_subtree_constraints -ignore_for_icg_reordering 
@@ -5787,6 +6665,7 @@ remove_net_buses -block (Specifies the block where the net bus is to be removed)
 remove_net_buses -cell (Specifies the cell where the net bus is to be removed)
 remove_net_buses -design (Top design for finding objects)
 remove_net_buses -force (To ignore locked status of the objects)
+remove_net_estimation_rules
 remove_net_weight_effort -nets 
 remove_nets -all (Remove all nets)
 remove_nets -design (Top design for finding objects)
@@ -5846,8 +6725,11 @@ remove_post_route_filler -hierarchical (hierarchical)
 remove_post_route_filler -skip_filler_type_check 
 remove_power_io_constraints -io_guide_list 
 remove_pr_rules -all (To remove all pr rules)
+remove_pre_stamp_stepdown_clock
 remove_programmable_spare_cell_mapping_rule -all (remove all psc mapping rules)
 remove_programmable_spare_cell_mapping_rule -psc_type_id (a list of psc type id)
+remove_propagated_clock
+remove_propagated_clocks
 remove_push_down_object_options -object_type 
 remove_qor_snapshot -all (Remove all QoR snapshots)
 remove_qor_snapshot -name (Name of QoR snapshot to be removed)
@@ -5860,6 +6742,7 @@ remove_redundant_shapes -remove_floating_shapes (false|true)]
 remove_redundant_shapes -remove_loop_shapes (false|true)]
 remove_redundant_shapes -report_changed_nets (false|true)]
 remove_redundant_shapes -route_types 
+remove_route_aware_estimation
 remove_routes -area_fill (remove routes with shape use as area fill)
 remove_routes -core_wire (remove routes with shape use as core wire)
 remove_routes -detail_route (remove routes with shape use as detail route)
@@ -5900,6 +6783,7 @@ remove_rp_group_options -rp_only_keepout_margin
 remove_rp_groups -all (Remove all RP groups)
 remove_rp_groups -hierarchical (Remove RP groups recursively too. Applicable only with rp_group_list)
 remove_sadp_track_rule -all (Removes all the track_rules)
+remove_scan_def
 remove_scenarios -all (Remove all scenarios)
 remove_sdc -corners (Remove constraints on these corners)
 remove_sdc -design (Remove constraints not associated with any mode, corner, or scenario)
@@ -5912,6 +6796,7 @@ remove_sense -clocks (List of clocks)
 remove_sense -type (Specify type of sense: Values: clock, data)
 remove_shapes -force (To ignore locked status of the objects)
 remove_shapes -verbose (To print verbose information)
+remove_shapes_over_cell
 remove_shaping_blockages -all (To remove all shaping blockages)
 remove_shaping_blockages -force (To ignore locked status of the objects)
 remove_shaping_blockages -verbose (To print verbose information)
@@ -5940,11 +6825,14 @@ remove_supernet_exceptions -all (To remove all supernet transparent)
 remove_supernet_exceptions -cells (Cells whose supernet transparent settings to remove)
 remove_supernet_exceptions -pins (Pins whose supernet transparent settings to remove)
 remove_supernets -design (Top design for finding objects)
+remove_taps
 remove_target_library_subset -objects (Hierarchical cells from which to remove subsets)
 remove_target_library_subset -top (To remove the subset from the top block)
+remove_tech
 remove_terminals -force (To ignore locked status of the objects)
 remove_terminals -verbose (To print verbose information)
 remove_tie_cells -objects (cells or lib_cells for tie-cell removal)
+remove_timing_paths_disabled_blocks
 remove_topological_constraints -all (To remove all topological pin feedthrough constraints in the current block)
 remove_topology_edges -all (Remove all topology_edges in the current block)
 remove_topology_edges -verbose (To print verbose information)
@@ -5960,6 +6848,7 @@ remove_tracks -dir (Direction of tracks to remove:
 remove_tracks -force (To ignore locked status of the objects)
 remove_tracks -layer (Routing layer of tracks to remove)
 remove_tracks -verbose (To print verbose information)
+remove_unambiguous_pins
 remove_utilization_configurations -all (Remove all the existing utilization configurations)
 remove_utilization_configurations -scope (Scope of the configuration: 
 remove_via_defs -design (Top design for finding objects)
@@ -5968,6 +6857,7 @@ remove_via_defs -tech (Tech for finding object)
 remove_via_defs -verbose (To print verbose information)
 remove_via_ladder_constraints -all (Remove constraints on all pins)
 remove_via_ladder_constraints -pins (Collection or names of pins)
+remove_via_ladder_rules
 remove_via_ladders -nets (the nets for via ladder removal (default all))
 remove_via_mappings -all (To remove all via mappings)
 remove_via_mappings -from (From via pattern)
@@ -5993,6 +6883,7 @@ remove_voltage_area_shapes -verbose (To print verbose information)
 remove_voltage_areas -all (To remove all voltage_areas)
 remove_voltage_areas -force (To ignore locked status of the objects)
 remove_voltage_areas -verbose (To print verbose information)
+rename
 rename_block -force (override a modified destination block)
 rename_block -from_block (Source block object or name)
 rename_block -hierarchical (rename all block views in this design hierarchy)
@@ -6031,6 +6922,8 @@ replace_fillers_by_rules -tap_distance_range
 replace_fillers_by_rules -target_fillers 
 report_3d_chip_placement -all (Display all chips' attributes)
 report_3d_chip_placement -chips (List of chips' names)
+report_abstracts
+report_active_debug_codes
 report_activity -corners (List of corner names to report)
 report_activity -driver (Report driver centric switching activity)
 report_activity -modes (List of mode names to report)
@@ -6088,6 +6981,7 @@ report_block_to_top_map -blocks (report just the given block cells in the netlis
 report_block_to_top_map -path (report just for the given hierarchy path)
 report_block_to_top_map -warnings (report on possible mapping problems)
 report_block_to_top_map -waveform (show waveform of clocks in blocks)
+report_boundary_cell_rules
 report_bounds -nosplit (Don't split lines if column overflows)
 report_bounds -significant_digits 
 report_bounds -verbose (Show all bound info)
@@ -6112,6 +7006,8 @@ report_buffer_trees -physical (show location of each pin)
 report_bundle_pin_constraints -bundles 
 report_bundle_pin_constraints -cells (Specify  the  block cells on which the constraints are reported..)
 report_bundle_pin_constraints -self (Specifies that the constraints applied  to the toplevel block are reported.)
+report_bundles
+report_busplan_constraints
 report_busplans -location (Report location data)
 report_busplans -start_end_cells (Report start/end cell data)
 report_busplans -xml_file (Report busplan details in XML format)
@@ -6143,6 +7039,7 @@ report_clock -modes (List of modes)
 report_clock -nosplit (Don't split lines if column overflows)
 report_clock -significant_digits 
 report_clock -skew (Show clock skew info)
+report_clock_balance_groups
 report_clock_balance_points -balance_points 
 report_clock_balance_points -clock (List of clocks)
 report_clock_balance_points -nosplit (Don't split lines if column overflows)
@@ -6182,6 +7079,7 @@ report_clock_qor -through (Through pin list)
 report_clock_qor -to (To pin list)
 report_clock_qor -trace_beyond_exception 
 report_clock_qor -type (Type of information to report: 
+report_clock_routing_rules
 report_clock_settings -clocks (List of clocks)
 report_clock_settings -nosplit (Do not split lines if column overflows)
 report_clock_settings -significant_digits 
@@ -6315,6 +7213,7 @@ report_delay_calculation -temperature
 report_delay_calculation -to (to-pins)
 report_delay_calculation -transition (Override for input transition time)
 report_delay_calculation -voltage (Override for operating voltage)
+report_density_gradient_options
 report_design -all (Reports floorplan/netlist/routing/library information)
 report_design -floorplan (Reports floorplan information such as of site rows/ plan groups/ voltage areas/ blockages etc.,)
 report_design -hierarchical (Reports netlist information including objects inside the block)
@@ -6334,6 +7233,7 @@ report_design_rules -verbose (Show all design rule info)
 report_disable_timing -mode (Mode to report)
 report_disable_timing -nosplit (Don't split lines if column overflows)
 report_dont_touch -all (Report details of all dont_touch cells and nets)
+report_eco_bus_buffer_patterns
 report_eco_physical_changes -cells 
 report_eco_physical_changes -min_displacement 
 report_eco_physical_changes -min_estimated_length 
@@ -6409,6 +7309,7 @@ report_io_rings -nosplit (Don't split lines if column overflows)
 report_io_rings -significant_digits 
 report_io_rings -verbose (Show all io_ring info)
 report_isolate_ports -all (Report details of all isolate_ports cells)
+report_keepout_margins
 report_latch_loop_groups -loop_breakers_only (only loop breakers will be reported)
 report_latch_loop_groups -nosplit (Don't split lines if column overflows)
 report_latch_loop_groups -of_objects 
@@ -6441,6 +7342,7 @@ report_macro_constraints -preferred_location (show preferred location)
 report_macro_relative_location -hierarchical (report hierarchical)
 report_macro_relative_location -nosplit (report with nosplit line)
 report_matching_types -nosplit (Don't split lines if column overflows)
+report_mibs
 report_min_pulse_width -all_violators (Show only min pulse width violations)
 report_min_pulse_width -corners (report for scenarios of these corners (default is all corners, or current scenario if neither mode nor corner are specified))
 report_min_pulse_width -modes (report for scenarios of these modes (default is all modes, or current scenario if neither mode nor corner are specified))
@@ -6453,6 +7355,7 @@ report_mismatch_configs -nosplit (Don't split lines if column overflows)
 report_modes -nosplit (Don't split lines if column overflows)
 report_modes -significant_digits 
 report_multibit -nosplit (Show summary without splitting)
+report_multisource_clock_sink_groups
 report_multisource_clock_subtree_constraints -clocks (report all constraints from these clock)
 report_multisource_clock_subtree_constraints -names (list of option set names for which constraints will be reported)
 report_multisource_clock_subtree_options -clocks (list of clocks to be reported)
@@ -6469,6 +7372,7 @@ report_mv_path -level_shifter (report level shifter constraints)
 report_mv_path -net (net_list )
 report_mv_path -pin (pin or port along the path)
 report_mv_path -shifting (shifting information)
+report_name_rules
 report_names -hierarchy (Report name changes hierarchically within current block only)
 report_names -include_sub_blocks (Report name changes across all hierarchies including different physical hierarchies)
 report_names -rules (name of the rule. Wildcards also allowed.)
@@ -6481,6 +7385,7 @@ report_net -significant_digits
 report_net -verbose (Show all net info)
 report_net_buses -nosplit (Don't split lines if column overflows)
 report_net_buses -verbose (Show all net bus info)
+report_net_estimation_rules
 report_net_fanout -connections (reports connections)
 report_net_fanout -depth (Show buffer trees with more levels than depth only)
 report_net_fanout -hierarchical (Reports fanout information including objects inside the block)
@@ -6535,6 +7440,7 @@ report_path_groups -modes (List of modes to report)
 report_path_groups -nosplit (Don't split lines if column overflows)
 report_pg_mask_constraints -tcl (report Tcl of this mask constraint)
 report_pg_patterns -tcl (report the Tcl command for this pattern)
+report_pg_regions
 report_pg_strategies -tcl (report the content for Tcl purpose)
 report_pg_strategy_via_rules -tcl (report the content for Tcl purpose)
 report_pg_via_master_rules -tcl (report Tcl of this via rule)
@@ -6568,6 +7474,7 @@ report_placement -user_grid (Report violations of user grid)
 report_placement -verbose 
 report_placement -voltage_area_violations 
 report_placement -wirelength 
+report_placement_spacing_rules
 report_pop_up_object_options -object_type 
 report_port -design_rule (Only port design rule info)
 report_port -drive (Only port drive info)
@@ -6577,6 +7484,7 @@ report_port -output_delay (Only port output delay info)
 report_port -verbose (Show all port info)
 report_port_buses -nosplit (Don't split lines if column overflows)
 report_port_buses -verbose (Show all port bus info)
+report_port_protection_diodes
 report_ports -design_rule (Only port design rule info)
 report_ports -drive (Only port drive info)
 report_ports -input_delay (Only port input delay info)
@@ -6617,10 +7525,12 @@ report_power_derate -scenarios
 report_power_derate -significant_digits 
 report_power_domain -nosplit (Don't split lines if column overflows)
 report_power_domains -nosplit (Don't split lines if column overflows)
+report_power_groups
 report_power_io_constraints -io_guide_list 
 report_power_io_constraints -significant_digits 
 report_power_scopes -nosplit (Don't split lines if column overflows)
 report_power_switch_patterns -nosplit (Don't split lines if column overflows)
+report_power_switch_placement_patterns
 report_pr_rules -all (To report all pr rules)
 report_pr_rules -library (Library for finding objects, default is current library's tech)
 report_pr_rules -nosplit (Don't split lines if column overflows)
@@ -6648,6 +7558,7 @@ report_qor_snapshot -directory (snapshot directory)
 report_qor_snapshot -display (show QoR snapshot report on browser)
 report_qor_snapshot -name (snapshot name)
 report_qor_snapshot -save_as (save report as)
+report_rail_integrity_strategy
 report_rdl_routes -create_error_data (false|flyline_only|verification)]
 report_rdl_routes -file (output RDL net names into a specified file)
 report_rdl_routes -nets 
@@ -6677,10 +7588,12 @@ report_rp_groups -verbose (Report failures in detail)
 report_sadp_track_rule -all (Report all the track_rules)
 report_sadp_track_rule -nosplit (Don't split lines if column overflows)
 report_sadp_track_rule -significant_digits 
+report_scan_chains
 report_scenarios -corners (report scenarios of these corners (default is all corners))
 report_scenarios -modes (report scenarios of these modes (default is all modes))
 report_scenarios -nosplit (Don't split lines if column overflows)
 report_scenarios -scenarios 
+report_shaping_options
 report_shields -nets 
 report_shields -output (output file name (default report_shields.txt))
 report_shields -per_layer (false|true)]
@@ -6807,6 +7720,7 @@ report_topology_nodes -design (Top design for finding objects)
 report_topology_nodes -nosplit (Don't split lines if column overflows)
 report_topology_nodes -significant_digits 
 report_topology_nodes -verbose (Show all topology_node info)
+report_track_constraints
 report_tracks -dir (Direction of tracks to report: 
 report_tracks -layer (Routing layer of tracks to report)
 report_tracks -nosplit (Don't split lines if column overflows)
@@ -6827,6 +7741,7 @@ report_utilization -config (Utilization configuration to use)
 report_utilization -of_objects 
 report_utilization -scope (Scope of the configuration: 
 report_utilization -verbose (Prints number and aggregate area of cells not completely within the block-boundary)
+report_versions
 report_via_defs -design (Top design for finding objects)
 report_via_defs -library (Library for finding objects)
 report_via_defs -nosplit (Don't split lines if column overflows)
@@ -6849,6 +7764,8 @@ report_via_rules -library (Library for finding objects)
 report_via_rules -nosplit (Don't split lines if column overflows)
 report_via_rules -tech (Tech for finding object)
 report_via_rules -verbose (Show all via rule info)
+report_virtual_pads
+report_visa_clocks
 report_voltage_area_rules -nosplit (Don't split lines if column overflows)
 report_voltage_areas -design (Top design for finding objects)
 report_voltage_areas -hierarchical (Show hierarchical voltage_area info)
@@ -6857,6 +7774,11 @@ report_voltage_areas -significant_digits
 report_voltage_areas -verbose (Show all voltage_area info)
 reset_app_options -block (Reset the options set on this block)
 reset_app_options -user_default (Reset the user-default value for the option)
+reset_cell_mode
+reset_design
+reset_origin
+reset_origin_move_block
+reset_origin_top
 reset_path -all (Remove all timing exceptions in this mode)
 reset_path -fall (Reset timing for falling signal at endpoint)
 reset_path -fall_from 
@@ -6906,6 +7828,7 @@ reset_timing_derate -pocvm_coefficient_scale_factor
 reset_timing_derate -pocvm_guardband (Reset the POCVM Guard Band)
 reset_timing_derate -scalar (Reset derate factor for deterministic delays only. Option currently ignored.)
 reset_timing_derate -variation (Reset derate factor for statistical delays only. Option currently ignored.)
+reset_upf
 reshape_objects -add (add rectangle to an object shape)
 reshape_objects -cut (cut object shape by rectangle)
 reshape_objects -cut_by_locked (cut object shape by another locked object)
@@ -6930,9 +7853,18 @@ resize_polygons -size (Distance to stretches boundaries. Can be 1, 2, or 4 numbe
 resolve_pg_nets -check_only (check inconsisitency only)
 resolve_pg_nets -design (Top design for finding objects)
 resolve_pg_nets -verbose (Verbose output)
+restore_correlation_status
+return_proc_source
+revert_blocks
 revert_cell_sizing -adjacent_cell_distance 
 revert_cell_sizing -cells (cells to be reverted)
 revert_cell_sizing -include_adjacent_sized_cells 
+rhz_fill_power_domains
+rhz_fill_stdcells_data
+rhz_generate_reports
+rhz_get_cells_at_depth
+rhz_vectorian_add
+rhz_vectorian_mult
 rls_table -breaks (include break lines?)
 rls_table -csv_mode (write out a csv rather than an actual table
 rls_table -file (set output file name instead of STDOUT)
@@ -6947,10 +7879,14 @@ rls_table -table (table data - is a list of lists)
 rls_table -title (title to print before table - no formatting)
 rls_table -to (set output file handle instead of STDOUT)
 rls_table -width_limit (limit column width (breaks to lines) - off by default)
+rls_table_echo
 rotate_objects -anchor (anchor point: 
 rotate_objects -angle (angle to rotate by: 
 rotate_objects -orient (orientation value to be set on the objects: 
 rotate_objects -pivot (pivot point)
+roundto
+routePins
+routeTerm
 route_auto -max_detail_route_iterations 
 route_auto -reuse_existing_global_route (false|true)]
 route_auto -route_nondefault_nets_first (false|true)]
@@ -7016,6 +7952,7 @@ route_rdl_flip_chip -nets_in_file
 route_rdl_flip_chip -objects 
 route_rdl_flip_chip -reuse_existing_global_route (false|true)]
 route_rdl_flip_chip -skip_detail_route (false|true)]
+route_track
 runRDT -init (initialize flow -> restart from beginning)
 runRDT -jump (jump to 'step' within the current stage (else if integer move step +forward or -reverse))
 runRDT -load (load design flow from this stage)
@@ -7046,6 +7983,10 @@ run_block_script -var_list
 run_block_script -work_dir 
 run_monitor_gui -kill (Terminate all running instances of the monitor gui from this session.)
 run_monitor_gui -nolaunch (Works together with -kill: only terminate, no launching)
+run_rdtpv
+sL
+sN
+sW
 saif_map -hsep (Write the Mapping Table using the specified hier char)
 saif_map -read_map (Read the Mapping Table)
 saif_map -start (Start the saif map notification process)
@@ -7058,6 +7999,7 @@ save_block -force (force save -as if destination block is modified)
 save_block -hierarchical (save all block views in this design hierarchy)
 save_block -label (specify the desired user label while keeping lib, block, and view the same)
 save_block -verbose (Verbose messages)
+save_correlation_status
 save_drc_error_data -as (Save the error data to this file name)
 save_ems_database -all (save all open databases)
 save_ems_database -as 
@@ -7074,6 +8016,11 @@ save_upf -force_reference
 save_upf -format (Output format: Values: both, user, supplemental)
 save_upf -full_chip (Generate full-chip UPF)
 save_upf -include 
+sb
+scale
+scrollbar
+sd_abstract_to_design
+sd_abstract_to_frame
 sd_add_diffcheck -include_macro_refs 
 sd_add_diffcheck -layer_name 
 sd_add_diffcheck -outputview 
@@ -7081,6 +8028,7 @@ sd_add_diffcheck -phase (negative straddles boundary {default=positive}:
 sd_add_diffcheck -pitch (layer pitch {default=0.084})
 sd_add_diffcheck -skip (skip diffcheck generation {default=0, do not skip}: 
 sd_add_diffcheck -width (layer width {default=0.028})
+sd_add_dop_diode
 sd_add_halo_metals -no_partition_twire (Don't add transition shapes or PG on the partition boundary)
 sd_add_polycheck -datatype (datatype for layer_num - requires layer_num is defined {default use polycheck layer_datatype})
 sd_add_polycheck -include_macro_refs 
@@ -7097,8 +8045,26 @@ sd_aon_pg_hookup -cells (Specify the aon cells to insert via ladder)
 sd_aon_pg_hookup -constraint_only (Setting constraints only)
 sd_aon_pg_hookup -incremental (Run pg hookup for newly added aon cells only)
 sd_aon_pg_hookup -logtag (Add log tag)
+sd_aon_pg_route
+sd_append_uin_parameters
+sd_apply_hip_pdn
+sd_base_layer_fill
+sd_base_layer_fill_step
+sd_base_layer_populate_lib
+sd_base_layer_populate_templates
+sd_base_layer_remove
+sd_base_layer_update_templates
+sd_block_clock_opt
+sd_block_place_opt
+sd_block_priority_route
+sd_block_route
+sd_block_user_priority_route
 sd_bottom_up_run_parallel_job -script_name (name of script to execute, include full-path to script)
 sd_bottom_up_run_parallel_job -work_dir (name of working directory where run_block_script jobs will be managed)
+sd_boundary_fiducial_cells
+sd_calculate_gridpattern
+sd_call_diamond
+sd_change_names
 sd_channel_add_buffer_on_route -distance (Repeater distance for add-buffer-on-route use)
 sd_channel_add_buffer_on_route -max_layer (Maximum layer for routing use)
 sd_channel_add_buffer_on_route -min_layer (Minimum layer for routing use)
@@ -7120,6 +8086,8 @@ sd_channel_block_recipe -use_gcr (Run GCR routing. Default: ZRoute/G_GCR_ROUTE)
 sd_channel_block_recipe -verbose (Print more information. Default: None/G_CHANNEL_VERBOSE)
 sd_channel_block_recipe -vialadder (Via ladder default constraints. Default: G_CHANNEL_VIA_LADDER_DEFAULT_CONSTRAINTS/G_CHANNEL_VIA_LADDER_CONSTRAINTS(REF_NAME))
 sd_channel_block_recipe -widths (Routing layer-width list {la wa lb wb ...} for wide wire routing)
+sd_channel_blocks
+sd_channel_get_nets
 sd_channel_place_cells -backoff (Placement backoff from port. Default: At Port)
 sd_channel_place_cells -keep_reps (Do Not remove repeaters. Default: Remove)
 sd_channel_place_cells -ports (Ports to trace and place channel cells)
@@ -7141,35 +8109,80 @@ sd_channel_priority_route -vialadder (Via ladder constraints)
 sd_channel_priority_route -widths (Routing layer-width list for wide wire routing)
 sd_channel_remove_repeaters -port (Port)
 sd_channel_remove_repeaters -supernet (Supernet)
+sd_channel_snap_cell_plc_at_coord
+sd_checkProcess
+sd_check_block_abutment
+sd_check_cell_area
+sd_check_fib_con
+sd_check_pin_placement
+sd_check_stitch_xmim
+sd_check_terminals
+sd_clean_up_block_level_power_hookup
+sd_clean_up_routing_blockage_groups
+sd_clk_load
+sd_clk_ndr_shielding
+sd_clk_push
+sd_clk_route
+sd_clk_shielding
+sd_clock_cleanup
 sd_commit_blocks -same_lib (Force commit of blocks in same library)
+sd_commit_blocks_same_lib
 sd_connect_ackport -drv_pin (Drive pin)
 sd_connect_ackport -rev_pin (Receive pin)
 sd_connect_aon_supply_pins -cells (List of cells)
 sd_connect_aon_supply_pins -force (If given, existing cells connections will be disconnected and re-connected)
 sd_connect_ebb_enables -reset_based_on_upf (Reset G_ vars based on upf values)
 sd_connect_ebb_enables -va_name (Voltage name)
+sd_connect_pg_net
+sd_connect_power_switch_enables
+sd_constraints
+sd_consume_io_constraints
+sd_create_aabb_region
 sd_create_analog_pg_template -file (Specifies template file name)
 sd_create_analog_pg_template -layers (Specifies layers list)
 sd_create_analog_power_strap -pg_regions (create grid on analog pg regions)
+sd_create_and_place_slos_logic
+sd_create_and_swap_abstracts
+sd_create_backoff_layer_blockage
+sd_create_backoff_layer_blockage_per_block
 sd_create_bbox_analog_power_strategies -bbox (Specify the bounding box to create grid. Format {{xl yl} {xh yh}})
 sd_create_bbox_analog_power_strategies -grid_template 
 sd_create_bbox_analog_power_strategies -layers (layers that need to be created)
 sd_create_bbox_analog_power_strategies -nets 
 sd_create_bbox_analog_power_strategies -pg_region 
 sd_create_bbox_analog_power_strategies -recreate_template (recreate pg template for calling standalone call)
+sd_create_black_box
+sd_create_black_box_by_default
+sd_create_black_box_pins
+sd_create_boundary_power_blockage
+sd_create_compl_pgr_blockage
 sd_create_custom_grid_vars -pgr (list pg region names)
 sd_create_custom_grid_vars -va (list of gas station voltage area names)
 sd_create_custom_power_strap -bbox (Specify the bounding box to create grid. Format {{xl yl} {xh yh}}, if specified pg_region will be created)
 sd_create_custom_power_strap -grid_template 
 sd_create_custom_power_strap -net (Supply net name)
 sd_create_custom_power_strap -pg_region 
+sd_create_diffcheck
 sd_create_dir -dir (name of directory to createt)
+sd_create_dr_blockage_around_object
+sd_create_gas_station_wrapper
+sd_create_halo_id
+sd_create_hierarchical_power_strap
+sd_create_m0_power_straps_fill
+sd_create_macro_on_boundary_blockage
 sd_create_path_groups -modes (run for specific modes list)
 sd_create_patterns -add_net_type (Add net type into the track spec of the pattern. Default: None)
 sd_create_patterns -outfile (Specify output file-name for writing patterns file)
 sd_create_patterns -pattern (Specify the patterns used for pattern creation)
 sd_create_patterns -region (Specify the regions used for pattern creation. Default: None)
 sd_create_patterns -verbose (Print more information. Default: None)
+sd_create_physical_only_modules
+sd_create_pin_pairings
+sd_create_pins_for_power_continuity
+sd_create_placement_abstracts
+sd_create_polycheck
+sd_create_port_polygon_for_terminals
+sd_create_power
 sd_create_power_straps -custom_only (Generate macro and custom rails only)
 sd_create_power_straps -custom_tags (Generate power straps for specified custom tags only)
 sd_create_power_straps -layers (Generate power straps for specified layers only)
@@ -7180,6 +8193,14 @@ sd_create_power_straps_m0 -keep_to_macro (Keep this space to macro on left and r
 sd_create_power_straps_m0 -m0_width (Create m0 of this width)
 sd_create_power_straps_m0 -m2width_ts (Min metal2 width threshold)
 sd_create_power_straps_m0 -remove_only (Remove existed m0)
+sd_create_prBoundary
+sd_create_pwr_blkg_from_objs
+sd_create_region_id
+sd_create_region_tracks
+sd_create_stdcell_fillers
+sd_create_stub_upf
+sd_create_timing_abstracts
+sd_create_timing_arcs_on_unconstrained_pins
 sd_create_top_va_pg_blockage -hierarchical (Process all VA in all hierarchy)
 sd_create_trackfill_config -layers (List of layers to fill)
 sd_create_trackfill_config -out_dir (Output directory)
@@ -7195,21 +8216,112 @@ sd_create_tracks -width (Specify the width to create track. If the width defined
 sd_create_tracks_for_hip_pins -cells (Cells to insert track on their pins.)
 sd_create_tracks_for_hip_pins -layers (Pin's layers.)
 sd_create_tracks_for_hip_pins -pins (Pin name to create tracks on it.)
+sd_create_tracks_for_offgrid_pins
+sd_create_twire_corner_blockage
 sd_create_uin -layers (List of layers to fill)
 sd_create_uin -out_dir (Output directory to save uin files)
 sd_create_uin -type (Type of UIN files to be created)
+sd_create_uin_gridpattern
+sd_create_uin_icv
+sd_create_uin_layers
+sd_create_uin_parameters
+sd_create_uin_v_layers
+sd_create_va_pg_blockage
+sd_create_visa_bound
+sd_create_xmim_lib
+sd_ctm_bumesh
+sd_ctm_clone_clock_gadget
+sd_ctm_create_dop_clocks
+sd_ctm_create_dops
+sd_ctm_detail_route
+sd_ctm_dop_enable_scan_repeater_duplication
+sd_ctm_dop_enable_split
+sd_ctm_enable_buffering
+sd_ctm_fishbone_route
+sd_ctm_initialize
+sd_ctm_level_balance
+sd_ctm_merge
+sd_ctm_optimize
+sd_ctm_post_setup
+sd_ctm_postroute_sizing
+sd_ctm_remove_dop_clocks
+sd_ctm_reports
 sd_ctm_route_dops -dirty_mode (Allow DRCs for debug)
 sd_ctm_route_dops -dop_nets (DOP nets - default all CTMESH dop nets)
+sd_ctm_set_clock_latency
+sd_ctm_set_visa_exceptions
+sd_ctm_sizing
+sd_ctp_create_clock_pins_at_block_center
+sd_cts
+sd_cts_ccd
+sd_cts_exceptions_for_icc
+sd_cts_params
+sd_cts_rename_cts_punch_port
+sd_cts_route_options
+sd_cts_setup
+sd_cts_store_hier_clk_pin_drivers
+sd_cts_trace_fain_to_first_ctech
+sd_customize_budgets
+sd_ddh
+sd_define_icc_wrappers
+sd_define_user_attributes
+sd_design_to_abstract
+sd_detect_netlist_ecos
+sd_dont_use
+sd_dop_cts
+sd_drc_bnd_spc_kor
+sd_dump_pdfx_power_connections
+sd_duplicate_slos
+sd_eco_apply_changelist
 sd_eco_boundary_cells -action (Option to remove or add boundary cells: 
 sd_eco_boundary_cells -direction (Specify inside or outside given bbox update the boundary cells 
 sd_eco_boundary_cells -target_obj_boundary_list 
+sd_eco_clk_repair
+sd_eco_connect_assignbuf_ceco
+sd_eco_connect_net_ceco
+sd_eco_create_port_ceco
+sd_eco_gen_changelist
+sd_eco_legalize
+sd_eco_optimize
+sd_eco_place_pins
+sd_eco_place_unplaced_cells
 sd_eco_rc_to_icc2_changelist -icc2_changelist (Pointer to the output ICC changelist file)
 sd_eco_rc_to_icc2_changelist -rc_changelist (Pointer to input RC changelist file)
+sd_eco_remove_dfm
+sd_eco_reset_dfm_stages
+sd_eco_route
+sd_eco_save_pre_eco_state
+sd_eco_scan_repair
+sd_eco_tieoff
+sd_enable_abstract_cmds
+sd_enable_hold_fixing
+sd_endcap_cells
+sd_estimate_timing
+sd_estimate_timing_pre_checks
+sd_expand_all_mi_block_pg_blockages
+sd_extend_macro_pins_on_boundary
+sd_extract_collaterals_for_capr_sapr
 sd_extraction_options_setup -corners (list of corners to work on, default is all)
 sd_fdr_constraints -out_path (output directory for override tcl file(s))
 sd_fdr_constraints -scenarios (list of scenarios to run for, by default run for all scenarios)
+sd_fdr_get_physical_clock
+sd_fdr_map_all_clocked_fdrs
+sd_fdr_read_attributes_file
+sd_fdr_read_clock_sources
+sd_fdr_set_attributes
 sd_fdr_write_vrlg_attr -flow (flow name)
 sd_fdr_write_vrlg_attr -outfile (Output file name)
+sd_fib_cells
+sd_fib_con
+sd_fill
+sd_fill_get_keepout_cells_list
+sd_fill_mark_hv_nets
+sd_fill_post_process
+sd_fill_run_calibre
+sd_fill_run_dfm
+sd_fill_run_icc
+sd_fill_run_icv
+sd_fill_run_qea
 sd_find_accessible_tap -cell (Cell requiring tap)
 sd_find_accessible_tap -direction (Specify which direction (left/right/both) to search for taps (default: both))
 sd_find_accessible_tap -distance (Specify the max distance allowed between the cell and the tap (default: G_TAP_MAX_SPACING/2))
@@ -7222,8 +8334,26 @@ sd_find_closest_cell -distance (Specify the max distance allowed between the cel
 sd_find_closest_cell -include_variants (Specify whether variants of the ref names provided should also be checked)
 sd_find_closest_cell -inst_names 
 sd_find_closest_cell -ref_cells (Ref names of cells to be searched)
+sd_find_unique_bound_name
+sd_fix_ipb
+sd_floorplan_design
+sd_fn_assign_srsn_per_net_groups
+sd_fn_cache_constraint_mapping_file
 sd_fn_calculate_track_region -cell (Lower level block name)
 sd_fn_calculate_track_region -coordinate (Coordinate of original region)
+sd_fn_check_fix_illegal_name
+sd_fn_convert_ps_pg_grid
+sd_fn_create_black_box
+sd_fn_create_black_box_abstract
+sd_fn_create_black_box_initialize_and_hollow
+sd_fn_create_black_box_pin_constraints
+sd_fn_create_black_box_source_pdintent
+sd_fn_create_black_box_timing
+sd_fn_create_block_host_options
+sd_fn_create_feedthru_supplies
+sd_fn_create_gas_station_wrapper
+sd_fn_create_keepout_margin
+sd_fn_create_partition_bbox_abstract
 sd_fn_create_stub_upf -outdir (output stub upf directory)
 sd_fn_create_stub_upf -stub_modules (stub modules)
 sd_fn_create_stub_upf -upf_dir (input upf directory)
@@ -7232,35 +8362,88 @@ sd_fn_create_track_check_edge -direction (Direction : X or Y)
 sd_fn_create_track_check_edge -exclusive (Index of point in the list)
 sd_fn_create_track_check_edge -index (Index of point in the list)
 sd_fn_create_track_check_edge -points (location)
+sd_fn_create_wire_on_power_track
 sd_fn_duplicate_terminal -attr (Specifies attribute to attached to the new terminal)
 sd_fn_duplicate_terminal -port (Specifies port related to the terminal)
 sd_fn_duplicate_terminal -terms 
 sd_fn_eco_concat_verilog_file -out_file ()
 sd_fn_eco_concat_verilog_file -v_files ()
 sd_fn_eco_concat_verilog_file -v_list ()
+sd_fn_eco_count_sequence_diff
+sd_fn_eco_create_bus
+sd_fn_eco_data_analysis_max_string_match
+sd_fn_eco_data_analysis_string_match
+sd_fn_eco_dump_net_shape
+sd_fn_eco_dump_terminals
+sd_fn_eco_get_ignore_modules
+sd_fn_eco_get_latters_diff
+sd_fn_eco_get_pin_nets
+sd_fn_eco_get_string_match
+sd_fn_eco_rename_advisory
+sd_fn_eco_write_ref_data
+sd_fn_execute_run_block_script
+sd_fn_find_dangling_partition_pins
+sd_fn_find_excluded_nets_for_place_pins
+sd_fn_fix_upf_for_icc
+sd_fn_found_input_upf_files
+sd_fn_gas_station_unwrap_hier
+sd_fn_gen_budgets
+sd_fn_get_custom_polygons
 sd_fn_get_io_connected_cells -net (Net name)
 sd_fn_get_io_connected_cells -type (receive or driver)
+sd_fn_get_pg_geo_of_pgr_va
+sd_fn_get_ref_libs
+sd_fn_hack_split_constraints_upf
+sd_fn_hier_commit_upf
+sd_fn_ideal_network
 sd_fn_insert_level_shifter -power (power)
+sd_fn_load_black_box_upf
+sd_fn_load_incremental_upf
+sd_fn_parse_log_file_to_find_out_failed_jobs
+sd_fn_pg_calculate_alt_pwrgrid_config
+sd_fn_place
+sd_fn_place_cell
 sd_fn_place_global_dic_cells -dic_distance (User defined relative distance to keep between DICs. Default is got from central var G_DIC_DIST)
 sd_fn_place_global_dic_cells -num_dics (User defined number of DIC pairs expected in design. Default is calculated based on core area)
 sd_fn_place_global_dic_cells -remove_existing (User defined boolean switch if want to remove existing DIC cells and start afresh. Default OFF)
 sd_fn_place_global_fid_cells -global_fid_distance 
 sd_fn_place_global_fid_cells -num_global_fids (User defined number of global FIDs expected in design. Default is calculated based on core area)
 sd_fn_place_global_fid_cells -remove_existing (User defined boolean switch if want to remove existing global FID cells and start afresh. Default OFF)
+sd_fn_propagate_driver_supply
+sd_fn_propagate_soft_macro_pg_terminal
 sd_fn_ps_connect_top_pg -cells (Specify the ps cells to insert via ladder)
 sd_fn_ps_create_rb_on_pg -cell (Specify the ps cell to insert via ladder)
 sd_fn_ps_create_rb_on_pg -layers (Specify the layers to check)
 sd_fn_ps_create_rb_on_pg -net (Specify the ps net to insert via ladder)
 sd_fn_pvt_setup -analysis (analysis type (max/min): 
 sd_fn_pvt_setup -corner (corner name)
+sd_fn_read_block_tcl_files
+sd_fn_read_pspec
+sd_fn_remove_extract_layer_constraints
+sd_fn_remove_twire_shorts
+sd_fn_remove_wiretracks_and_power_straps
+sd_fn_reports_pspec
+sd_fn_restore_srsn
 sd_fn_run_a_command_on_blocks -command (name of the TCL command to be executed)
+sd_fn_run_block_script
 sd_fn_run_parallel_set_of_commands_on_block -blocks (names of blocks)
 sd_fn_run_parallel_set_of_commands_on_block -command_list 
+sd_fn_run_step
+sd_fn_save_srsn
 sd_fn_save_user_attributes -outfile (File name)
+sd_fn_set_td_type_for_tsvs
+sd_fn_setup_ctp_config
 sd_fn_source_icc_file -infile (Input file)
 sd_fn_source_icc_file -outfile (output file)
 sd_fn_source_icc_file -tag (Procedure tag)
+sd_fn_synthesize_clock_trunks
 sd_fn_template_based_partition_bbt -partition (Collection or list of partition to create bbt. Default: Selected)
+sd_fn_update_block_netlist
+sd_for_each_block_fib_cells
+sd_for_each_block_local_fiducial_cells
+sd_for_each_block_tap_cells
+sd_fp_boundary_size_check
+sd_frame_to_abstract
 sd_gcr_create_commands -bus_with_signal_flow 
 sd_gcr_create_commands -debug (Add report command to print out details of each route. Default: Do not print report for each net)
 sd_gcr_create_commands -devtest (DO NOT USE!!! Developer testing switch ONLY. Default: PRD)
@@ -7284,10 +8467,14 @@ sd_gcr_pin_analysis_debug -standalone (Standalone pin access reporting. Default:
 sd_gcr_pin_analysis_debug -work_dir (Specify working directory-name for priority-route use. Default: priority_route)
 sd_gcr_routing_summary -outfile (Specify output file-name for summary report. Default: <block>_GCR_routing_summary.rpt)
 sd_gcr_routing_summary -work_dir (Specify working directory-name for priority-route use. Default: priority_route)
+sd_gen_budgets
+sd_gen_mw_from_icc2
+sd_gen_spef
 sd_generate_critical_nets -add_options 
 sd_generate_critical_nets -max_paths (Total number of timing paths to generate. Default is 2000000 (2e6))
 sd_generate_critical_nets -net_threshold 
 sd_generate_critical_nets -slack_lesser_than 
+sd_generate_icv_netlist
 sd_generate_pg_template -custom_only (Turn off power via creation)
 sd_generate_pg_template -file (Template file name)
 sd_generate_pg_template -layers (Generate power straps for specified layers only)
@@ -7297,6 +8484,9 @@ sd_generate_pg_template -no_vias (Turn off power via creation)
 sd_get_boundary_cells_from_gvar -boundary_type_list (List of boundary cells with the GVARs of cell and orientation info)
 sd_get_boundary_cells_from_gvar -layer (Layer To use for while expanding the GVAR)
 sd_get_bus_layers_widths -verbose (Print more information. Default: None)
+sd_get_fill_layers
+sd_get_gvars
+sd_get_keepout_cells_list
 sd_get_macro_metal_layers -hml_type (Type for metal layer query, G_HEML, G_HPML or G_HSML)
 sd_get_macro_metal_layers -macro_info (Array that will contain metal layer info per macro)
 sd_get_macro_metal_layers -macro_refs (List of macro names)
@@ -7308,30 +8498,117 @@ sd_get_normalized_pattern -verbose (Print more information. Default: None)
 sd_get_pattern_from_track_def -add_net_type (Add net type into the track spec of the pattern. Default: None)
 sd_get_pattern_from_track_def -track_def (Specify the track definition)
 sd_get_pattern_from_track_def -verbose (Print more information. Default: None)
+sd_get_process_dot_num
+sd_get_trackfill_process
 sd_get_twire_config -use_pg_nets 
 sd_get_twire_config -uses_aon_nets 
 sd_get_twire_edge_polygons -layers (Only compute edge polygons for the specified layers)
+sd_gridpattern_period
+sd_hier_apply_netlist_ecos
+sd_hier_insert_boundary_cells
+sd_hier_insert_ps_cells
+sd_hier_macro_pin_expose_to_block
+sd_hier_place
+sd_hier_ps_stitching
+sd_hier_push_down_pg
+sd_hier_push_pg_blockage
+sd_hier_set_up_rows
+sd_hierarchy_owner_wrapper
+sd_ideal_network
+sd_import_def
+sd_import_die_file
+sd_import_vars
 sd_incr_stdcell_power_hookup -area (use defined area for hookup removal/insertion)
 sd_incr_stdcell_power_hookup -cells (use area defined by cells boundary)
+sd_init_place
+sd_init_rpd
+sd_input_port_diode
+sd_insert_boundary_cells
+sd_insert_decaps
+sd_insert_fillers
+sd_insert_level_shifter
+sd_insert_ps_cells
 sd_insert_ps_cells_around_macro -va (voltage area for ps cell)
+sd_insert_ps_delay_cell
+sd_insert_top_block_dic_cells
+sd_insert_top_block_global_fid_cells
+sd_io_placement
+sd_iss_verify
+sd_iss_verify_check
+sd_iwsdb_close_tmp_lib
+sd_iwsdb_open_tmp_lib_and_block
+sd_iwsdb_recalc_offset_for_uin_gridpattern
+sd_iwsdb_return_parallel_libs
 sd_lbist_constraints -scenarios (run for list of scenarios, by default running for all scenarios)
+sd_legalize_placement
 sd_limit_template_layers -excl_layers (exclude layers, mutual exclusive with layers)
 sd_limit_template_layers -excl_tags 
 sd_limit_template_layers -layers (include layers, mutual exclusive with excl_layers)
 sd_limit_template_layers -tags 
+sd_load_aocvm
 sd_load_aocvm_gcd -corner (Name of corner, usually max or min)
 sd_load_aocvm_gcd -timing_mode (Timing analysis mode: hold or setup)
 sd_load_aocvm_legacy -corner (Name of corner, usually max or min)
 sd_load_aocvm_legacy -timing_mode (Timing analysis mode: hold or setup)
 sd_load_aocvm_legacy -voltage (Voltage for corner)
 sd_load_aocvm_legacy -vt_list (List of valid VT types: ln, nn, etc)
+sd_load_app_option_info
+sd_load_base_db_for_eco
+sd_load_block_timing
+sd_load_incremental_srsn
+sd_load_incremental_upf
+sd_load_io_placement
+sd_load_macro_placement
+sd_load_ocvm
+sd_load_pg_grid
+sd_load_pocvm
+sd_load_post_split_constraints
+sd_load_pre_defined_shapes_for_blocks
+sd_load_routing_blockage_groups
+sd_load_td_routes
+sd_load_tm
+sd_load_tracks
+sd_load_upf
+sd_local_fiducial_cells
+sd_lr_check_env_vars
+sd_lr_overrride_tool_versions
+sd_lr_ovr_tools
+sd_lr_restore_saved_vars_and_tool_versions
+sd_lr_setup_run_dir
+sd_macro_pin_expose_to_block
+sd_macro_placement
 sd_macropowerswitchorder -drive_p (Drive pin)
 sd_macropowerswitchorder -inputPortPattern 
 sd_macropowerswitchorder -outputPortPattern 
 sd_macropowerswitchorder -va_name (Voltage name)
+sd_man_page
 sd_mark_critical_nets_for_qea_fill -nets (List or collection of nets to be marked as critical for qea fill)
 sd_mbist_constraints -scenarios (run for list of scenarios, by default running for all scenarios)
+sd_mcmm_analyze_existing_labels
+sd_mcmm_corners_setup
+sd_mcmm_create_scenarios_and_status
+sd_mcmm_get_corner_default_voltage
+sd_mcmm_get_corner_of_scenario
+sd_mcmm_get_corner_priority_search_path
+sd_mcmm_get_corners_from_map
+sd_mcmm_get_default_scenario
+sd_mcmm_get_mode_of_scenario
+sd_mcmm_get_mode_priority_search_path
+sd_mcmm_get_process_label
+sd_mcmm_get_process_number
+sd_mcmm_get_scenario_constraint_files
+sd_mcmm_get_scenario_from_corner
+sd_mcmm_get_scenario_priority_search_path
+sd_mcmm_is_compatible_mode
+sd_mcmm_match_ebb_label
+sd_mcmm_match_ebb_label_from_dror
+sd_mcmm_match_library_labels_to_spec
+sd_mcmm_match_stdlib_label
+sd_mcmm_match_stdlib_label_from_dror
+sd_mcmm_post_setup_source
+sd_mcmm_report_and_verify_pvt
 sd_mcmm_set_corner_constraints -corners (list of corners to run for, default is all)
+sd_mcmm_set_max_transition
 sd_mcmm_set_mode_constraints -modes (list of modes to run for, default is all)
 sd_mcmm_set_parasitics_parameters -corners (list of corners to work on, default is all)
 sd_mcmm_set_process_labels_numbers -corners (list of corners to work on, default is all)
@@ -7341,18 +8618,26 @@ sd_mcmm_set_voltage -corners (list of corners to work on, default is all)
 sd_mcmm_set_voltage_by_source -corners (list of corners to work on, default is all)
 sd_mcmm_setup -keep_existing_scenarios 
 sd_mcmm_setup -skip_loading_constraints 
+sd_mcmm_setup_from_file
 sd_mcmm_source_constraints_file -filename (file name to source)
 sd_mcmm_source_constraints_file -flags (flags passed to rdt_source_if_exists)
 sd_mcmm_source_constraints_file -logfile (log file name)
+sd_mcmm_source_translated_icc_sdc_file
 sd_mcmm_timing_constraints -corners (list of corners to run for, default is all)
 sd_mcmm_timing_constraints -modes (list of modes to run for, default is all)
 sd_mcmm_timing_constraints -scenarios (list of scenarios to run for, default is all)
+sd_mcmm_verify_corner_name_type
 sd_merge_layout_files -cell (Specify top cell in the input layout file.)
 sd_merge_layout_files -compress (Specify if the layout file is compressed)
 sd_merge_layout_files -gds (Specify the input gds file.)
 sd_merge_layout_files -merge_list 
 sd_merge_layout_files -oasis (Specify the input oasis file.)
 sd_merge_layout_files -units (Specify the length precision.)
+sd_metal_pre_fill
+sd_module_placement
+sd_n_site_cycling
+sd_need_m0cid_remapping
+sd_open_block
 sd_open_library -block (Block to be opened; default G_DESIGN_NAME)
 sd_open_library -dont_copy (Does not copy the lib to design_LIB)
 sd_open_library -init (Create the library and design (G_DESIGN_NAME))
@@ -7363,15 +8648,43 @@ sd_open_library -readonly (Open the library in read only mode)
 sd_open_library -reset_references (Reset the references)
 sd_open_library -update_design_tech (Update tech file and tlu+)
 sd_open_library -update_techfile (Update the tech file)
+sd_opportunistic_lfid_cells
+sd_outputs
+sd_outputs_aon_pg_net
 sd_outputs_box_file -output_file (Specify the location of the output file)
+sd_outputs_create_abstract
 sd_outputs_data_for_extraction -generate_boxfile (Generates the boxfile as a part of the FC pushdown call)
 sd_outputs_data_for_extraction -input_lib (Pointer to input nlib)
 sd_outputs_data_for_extraction -output_lib (Pointer to output lib)
 sd_outputs_data_for_extraction -update_hips (Update the hip references-Ensure you have run noble -populate to get latest hip_list.tcl in WARD/collateral/rtl)
+sd_outputs_def
+sd_outputs_def_dct
+sd_outputs_def_redhawk
+sd_outputs_fdr_write_vrlg_attr
+sd_outputs_floorplan_tcl
+sd_outputs_frame
+sd_outputs_gds
+sd_outputs_icv_netlist
+sd_outputs_iwsdb_write_donut
+sd_outputs_lef
+sd_outputs_macro_floorplan
+sd_outputs_oas
+sd_outputs_outputs_for_icc
+sd_outputs_pb_floorplan
+sd_outputs_saif
+sd_outputs_scandef
+sd_outputs_sdc
+sd_outputs_spef
+sd_outputs_upf_etm
+sd_outputs_upf_out
+sd_outputs_verilog
+sd_outputs_verilog_w_power
+sd_outputs_xyv
 sd_pg_calculate_blockage -custom_pg (Include custom powergrid)
 sd_pg_calculate_blockage -domain_name (Specify the domain name of upf design)
 sd_pg_calculate_custom_grid_blockage -no_softmacro_blockage 
 sd_pg_calculate_custom_grid_blockage -polygon (Specify the polygon of the custom grid)
+sd_pg_regions
 sd_pg_set_strategy -block (blocks)
 sd_pg_set_strategy -blockages (specify blockage for the power grid)
 sd_pg_set_strategy -custom_tags (Generate power strategies for specified custom tags only)
@@ -7381,14 +8694,33 @@ sd_pg_set_strategy -tag (strategy tag name)
 sd_pg_set_strategy -va (voltage area)
 sd_pg_set_strategy -va_mode (create strategy base on va area instead of design boundary)
 sd_pg_via0_via1_insertion -dirty_mode (Insert missing vias)
+sd_place
+sd_place_custom_2pass
+sd_place_exploration
+sd_place_hier_pins
 sd_place_pins -nets (Nets to run place-pins on for testing)
+sd_place_refine
+sd_placement_blockage
+sd_polaris_call
+sd_post_cts_opt
+sd_post_cts_setup
 sd_post_priority_route_report -nets (Nets to report on priority route)
 sd_post_priority_route_report -use_gcr (Report from GCR priority routing. Default: ZRoute)
 sd_post_priority_route_report -work_dir (Specify working directory-name for priority-route use. Default: priority_route)
+sd_post_pushdown_clean_up
+sd_postplace_spare_cells
+sd_postprocss_verilog_netlist
+sd_postroute_tap_insertion
+sd_power_hookup_search_repair
+sd_power_switching_activity
+sd_pre_clock_route
 sd_pre_priority_route_report -nets (Nets to report on priority route)
 sd_pre_priority_route_report -work_dir (Specify working directory-name for priority-route use. Default: priority_route)
+sd_prep_collateral_for_pt
+sd_preroute
 sd_priority_create_shields -nets (Nets to priority create-shields. Default: All)
 sd_priority_create_shields -post_gcr (Post GCR shield modification. Default: None)
+sd_priority_place_hier_pins
 sd_priority_route -debug (Used specifically for GCR debug. Default: G_PRIORITY_DEBUG)
 sd_priority_route -devtest (DO NOT USE!!! Developer testing switch ONLY. Default: PRD)
 sd_priority_route -gcr_avoid_PG_tracks (Add net type into the track spec of the pattern and avoid using PG tracks. Default: None)
@@ -7404,6 +8736,10 @@ sd_priority_route -use_gcr (Run GCR for priority routing. Default: G_GCR_ROUTE/Z
 sd_priority_route -verbose (Print more information. Default: None)
 sd_priority_route -work_dir (Specify working directory-name for priority-route use. Default: priority_route)
 sd_priority_route_group -nets (Nets to priority group-route)
+sd_process_dcszo_cells
+sd_process_ptlr_collaterals
+sd_propagate_driver_supply
+sd_propagate_pg_terminal
 sd_ps_handle_dangling_ack_net -drv_pin (Pin to drive the ps chain hier ack pin)
 sd_ps_handle_dangling_ack_net -is_top_level_port 
 sd_ps_handle_dangling_ack_net -ps_ack_port 
@@ -7414,19 +8750,105 @@ sd_ps_pg_hookup_use_cfg -connect_layer (Specify the ungated layer to hookup. Def
 sd_ps_pg_hookup_use_cfg -incremental (Run the power switch power hookup in incremental mode on newly added PS cells)
 sd_ps_pg_hookup_use_cfg -ps_pin_name 
 sd_ps_remove_hookup -cells (Specify the ps cells to insert via ladder)
+sd_ps_report_chain_info
+sd_ps_snap_placement
+sd_ps_stitching
+sd_pt_ctsizer_run_flow
+sd_pt_lr_run_flow
+sd_pt_lrdp_run_flow
+sd_pteco_apr_eco_setting
+sd_pteco_fixer
+sd_push_down_pg
+sd_pushdown
+sd_pushdown_pv_voltage_map
 sd_pwr_hookup_interity_check -checker_max_tracks_for_gcn 
 sd_pwr_hookup_interity_check -checker_max_tracks_for_m0 
 sd_pwr_hookup_interity_check -max_tracks_for_gcn_in_cell 
 sd_pwr_hookup_interity_check -max_tracks_for_m0_in_cell 
+sd_qea_fill_critical_net_flow
 sd_read_design -force_full_view (Force reading of full verilog - full view)
+sd_read_design_for_delite
+sd_read_design_for_planning
+sd_read_design_for_split_constraints
 sd_read_layout_file -cell (Specify top cell name in input oasis)
 sd_read_layout_file -oasis 
 sd_read_layout_file -type (Specify dfm run type)
+sd_read_netspec
+sd_read_pin_constraints_in_tcl_format
+sd_read_pin_constraints_in_topo_format
+sd_read_pspec
+sd_read_pushdown_cells
+sd_read_pushdown_content
+sd_read_pushdown_routes_and_blockages
+sd_read_pv_voltage_mapfile
+sd_read_tspec
+sd_read_upf
+sd_read_user_collateral
+sd_read_voltage_tcl_file
+sd_reconcile_tintent
+sd_regen_budgets
 sd_remove_aon_pg_hookup -cells (Specify the aon cells to insert via ladder)
+sd_remove_critical_nets_for_qea_fill
+sd_remove_donut
+sd_remove_icc_wrappers
+sd_remove_level_shifter
+sd_remove_pg_pins_based_on_user_input
 sd_remove_priority_routes -nets (Nets to remove priority routes)
+sd_remove_top_gas_station_wrapper
+sd_replace_module_netlist
+sd_report_pin_constraints
+sd_report_pin_placement_qor
+sd_reports_app_options
+sd_reports_area
+sd_reports_check_legality
+sd_reports_check_mv_design
+sd_reports_check_pin_placement
+sd_reports_check_routes
+sd_reports_clk_cap_histogram
+sd_reports_clk_latency
+sd_reports_clk_local_skew
+sd_reports_clk_local_skew_histogram
+sd_reports_clk_skew
+sd_reports_clk_structure
+sd_reports_clk_transition
+sd_reports_clock
+sd_reports_clock_drc_violators
+sd_reports_clock_tree_summary
+sd_reports_config_vars
+sd_reports_design_check
+sd_reports_design_qor
+sd_reports_design_report
+sd_reports_macro_data
+sd_reports_max_fanout_vio
+sd_reports_pdfx_content
+sd_reports_pdfx_power_connections
+sd_reports_pg_connectivity
+sd_reports_pg_drc
+sd_reports_pin_placement_qor
+sd_reports_ps_chain_info
+sd_reports_pspec
+sd_reports_qor
+sd_reports_secondary_power_bounds
+sd_reports_threshold_voltage_group
+sd_reports_vio_all
+sd_reports_vio_max_no_clock_expanded_nworst_100
+sd_reports_vio_max_nworst_100
+sd_reports_vio_min_no_clock_expanded_nworst_100
+sd_reports_vio_min_nworst_100
+sd_reports_zeroRC_timing
+sd_reset_library
+sd_restore_input_port_diode_connections
+sd_restore_pre_abstract_cmds
+sd_restore_user_default_app_options
+sd_route
 sd_route_add_via_ladders -allow_drcs 
 sd_route_add_via_ladders -report_tag (Report stage tag.)
+sd_route_global
+sd_route_opt
+sd_rpd_post_place
+sd_run_adr
 sd_run_conformal_check -run_check (optional argument to run actual conformal check, default only shell shell executable file is generated)
+sd_run_health_check
 sd_run_parallel_job -blocks (collection of blocks for which script will run)
 sd_run_parallel_job -cells (collection of cells for which script will run)
 sd_run_parallel_job -detach (detach)
@@ -7435,29 +8857,81 @@ sd_run_parallel_job -run_order (top_down or bottom_up or all)
 sd_run_parallel_job -script_name (name of scripts to execute, include full-path to script)
 sd_run_parallel_job -var_list (list_of_variable_value_pairs)
 sd_run_parallel_job -work_dir (name of working directory where run_block_script jobs will be managed)
+sd_run_rumba_flow
+sd_save_input_port_diode_connections
+sd_save_user_default_app_options
 sd_seq_chain_alignment -anchors (Ports or pins that are startpoints for the chains)
 sd_seq_chain_alignment -corridor (Routing corridor object that is created in the database)
 sd_seq_chain_alignment -run_place_pins (Switch to enable place_pins command run after all constraints are set)
+sd_ser_insertion
+sd_set_antenna_rules
+sd_set_attributes
+sd_set_boundary_for_logical_black_box
+sd_set_boundary_insertion_variables
 sd_set_detail_route_shape_use_and_physical_status -layers (List of layers to set shape-use and physical-status. Default: All)
 sd_set_detail_route_shape_use_and_physical_status -nets (Nets to set shape-use from detail-route. Default: All)
 sd_set_detail_route_shape_use_and_physical_status -phys_status 
 sd_set_detail_route_shape_use_and_physical_status -shape_use (Shape-use to set from detail-route shape-use. Default: user_route)
 sd_set_freeze_port_constraints -remove (remove all freeze port settings)
 sd_set_freeze_port_constraints -type (data/clock/all )
+sd_set_gvars_from_array
+sd_set_hierarchy_owner
+sd_set_host_options
 sd_set_io_preroute_constraints -max_layer_constraint 
 sd_set_io_preroute_constraints -min_layer_constraint 
 sd_set_io_preroute_constraints -ports (List of port to check)
 sd_set_io_preroute_constraints -use_ndr (Use ndr for the net. Default is not use)
+sd_set_is_ft_noconn
+sd_set_is_ft_noconn_for_block
+sd_set_is_td
 sd_set_layer_costs -costlist (Specify a complete list {via1 via2 ... via9  m0 m1 ... m10})
 sd_set_layer_costs -reset (Reset layer costs back to defaults)
+sd_set_min_max_ignored_layers
+sd_set_multi_vtlibs
+sd_set_parent_bbox
+sd_set_pg_td_true
+sd_set_pocvm_coeff_scale_factor
+sd_set_pocvm_guardband
+sd_set_preroute_constraints
 sd_set_priority_route_options -trunk_only (Route on preferred layers only. Default: Route on preferred layers and other layers to access pins)
 sd_set_priority_route_options -use_gcr (Set GCR route options. Default: ZRoute)
+sd_set_routing_direction
+sd_set_tile_symmetry
+sd_set_vt_groups
+sd_set_wiretracks
+sd_setup_ctp_config
+sd_setup_macro_placement_constraints
+sd_setup_parasitic_tech
+sd_setup_placement_constraints
+sd_setup_xmim
+sd_shape_blocks
+sd_shell_budgets
+sd_skew_groups_for_icc
 sd_snap_macro_placement -pushdown (Enable and control snapping for pushdowns)
+sd_source_caliber_cbc_files
+sd_spare_cells
+sd_split_constraints
 sd_split_ps_chain -control_signal (List of control signal names of "a" chain of above power domains in the same order)
 sd_split_ps_chain -domain_name (List of power domain names to split the chain)
 sd_split_ps_chain -use_g_var_libcell (Uses G_POWER_SWITCH_CELL instead of upf lib cell)
+sd_stdcell_power_hookup
+sd_stitch_from_mapfile
+sd_stitch_physically_shorted_pins
+sd_stitch_xmim
+sd_swap_design_and_remove_abstract
 sd_swap_macrohalos_heml4 -macros (to query blocks info for all macros)
+sd_switch_to_donut
+sd_synthesize_clock_trunks
+sd_tap_cells
+sd_td_handler
+sd_test_budgets
+sd_tho_off
+sd_tho_on
+sd_tho_place
 sd_time_derate_setup -corners (list of corners to work on, default is all)
+sd_tm_attach_attribute
+sd_tm_create_terminal_blockage_on_boundary
+sd_tm_get_boundary
 sd_tm_popup -disable_mim (Dont process MIM Cap layers)
 sd_tm_route_terminal_blockage_on_boundary -layer (Layers to be processed)
 sd_tm_route_terminal_blockage_on_boundary -only_blockages (If only blockages to create)
@@ -7468,12 +8942,30 @@ sd_tm_write_collateral -disable_mim (Dont process MIM Cap layers)
 sd_tm_write_collateral -dont_delete_top_metals 
 sd_tm_write_collateral -generate_def (To generate DEF file(both bu_tm & td_tm) : Default is .tcl format)
 sd_tm_write_collateral -skip_bu_tm (In case if you want to generate only td_tm you can disable generating bu_tm with this option)
+sd_undo_pteco_apr_eco_setting
+sd_update_local_config_for_mcmm_run
+sd_update_uin_keepout_cells
+sd_upf_setup
+sd_uv_fill
+sd_vcx250_fill
+sd_vector_swap
+sd_via1_size
+sd_via_color
+sd_visa_set_clock_exceptions
+sd_visa_trace_connectivity
+sd_voltage_areas
+sd_waitForICVComplete
+sd_write_collateral
 sd_write_collateral_for_block -block (Name of the block for which collateral is being written)
 sd_write_collateral_for_block -cache_dir (Directory with cached collateral info)
 sd_write_collateral_for_block -formats (List of formats to write collaterals)
+sd_write_dp2apr_hand_shaking_ndm
+sd_write_evr_collateral
 sd_write_evr_collateral_for_one_cell -cell (Cell to write collateral for)
 sd_write_evr_collateral_for_one_cell -file_name (File name)
 sd_write_evr_collateral_for_one_cell -layers (List of layers to write EVR collateral for)
+sd_write_icv_netlist
+sd_write_iss_cmdfile
 sd_write_layout_file -cell (Specify the cell for the layout file. Default is the current open cel)
 sd_write_layout_file -compress (Specify if layout file to be compressed.  Oasis is compressed by default)
 sd_write_layout_file -create_port_for_terminals 
@@ -7484,6 +8976,7 @@ sd_write_layout_file -output_net_text (Specify if text is to be written for a ne
 sd_write_layout_file -rename_cell 
 sd_write_layout_file -skip_fill_output (Specify if fill data should be skipped)
 sd_write_layout_file -use_donut (Enable using donut models for sub blocks)
+sd_write_macro_spice
 sd_write_oas2ndm -fillcell (Specify if oas write to FILL view)
 sd_write_oas2ndm -input_oasis_file 
 sd_write_oas2ndm -input_top_cell 
@@ -7491,6 +8984,8 @@ sd_write_oas2ndm -ndm_lib_cell
 sd_write_oas2ndm -ndm_lib_name 
 sd_write_oas2ndm -ndm_lib_path 
 sd_write_oas2ndm -rundir (run directory)
+sd_write_verilog_netlist
+sd_zt_brb_on_cell_pin_ends
 sd_zt_brb_on_pin_ends -pin (Pin to add routing blockages on ends)
 sd_zt_create_brb_around_macro -back_off_half_dr (back_off brb half dr from boundary)
 sd_zt_create_brb_around_macro -macro (generate brb for this macro)
@@ -7506,6 +9001,7 @@ sd_zt_neighbor_isolated_pins -terminals (Specify terminals to fix. Default is fo
 sd_zt_pull_back_boundary_terms -layers (Pull-back terminals on these layers)
 sd_zt_query_term_neighbor -dir (Provide direction to look for neighbor: left/right/up/down)
 sd_zt_query_term_neighbor -terminal (Find neighbor of this terminal)
+sd_zt_remove_brb_on_cell_pin_ends
 sd_zt_stagger_pin_triplets -layer (Specify layer to stagger boundary pins.)
 sd_zt_stagger_pin_triplets -length1 (First terminal length)
 sd_zt_stagger_pin_triplets -length2 (Second terminal length)
@@ -7513,7 +9009,11 @@ sd_zt_stagger_pin_triplets -length3 (Third terminal length)
 sd_zt_stagger_pin_triplets -length4 (Fourth terminal length)
 sd_zt_stagger_pin_triplets -length5 (Fifth terminal length)
 sd_zt_stagger_pin_triplets -length6 (Sixth terminal length.  Longest between length1, length2, length3, length4, length5 and lenght6 will be used to as first pin length in pattern. 2nd longest will be used as 2nd pin length and so on. )
+seed_pspecs
+selection
+send
 send_status -status (Status message to send)
+setDuetUser
 set_3d_chip_placement -chip (Name of chip)
 set_3d_chip_placement -location (Location of chip {x y z}, default is {0 0 0})
 set_3d_chip_placement -orientation 
@@ -7558,6 +9058,7 @@ set_annotated_transition -min (Set minimum transition only)
 set_annotated_transition -modes (use scenarios of these modes (default is current mode, or current scenario if neither mode nor corner are specified))
 set_annotated_transition -rise (Set rise transition only)
 set_annotated_transition -scenarios 
+set_aocvm_coefficient
 set_app_options -as_user_default (Update the user-default)
 set_app_options -block (Set options on this block)
 set_app_options -category (Category of the application option)
@@ -7572,6 +9073,7 @@ set_attribute -quiet (Suppress warning messages)
 set_attribute -value (Attribute value)
 set_base_lib -base_lib (Base library path)
 set_base_lib -library (Library)
+set_blackbox_clock_port
 set_blackbox_port_drive -input_transition_fall 
 set_blackbox_port_drive -input_transition_rise 
 set_blackbox_port_drive -type (Specify the pre-defined drive type for the ports)
@@ -7703,6 +9205,7 @@ set_busplan_constraints -remove (remove all constraints on bus)
 set_busplan_constraints -to (bus the constraint is to)
 set_busplan_constraints -to_value 
 set_busplan_constraints -type (constraint to set)
+set_case_analysis
 set_cell_hierarchy_type -boundary (Boundary for the cell (only valid for boundary or partition types))
 set_cell_hierarchy_type -type (New hierarchy type: 
 set_cell_location -coordinates (Cell placement origin)
@@ -7862,11 +9365,13 @@ set_density_gradient_options -white_space_density
 set_design_attributes -attribute 
 set_design_attributes -elements 
 set_design_attributes -models (list of lib cells on which the attribute will be set)
+set_disable_clock_gating_check
 set_disable_timing -from (From pin on cell)
 set_disable_timing -loop_break (indicate whether constraints coming from tool, not user)
 set_disable_timing -to (To pin on cell)
 set_domain_supply_net -primary_ground_net 
 set_domain_supply_net -primary_power_net 
+set_dont_touch
 set_dont_touch_network -clear (Remove any dont_touch_network attribute)
 set_dont_touch_network -clock_only (Propagate only within clock network)
 set_dont_touch_network -no_propagate (Don't propagate across logic gates)
@@ -7994,6 +9499,7 @@ set_false_path -rise_to
 set_false_path -setup (Eliminate setup timing analysis for paths)
 set_false_path -through 
 set_false_path -to (List of path endpoints or clocks)
+set_fanout_load
 set_fixed_objects -unfix (Unfix objects)
 set_floorplan_area_rules -forbidden_list 
 set_floorplan_area_rules -forbidden_ranges 
@@ -8089,6 +9595,7 @@ set_grid -x_offset (Specify the grid's offset to the owner design's origin in th
 set_grid -x_step (Specify the grid pitch in the X direction)
 set_grid -y_offset (Specify the grid's offset to the owner design's origin in the Y direction)
 set_grid -y_step (Specify the grid pitch in the Y direction)
+set_hidden_app_var
 set_hierarchy_options -blocks 
 set_hierarchy_options -enable_planning 
 set_hierarchy_options -from_level 
@@ -8234,6 +9741,7 @@ set_load -rise (Specify the rise capacitance value (for ports only))
 set_load -subtract_pin_load (Subtract pin capacitance from value (nets only))
 set_load -wire_load (Wire capacitance (for ports only))
 set_locked_objects -unlock (Unlock objects)
+set_m14_pg_config_by_direction
 set_macro_constraints -align_pins_to_tracks 
 set_macro_constraints -alignment_grid 
 set_macro_constraints -alignment_orientation_set 
@@ -8269,6 +9777,8 @@ set_max_delay -rise_through
 set_max_delay -rise_to 
 set_max_delay -through 
 set_max_delay -to (List of path endpoints or clocks)
+set_max_fanout
+set_max_lvth_percentage
 set_max_time_borrow -corners (set max_time_borrow for scenarios of these corners (default is all corners, or current scenario if neither mode nor corner are specified))
 set_max_time_borrow -modes (set max_time_borrow for scenarios of these modes (default is current mode, or current scenario if neither mode nor corner are specified))
 set_max_time_borrow -scenarios 
@@ -8478,6 +9988,7 @@ set_placement_spacing_label -name (Label name)
 set_placement_spacing_label -row (row of cell)
 set_placement_spacing_label -side (Side one of left | right | both: 
 set_placement_spacing_rule -labels 
+set_placement_status
 set_pocvm_corner_sigma -corners (List of corners)
 set_pop_up_object_options -block_action 
 set_pop_up_object_options -object_type 
@@ -8513,6 +10024,7 @@ set_power_io_constraints -ratio
 set_power_io_constraints -reference_cell 
 set_power_io_constraints -share 
 set_power_io_constraints -spacing 
+set_power_strategy_attribute
 set_power_switch_placement_pattern -connect_mode 
 set_power_switch_placement_pattern -direction (power switch pattern placement direction: 
 set_power_switch_placement_pattern -driver (drive cell in the pattern)
@@ -8538,6 +10050,7 @@ set_programmable_spare_cell_mapping_rule -multi_height_merge
 set_programmable_spare_cell_mapping_rule -multi_height_split 
 set_programmable_spare_cell_mapping_rule -partial_overlap_pg_stripe_layer 
 set_programmable_spare_cell_mapping_rule -psc_type_id (a list of psc type id)
+set_propagated_clock
 set_push_down_object_options -allow_multi_rail_cells (default is false)]
 set_push_down_object_options -block_action 
 set_push_down_object_options -collinear_margin (default is -1, 0 means abutting exactly, >0 applies a non-0 margin)]
@@ -8692,6 +10205,7 @@ set_scenario_status -min_capacitance
 set_scenario_status -none (Turn off all analysis types)
 set_scenario_status -setup (Control setup analysis)
 set_scenario_status -signal_em 
+set_scope
 set_segment_budget_constraints -delay (Delay to attach to the segment)
 set_segment_budget_constraints -from (Pin on budget block where segment starts)
 set_segment_budget_constraints -remove (Remove the specified constraint)
@@ -8753,6 +10267,9 @@ set_ssc_data_write -hold_args (hold value)
 set_ssc_data_write -nofp (dont apply false paths)
 set_ssc_data_write -setup_args (setup value)
 set_ssc_data_write -to (name of the data port at which you want to create the check)
+set_ssc_top_get_par_name
+set_ssc_top_get_unit_name
+set_ssc_top_get_unit_par_names
 set_starrc_in_design -config (config file to set for StarRC in design)
 set_supernet_exceptions -disable_cells 
 set_supernet_exceptions -pins (Pins whch are to be set to supernet transparent)
@@ -8800,6 +10317,7 @@ set_timing_derate -rise (Specify rise derate factor)
 set_timing_derate -static (Specify derate factor for non-delta delays.)
 set_timing_derate -variation (Specify derate factor for statistical delays only. Option currenty ignored)
 set_timing_paths_disabled_blocks -all_sub_blocks (Ignore internal timing paths in all sub-blocks )
+set_tmp_var
 set_track_constraint -block 
 set_track_constraint -grid 
 set_track_constraint -label (A label identifying the given constraint)
@@ -8808,6 +10326,7 @@ set_track_constraint -mask
 set_track_constraint -offset 
 set_track_constraint -origin (The region in which the constraint applies: 
 set_track_constraint -track_direction 
+set_unix_variable
 set_user_units -input (Set the user units for data input)
 set_user_units -output (Set the user units for data output)
 set_user_units -type (Unit type: 
@@ -8870,6 +10389,9 @@ set_vt_filler_rule -vt_type (the vts to set the cell to)
 set_working_design -level (Level to pop design stack: 
 set_working_design -pop (Pop current design out of stack)
 set_working_design -push (Cell to be pushed to)
+set_working_design_stack
+setenv
+setup_toolbars_hotkeys
 setvar -constant (Value cannot be modified after setting)
 setvar -info (Information about the parameter)
 setvar -one_of (List of user specified value for the variable)
@@ -8877,16 +10399,19 @@ setvar -property (User property for parameter)
 setvar -roulette (Values for roulette flow.)
 setvar -subst (Run subst before returning the value in getvar)
 setvar -type (Type of the parameter)
+setvar_array
 setvar_array_copy_partial -clean (Cleanup target array first)
 setvar_array_copy_partial -from_array (Source array name)
 setvar_array_copy_partial -from_tag (Source array key pattern)
 setvar_array_copy_partial -to_array (Target array name)
 setvar_array_copy_partial -to_tag (Target array key pattern)
+sh
 shape_blocks -channels 
 shape_blocks -constraint_file 
 shape_blocks -host_options 
 shape_blocks -incremental 
 shape_blocks -pg_strategy 
+shell_debug
 signoff_calculate_hier_antenna_property -contact_layers 
 signoff_calculate_hier_antenna_property -contact_layers_between_m0_diffusion 
 signoff_calculate_hier_antenna_property -diffusion_layers 
@@ -8946,6 +10471,7 @@ signoff_report_metal_density -starting_point (Starting point for density windows
 size_cell -lib_cell (New lib_cell used to size cells)
 size_cell -max_distance_to_spare_cell 
 size_cell -not_spare_cell_aware 
+sizeof_collection
 snap_cells_to_block_grid -cells (Specify the block instances to snap)
 snap_cells_to_block_grid -designs (Specify the block designs)
 snap_cells_to_block_grid -grid (Specify the block grid)
@@ -8956,11 +10482,19 @@ snap_object_shapes -grid (grid to use for snapping)
 snap_object_shapes -left 
 snap_object_shapes -right 
 snap_object_shapes -top (Specifies snapping for all top edges: 
+snap_objects
+snps_version_at_least
+snps_version_prior_to
+snps_version_within
+sort_bboxes_y_x_increasing
 sort_collection -descending (Sort in descending order)
 sort_collection -dictionary (Sort strings dictionary order.)
 source -continue_on_error (Don't stop script on errors)
 source -echo (Echo all commands)
 source -verbose (Display intermediate results)
+source_pkg_file
+spinbox
+split_bins
 split_clock_cells -cells (list of cells to be split)
 split_clock_cells -loads 
 split_constraints -compress (File compression method: 
@@ -9024,8 +10558,13 @@ spread_wires -pitch (Number of pitches to spread on either side of the wire, def
 spread_wires -timing_preserve_hold_slack_threshold 
 spread_wires -timing_preserve_nets 
 spread_wires -timing_preserve_setup_slack_threshold 
+ss_remove_net_routing
+start_busplan_gui
 start_gui -file (file to source on gui_start)
 start_gui -no_windows (set flag not to load windows for this cmd)
+stop_gui
+suppress_message
+swap_objects
 synthesize_clock_trees -clocks (List of clocks)
 synthesize_clock_trees -postroute (run post route CTO)
 synthesize_clock_trees -propagate_only (purge ideal clocks attributes and propagate clocks only)
@@ -9048,6 +10587,1100 @@ synthesize_multisource_global_clock_trees -prefix (prefix for created instances)
 synthesize_multisource_global_clock_trees -roots (List of global clock tree roots)
 synthesize_multisource_global_clock_trees -skip_pin_connections 
 synthesize_multisource_global_clock_trees -use_zroute_for_pin_connections 
+table
+tclLog
+tclPkgSetup
+tclPkgUnknown
+tcl_findLibrary
+termWire
+test_rst
+text
+tix
+tixAddBindTag
+tixAppContext
+tixAppContext:AutoLoad
+tixAppContext:BitmapInit
+tixAppContext:Constructor
+tixAppContext:FileDialogInit
+tixAppContext:StartupError
+tixAppContext:addbitmapdir
+tixAppContext:config-fontset
+tixAppContext:config-scheme
+tixAppContext:filedialog
+tixAppContext:getbitmap
+tixAppContext:getimage
+tixAppContext:initstyle
+tixAppContext:option
+tixAppContext:platform
+tixAppContext:resetoptions
+tixAppendBindTag
+tixBalIgnoreWhenGrabbed
+tixBalloon
+tixBalloon:Activate
+tixBalloon:AutoLoad
+tixBalloon:ClearStatus
+tixBalloon:ClientDestroy
+tixBalloon:ConstructWidget
+tixBalloon:Deactivate
+tixBalloon:Destructor
+tixBalloon:GrabBad
+tixBalloon:InitWidgetRec
+tixBalloon:PopDown
+tixBalloon:PopUp
+tixBalloon:SetStatus
+tixBalloon:SwitchToClient
+tixBalloon:Verify
+tixBalloon:XXButton
+tixBalloon:XXButtonUp
+tixBalloon:XXMotion
+tixBalloon:bind
+tixBalloon:config-state
+tixBalloon:post
+tixBalloon:unbind
+tixBalloon_XXButton
+tixBalloon_XXButtonUp
+tixBalloon_XXMotion
+tixBind
+tixBreak
+tixBuiltInCmdErrorHandler
+tixBusy
+tixButtonBox
+tixButtonBox:AutoLoad
+tixButtonBox:InitWidgetRec
+tixButtonBox:add
+tixButtonBox:button
+tixButtonBox:buttons
+tixButtonBox:config-padx
+tixButtonBox:config-pady
+tixButtonBox:config-state
+tixButtonBox:invoke
+tixCObjView
+tixCObjView:AutoLoad
+tixCObjView:ConstructWidget
+tixCObjView:GeometryInfo
+tixCObjView:GetScrollRegion
+tixCObjView:PlaceWindow
+tixCObjView:SetBindings
+tixCObjView:SetScrollBars
+tixCObjView:UserScroll
+tixCObjView:XScroll
+tixCObjView:YScroll
+tixCObjView:adjustscrollregion
+tixCObjView:config-takefocus
+tixCallMethod
+tixChainMethod
+tixCheckList
+tixCheckList:AutoLoad
+tixCheckList:BrowseCmd
+tixCheckList:Command
+tixCheckList:GetSel
+tixCheckList:HandleCheck
+tixCheckList:InitWidgetRec
+tixCheckList:Select
+tixCheckList:getselection
+tixCheckList:getstatus
+tixCheckList:setstatus
+tixClass
+tixCmdErrorHandler
+tixComboBox
+tixComboBox:ArrowDown
+tixComboBox:ArrowUp
+tixComboBox:AutoLoad
+tixComboBox:BlinkEntry
+tixComboBox:Cancel
+tixComboBox:CheckListboxSelection
+tixComboBox:ClearListboxSelection
+tixComboBox:ConstructEntryFrame
+tixComboBox:ConstructFramedWidget
+tixComboBox:ConstructListFrame
+tixComboBox:ConstructListShell
+tixComboBox:CrossBtn
+tixComboBox:Destructor
+tixComboBox:EntDirKey
+tixComboBox:EntKeyPress
+tixComboBox:EntReturnKey
+tixComboBox:EntTab
+tixComboBox:EntryAlignEnd
+tixComboBox:EscKey
+tixComboBox:GoState
+tixComboBox:GoState-0
+tixComboBox:GoState-1
+tixComboBox:GoState-10
+tixComboBox:GoState-11
+tixComboBox:GoState-12
+tixComboBox:GoState-13
+tixComboBox:GoState-14
+tixComboBox:GoState-15
+tixComboBox:GoState-16
+tixComboBox:GoState-17
+tixComboBox:GoState-19
+tixComboBox:GoState-2
+tixComboBox:GoState-3
+tixComboBox:GoState-4
+tixComboBox:GoState-5
+tixComboBox:GoState-6
+tixComboBox:GoState-7
+tixComboBox:GoState-9
+tixComboBox:GoState-n0
+tixComboBox:GoState-n1
+tixComboBox:GoState-n3
+tixComboBox:GoState-n4
+tixComboBox:GoState-n6
+tixComboBox:Grab
+tixComboBox:HandleDirKey
+tixComboBox:InitWidgetRec
+tixComboBox:Invoke
+tixComboBox:LbBrowse
+tixComboBox:LbCommand
+tixComboBox:LbGetSelection
+tixComboBox:LbIndex
+tixComboBox:LbSelect
+tixComboBox:Popdown
+tixComboBox:Popup
+tixComboBox:RestoreBlink
+tixComboBox:RootDown
+tixComboBox:RootUp
+tixComboBox:SetBindings
+tixComboBox:SetCursor
+tixComboBox:SetSelection
+tixComboBox:SetSelectionFromListbox
+tixComboBox:SetState
+tixComboBox:SetValue
+tixComboBox:StateError
+tixComboBox:Ungrab
+tixComboBox:UpdateListboxSelection
+tixComboBox:WidUp
+tixComboBox:addhistory
+tixComboBox:align
+tixComboBox:appendhistory
+tixComboBox:config-selection
+tixComboBox:config-state
+tixComboBox:config-value
+tixComboBox:config-variable
+tixComboBox:flash
+tixComboBox:insert
+tixComboBox:invoke
+tixComboBox:pick
+tixComboBox:popdown
+tixComboBoxBind
+tixCombobox
+tixConsoleBind
+tixConsoleEvalAppend
+tixConsoleExit
+tixConsoleHistory
+tixConsoleInit
+tixConsoleInsert
+tixConsoleInvoke
+tixConsoleOutput
+tixConsolePrompt
+tixConsoleSetFont
+tixControl
+tixControl:AdjustValue
+tixControl:AutoLoad
+tixControl:ConstructFramedWidget
+tixControl:Destructor
+tixControl:Escape
+tixControl:InitWidgetRec
+tixControl:Invoke
+tixControl:KeyPress
+tixControl:Repeat
+tixControl:SetBindings
+tixControl:SetValue
+tixControl:StartRepeat
+tixControl:StopRepeat
+tixControl:Tab
+tixControl:config-state
+tixControl:config-value
+tixControl:config-variable
+tixControl:decr
+tixControl:incr
+tixControl:invoke
+tixControl:update
+tixControlBind
+tixDebug
+tixDeleteBindTag
+tixDescendants
+tixDestroy
+tixDetailList
+tixDetailList:AutoLoad
+tixDetailList:FormatCmd
+tixDialogDestroy
+tixDialogRestore
+tixDialogShell
+tixDialogShell:AutoLoad
+tixDialogShell:ConstructWidget
+tixDialogShell:center
+tixDialogShell:popdown
+tixDialogShell:popup
+tixDialogWithdraw
+tixDirList
+tixDirList:AutoLoad
+tixDirList:Browse
+tixDirList:CallBrowseCmd
+tixDirList:CallCommand
+tixDirList:Command
+tixDirList:ConstructWidget
+tixDirList:HighLight
+tixDirList:InitWidgetRec
+tixDirList:ListHierachy
+tixDirList:ListSubDirs
+tixDirList:LoadDir
+tixDirList:SetBindings
+tixDirList:SetValue
+tixDirList:chdir
+tixDirList:config-showhidden
+tixDirList:config-value
+tixDirSelectBox
+tixDirSelectBox:AutoLoad
+tixDirSelectBox:Browse-DirList
+tixDirSelectBox:Cmd-DirCbx
+tixDirSelectBox:Cmd-DirList
+tixDirSelectBox:ConstructWidget
+tixDirSelectBox:InitWidgetRec
+tixDirSelectBox:SetBindings
+tixDirSelectBox:SetValue
+tixDirSelectBox:config-label
+tixDirSelectBox:config-value
+tixDirSelectDialog
+tixDirSelectDialog:AutoLoad
+tixDirSelectDialog:CallCmd
+tixDirSelectDialog:Cancel
+tixDirSelectDialog:ConstructWidget
+tixDirSelectDialog:DirBoxCmd
+tixDirSelectDialog:OK
+tixDirSelectDialog:SetBindings
+tixDirTree
+tixDirTree:AddToList
+tixDirTree:AutoLoad
+tixDirTree:BrowseCmd
+tixDirTree:CallBrowseCmd
+tixDirTree:CallCommand
+tixDirTree:ChangeDir
+tixDirTree:CloseCmd
+tixDirTree:Command
+tixDirTree:ConstructWidget
+tixDirTree:InitWidgetRec
+tixDirTree:LoadDir
+tixDirTree:OpenCmd
+tixDirTree:SetBindings
+tixDirTree:SetDir
+tixDirTree:StartUp
+tixDirTree:ToggleDir
+tixDirTree:chdir
+tixDirTree:config-directory
+tixDirTree:refresh
+tixDisableAll
+tixDisplayStyle
+tixDlgBtns
+tixDoWhenIdle
+tixDoWhenMapped
+tixDragDropContext
+tixDragDropContext:AutoLoad
+tixDragDropContext:CallCommand
+tixDragDropContext:Constructor
+tixDragDropContext:Send
+tixDragDropContext:drag
+tixDragDropContext:drop
+tixDragDropContext:set
+tixDragDropContext:startdrag
+tixDropBind
+tixDropBindTags
+tixEnableAll
+tixEvalCmdBinding
+tixEvent
+tixExFileSelectBox
+tixExFileSelectBox:AutoLoad
+tixExFileSelectBox:Browse-DirList
+tixExFileSelectBox:Cancel
+tixExFileSelectBox:Cmd-DirCombo
+tixExFileSelectBox:Cmd-DirList
+tixExFileSelectBox:Cmd-FileCombo
+tixExFileSelectBox:Cmd-FileList
+tixExFileSelectBox:Cmd-TypeCombo
+tixExFileSelectBox:ConstructWidget
+tixExFileSelectBox:InitWidgetRec
+tixExFileSelectBox:Invoke
+tixExFileSelectBox:IsPattern
+tixExFileSelectBox:LoadFiles
+tixExFileSelectBox:Map
+tixExFileSelectBox:Ok
+tixExFileSelectBox:SetShowHidden
+tixExFileSelectBox:config-directory
+tixExFileSelectBox:config-filetypes
+tixExFileSelectBox:config-showhidden
+tixExFileSelectBox:filter
+tixExFileSelectBox:invoke
+tixExFileSelectDialog
+tixExFileSelectDialog:AutoLoad
+tixExFileSelectDialog:ConstructWidget
+tixExFileSelectDialog:SetBindings
+tixExFileSelectDialog:config-command
+tixFSAncestors
+tixFSDisplayFileName
+tixFSDisplayName
+tixFSExternal
+tixFSInternal
+tixFSIsAbsPath
+tixFSIsValid
+tixFSJoin
+tixFSListDir
+tixFSNative
+tixFSNativeNorm
+tixFSNormalize
+tixFSSep
+tixFSTilde
+tixFSVolumes
+tixFalse
+tixFile
+tixFileComboBox
+tixFileComboBox:AutoLoad
+tixFileComboBox:ConstructWidget
+tixFileComboBox:InitWidgetRec
+tixFileComboBox:OnComboCmd
+tixFileComboBox:SetBindings
+tixFileComboBox:config-directory
+tixFileComboBox:config-text
+tixFileComboBox:invoke
+tixFileEntry
+tixFileEntry:AutoLoad
+tixFileEntry:ConstructFramedWidget
+tixFileEntry:Destructor
+tixFileEntry:FileDlgCallback
+tixFileEntry:InitWidgetRec
+tixFileEntry:OpenFile
+tixFileEntry:SetBindings
+tixFileEntry:SetValue
+tixFileEntry:config-state
+tixFileEntry:config-value
+tixFileEntry:config-variable
+tixFileEntry:filedialog
+tixFileEntry:invoke
+tixFileEntry:update
+tixFileJoin
+tixFileSelectBox
+tixFileSelectBox:AutoLoad
+tixFileSelectBox:ConstructWidget
+tixFileSelectBox:CreateFrame1
+tixFileSelectBox:CreateFrame2
+tixFileSelectBox:CreateFrame3
+tixFileSelectBox:FirstMapped
+tixFileSelectBox:InitWidgetRec
+tixFileSelectBox:InterpFilter
+tixFileSelectBox:InvokeDir
+tixFileSelectBox:InvokeFile
+tixFileSelectBox:LoadDir
+tixFileSelectBox:LoadDirIntoLists
+tixFileSelectBox:SelInvoke
+tixFileSelectBox:SelectDir
+tixFileSelectBox:SelectFile
+tixFileSelectBox:SetBindings
+tixFileSelectBox:SetDir
+tixFileSelectBox:SetFilter
+tixFileSelectBox:SetPat
+tixFileSelectBox:SetValue
+tixFileSelectBox:config-directory
+tixFileSelectBox:config-pattern
+tixFileSelectBox:config-value
+tixFileSelectBox:filter
+tixFileSelectBox:invoke
+tixFileSelectDialog
+tixFileSelectDialog:AutoLoad
+tixFileSelectDialog:ConstructTopFrame
+tixFileSelectDialog:Invoke
+tixFileSelectDialog:SetBindings
+tixFileSelectbox
+tixFloatEntry
+tixFloatEntry:AutoLoad
+tixFloatEntry:ConstructWidget
+tixFloatEntry:InitWidgetRec
+tixFloatEntry:SetBindings
+tixFloatEntry:config-value
+tixFloatEntry:invoke
+tixFloatEntry:post
+tixFloatEntry:unpost
+tixFloatEntryBind
+tixFlushX
+tixForm
+tixGeometryRequest
+tixGet3DBorder
+tixGetBoolean
+tixGetDefault
+tixGetDragDropContext
+tixGetInt
+tixGetMegaWidget
+tixGetMethod
+tixGrid
+tixGrid:AutoScan
+tixGrid:B1-Enter
+tixGrid:B1-Leave
+tixGrid:B1-Motion
+tixGrid:Button-1
+tixGrid:ButtonRelease-1
+tixGrid:CallBrowseCmd
+tixGrid:CallCommand
+tixGrid:CheckEdit
+tixGrid:Control-B1-Enter
+tixGrid:Control-B1-Leave
+tixGrid:Control-B1-Motion
+tixGrid:Control-Button-1
+tixGrid:DirKey
+tixGrid:DoScan
+tixGrid:DoneEdit
+tixGrid:Double-1
+tixGrid:EditApply
+tixGrid:EditCell
+tixGrid:GetState
+tixGrid:GoState
+tixGrid:GoState-0
+tixGrid:GoState-1
+tixGrid:GoState-12
+tixGrid:GoState-13
+tixGrid:GoState-14
+tixGrid:GoState-16
+tixGrid:GoState-18
+tixGrid:GoState-2
+tixGrid:GoState-20
+tixGrid:GoState-21
+tixGrid:GoState-22
+tixGrid:GoState-3
+tixGrid:GoState-4
+tixGrid:GoState-5
+tixGrid:GoState-b0
+tixGrid:GoState-b1
+tixGrid:GoState-b10
+tixGrid:GoState-b2
+tixGrid:GoState-b3
+tixGrid:GoState-b4
+tixGrid:GoState-b5
+tixGrid:GoState-b6
+tixGrid:GoState-b7
+tixGrid:GoState-b8
+tixGrid:GoState-b9
+tixGrid:GoState-e0
+tixGrid:GoState-e1
+tixGrid:GoState-e10
+tixGrid:GoState-e2
+tixGrid:GoState-e3
+tixGrid:GoState-e4
+tixGrid:GoState-e5
+tixGrid:GoState-e6
+tixGrid:GoState-e7
+tixGrid:GoState-e8
+tixGrid:GoState-e9
+tixGrid:GoState-m0
+tixGrid:GoState-m1
+tixGrid:GoState-m2
+tixGrid:GoState-m3
+tixGrid:GoState-m4
+tixGrid:GoState-m5
+tixGrid:GoState-m6
+tixGrid:GoState-m7
+tixGrid:GoState-m8
+tixGrid:GoState-m9
+tixGrid:GoState-s10
+tixGrid:GoState-s5
+tixGrid:GoState-s6
+tixGrid:GoState-s7
+tixGrid:GoState-s8
+tixGrid:GoState-s9
+tixGrid:GoState-xm7
+tixGrid:Return
+tixGrid:Select
+tixGrid:SelectSingle
+tixGrid:SetAnchor
+tixGrid:SetEdit
+tixGrid:SetFocus
+tixGrid:SetState
+tixGrid:Shift-Button-1
+tixGrid:Space
+tixGrid:StartScan
+tixGridBind
+tixHList
+tixHList:AutoScan
+tixHList:B1-Enter
+tixHList:B1-Leave
+tixHList:B1-Motion
+tixHList:Browse
+tixHList:Button-1
+tixHList:ButtonRelease-1
+tixHList:CallIndicatorCmd
+tixHList:DoScan
+tixHList:Double-1
+tixHList:GetNearest
+tixHList:GetState
+tixHList:GoState
+tixHList:GoState-0
+tixHList:GoState-1
+tixHList:GoState-10
+tixHList:GoState-11
+tixHList:GoState-12
+tixHList:GoState-13
+tixHList:GoState-14
+tixHList:GoState-16
+tixHList:GoState-18
+tixHList:GoState-20
+tixHList:GoState-21
+tixHList:GoState-22
+tixHList:GoState-23
+tixHList:GoState-24
+tixHList:GoState-25
+tixHList:GoState-26
+tixHList:GoState-27
+tixHList:GoState-28
+tixHList:GoState-29
+tixHList:GoState-30
+tixHList:GoState-31
+tixHList:GoState-32
+tixHList:GoState-33
+tixHList:GoState-5
+tixHList:GoState-6
+tixHList:InsideArmedIndicator
+tixHList:Keyboard-Activate
+tixHList:Keyboard-Browse
+tixHList:LeftRight
+tixHList:Select
+tixHList:SetAnchor
+tixHList:SetState
+tixHList:StartScan
+tixHList:UpDown
+tixHListBind
+tixHListSingle:DragTimer
+tixHListSingle:Rec:DragIn
+tixHListSingle:Rec:DragOut
+tixHListSingle:Rec:DragOver
+tixHListSingle:Rec:Drop
+tixHListSingle:Send:Cmd
+tixHListSingle:Send:DoneDrag
+tixHListSingle:Send:StartDrag
+tixHListSingle:Send:WaitDrag
+tixHandleArgv
+tixHandleOptions
+tixIconView
+tixIconView:Arrange
+tixIconView:ArrangeGrid
+tixIconView:ArrangePack
+tixIconView:AutoLoad
+tixIconView:ConstructWidget
+tixIconView:Drag
+tixIconView:EndDrag
+tixIconView:PackOneRow
+tixIconView:PlaceWindow
+tixIconView:SetBindings
+tixIconView:StartDrag
+tixIconView:add
+tixIconView:arrange
+tixInit
+tixInputOnly
+tixInt_Expand
+tixIsDescendant
+tixLabelEntry
+tixLabelEntry:AutoLoad
+tixLabelEntry:ConstructFramedWidget
+tixLabelEntry:config-state
+tixLabelEntryBind
+tixLabelFrame
+tixLabelFrame:AutoLoad
+tixLabelFrame:frame
+tixLabelWidget
+tixLabelWidget:AutoLoad
+tixLabelWidget:ConstructFramedWidget
+tixLabelWidget:ConstructWidget
+tixLabelWidget:Pack
+tixLabelWidget:Pack-acrosstop
+tixLabelWidget:Pack-bottom
+tixLabelWidget:Pack-left
+tixLabelWidget:Pack-none
+tixLabelWidget:Pack-right
+tixLabelWidget:Pack-top
+tixLabelWidget:config-label
+tixListGetSingle
+tixListNoteBook
+tixListNoteBook:AutoLoad
+tixListNoteBook:Choose
+tixListNoteBook:ConstructWidget
+tixListNoteBook:CreateChildFrame
+tixListNoteBook:InitGeometryManager
+tixListNoteBook:InitialRaise
+tixListNoteBook:RaiseChildFrame
+tixListNoteBook:add
+tixListNoteBook:config-dynamicgeometry
+tixListNoteBook:config-height
+tixListNoteBook:config-width
+tixListNoteBook:raise
+tixListboxGetCurrent
+tixManageGeometry
+tixMapWindow
+tixMeter
+tixMeter:AutoLoad
+tixMeter:ConstructWidget
+tixMeter:InitWidgetRec
+tixMeter:SetBindings
+tixMeter:Update
+tixMeter:config-fillcolor
+tixMeter:config-text
+tixMeter:config-value
+tixMkFileDialog
+tixMoveResizeWindow
+tixMultiView
+tixMultiView:AutoLoad
+tixMultiView:ConstructWidget
+tixMultiView:GetWid
+tixMultiView:GridFormat
+tixMultiView:InitWidgetRec
+tixMultiView:SetBindings
+tixMultiView:VerifyView
+tixMultiView:add
+tixMultiView:config-view
+tixMwm
+tixNoteBook
+tixNoteBook:AutoLoad
+tixNoteBook:ConstructWidget
+tixNoteBook:FocusNext
+tixNoteBook:InitWidgetRec
+tixNoteBook:MouseDown
+tixNoteBook:MouseUp
+tixNoteBook:Resize
+tixNoteBook:SetFocusByKey
+tixNoteBook:add
+tixNoteBook:delete
+tixNoteBook:raise
+tixNoteBookFind
+tixNoteBookFrame
+tixOptionMenu
+tixOptionMenu:AutoLoad
+tixOptionMenu:ConstructFramedWidget
+tixOptionMenu:Destructor
+tixOptionMenu:InitWidgetRec
+tixOptionMenu:Invoke
+tixOptionMenu:Post
+tixOptionMenu:SetBindings
+tixOptionMenu:SetMaxWidth
+tixOptionMenu:SetValue
+tixOptionMenu:add
+tixOptionMenu:config-state
+tixOptionMenu:config-value
+tixOptionMenu:config-variable
+tixOptionMenu:delete
+tixOptionMenu:disable
+tixOptionMenu:enable
+tixOptionMenu:entries
+tixOptionMenu:entrycget
+tixOptionMenu:entryconfigure
+tixOptionName
+tixPConfig
+tixPanedWindow
+tixPanedWindow:AddSeparator
+tixPanedWindow:AutoLoad
+tixPanedWindow:BtnDown
+tixPanedWindow:BtnMove
+tixPanedWindow:BtnMoveCompressed
+tixPanedWindow:BtnUp
+tixPanedWindow:CalculateChange
+tixPanedWindow:CancleLines
+tixPanedWindow:ClientGeomProc
+tixPanedWindow:ConstructWidget
+tixPanedWindow:DeHighlightBtn
+tixPanedWindow:DoRepack
+tixPanedWindow:GetMotionLimit
+tixPanedWindow:GetNaturalSizes
+tixPanedWindow:Grow
+tixPanedWindow:HighlightBtn
+tixPanedWindow:InitWidgetRec
+tixPanedWindow:Iterate
+tixPanedWindow:MasterGeomProc
+tixPanedWindow:Min2
+tixPanedWindow:MoveAfter
+tixPanedWindow:MoveBefore
+tixPanedWindow:PlotHandles
+tixPanedWindow:Repack
+tixPanedWindow:RepackWhenIdle
+tixPanedWindow:SetBindings
+tixPanedWindow:Shrink
+tixPanedWindow:UpdateSizes
+tixPanedWindow:add
+tixPanedWindow:config-handlebg
+tixPanedWindow:delete
+tixPanedWindow:forget
+tixPanedWindow:manage
+tixPanedWindow:panecget
+tixPanedWindow:paneconfigure
+tixPanedWindow:panes
+tixPanedWindow:setsize
+tixPanedWindow:xGrow
+tixPanedWindow:xShrink
+tixPopEventStack
+tixPopGrab
+tixPopupMenu
+tixPopupMenu:AutoLoad
+tixPopupMenu:BtnRelease
+tixPopupMenu:ConstructWidget
+tixPopupMenu:Destructor
+tixPopupMenu:InitWidgetRec
+tixPopupMenu:SetBindings
+tixPopupMenu:Unmap
+tixPopupMenu:Unpost
+tixPopupMenu:bind
+tixPopupMenu:config-title
+tixPopupMenu:post
+tixPopupMenu:unbind
+tixPrimitive
+tixPrimitive:AutoLoad
+tixPrimitive:ConstructWidget
+tixPrimitive:Constructor
+tixPrimitive:CreateRootWidget
+tixPrimitive:Destructor
+tixPrimitive:InitWidgetRec
+tixPrimitive:MkWidgetCmd
+tixPrimitive:ParseDefaultOptions
+tixPrimitive:ParseUserOptions
+tixPrimitive:SetBindings
+tixPrimitive:config
+tixPrimitive:subwidget
+tixPrimitive:subwidgets
+tixPushEventStack
+tixPushGrab
+tixRaiseWindow
+tixResizeHandle
+tixResizeHandle:Attach
+tixResizeHandle:AutoLoad
+tixResizeHandle:BMotion
+tixResizeHandle:BRelease
+tixResizeHandle:ComposeWindow
+tixResizeHandle:ConstructWidget
+tixResizeHandle:Destructor
+tixResizeHandle:DrawTmpLines
+tixResizeHandle:HideHintFrame
+tixResizeHandle:InitWidgetRec
+tixResizeHandle:SetBindings
+tixResizeHandle:SetHintFrame
+tixResizeHandle:ShowHintFrame
+tixResizeHandle:UpdateSize
+tixResizeHandle:attachwidget
+tixResizeHandle:config-height
+tixResizeHandle:config-width
+tixResizeHandle:config-x
+tixResizeHandle:config-y
+tixResizeHandle:detachwidget
+tixResizeHandle:dragstart
+tixResizeHandle:hide
+tixResizeHandle:show
+tixScriptPatchLevel
+tixScriptVersion
+tixScrolledGrid
+tixScrolledGrid:AutoLoad
+tixScrolledGrid:Button-1
+tixScrolledGrid:ConstructWidget
+tixScrolledGrid:FormatCmd
+tixScrolledGrid:GeometryInfo
+tixScrolledGrid:SetBindings
+tixScrolledGridBind
+tixScrolledHList
+tixScrolledHList:AutoLoad
+tixScrolledHList:ConstructWidget
+tixScrolledHList:GeometryInfo
+tixScrolledHList:RepackHook
+tixScrolledHList:SetBindings
+tixScrolledHList:config-highlightbackground
+tixScrolledHList:config-highlightcolor
+tixScrolledHList:config-highlightthickness
+tixScrolledHList:config-takefocus
+tixScrolledListBox
+tixScrolledListBox:AutoLoad
+tixScrolledListBox:Browse
+tixScrolledListBox:Configure
+tixScrolledListBox:ConstructWidget
+tixScrolledListBox:GeometryInfo
+tixScrolledListBox:InitWidgetRec
+tixScrolledListBox:Invoke
+tixScrolledListBox:KeyBrowse
+tixScrolledListBox:KeyInvoke
+tixScrolledListBox:SetBindings
+tixScrolledListBox:TrickScrollbar
+tixScrolledListBox:XView
+tixScrolledListBox:YView
+tixScrolledListBox:config-takefocus
+tixScrolledListBoxBind
+tixScrolledListbox
+tixScrolledTList
+tixScrolledTList:AutoLoad
+tixScrolledTList:ConstructWidget
+tixScrolledTList:GeometryInfo
+tixScrolledTList:SetBindings
+tixScrolledTList:config-takefocus
+tixScrolledText
+tixScrolledText:AutoLoad
+tixScrolledText:ConstructWidget
+tixScrolledText:GeometryInfo
+tixScrolledText:SetBindings
+tixScrolledText:XScroll
+tixScrolledText:YScroll
+tixScrolledText:config-scrollbar
+tixScrolledText:config-takefocus
+tixScrolledWidget
+tixScrolledWidget:AutoLoad
+tixScrolledWidget:CheckScrollbars
+tixScrolledWidget:ClientGeomProc
+tixScrolledWidget:Configure
+tixScrolledWidget:InitWidgetRec
+tixScrolledWidget:MasterGeomProc
+tixScrolledWidget:NeedScrollbar
+tixScrolledWidget:PlaceWindow
+tixScrolledWidget:Repack
+tixScrolledWidget:RepackHook
+tixScrolledWidget:ScrollCmd
+tixScrolledWidget:SetBindings
+tixScrolledWidget:config-scrollbar
+tixScrolledWidget:config-scrollbarspace
+tixScrolledWidget:config-sizebox
+tixScrolledWindow
+tixScrolledWindow:AutoLoad
+tixScrolledWindow:ConstructWidget
+tixScrolledWindow:GeometryInfo
+tixScrolledWindow:InitWidgetRec
+tixScrolledWindow:PlaceWindow
+tixScrolledWindow:Scroll
+tixScrolledWindow:ScrollBarCB
+tixScrolledWindow:SetBindings
+tixScrolledWindow:WindowGeomProc
+tixSelect
+tixSelect:AutoLoad
+tixSelect:CallCommand
+tixSelect:Destructor
+tixSelect:InitWidgetRec
+tixSelect:SetValue
+tixSelect:add
+tixSelect:button
+tixSelect:config-state
+tixSelect:config-value
+tixSelect:config-variable
+tixSelect:invoke
+tixSetDefaultFontset
+tixSetDefaultScheme-Color
+tixSetDefaultScheme-Mono
+tixSetEntry
+tixSetMegaWidget
+tixSetSilent
+tixShell
+tixShell:AutoLoad
+tixShell:CreateRootWidget
+tixShell:config-title
+tixSimpleDialog
+tixSimpleDialog:AutoLoad
+tixSimpleDialog:ConstructWidget
+tixStackWindow
+tixStackWindow:AutoLoad
+tixStackWindow:ConstructWidget
+tixStackWindow:Resize
+tixStackWindow:add
+tixStackWindow:raise
+tixStatusBar
+tixStatusBar:AutoLoad
+tixStatusBar:ConstructWidget
+tixStdButtonBox
+tixStdButtonBox:AutoLoad
+tixStdButtonBox:ConstructWidget
+tixStdButtonBox:config
+tixStdDialogShell
+tixStdDialogShell:AutoLoad
+tixStdDialogShell:ConstructTopFrame
+tixStdDialogShell:ConstructWidget
+tixStdDlgBtns
+tixStrEq
+tixStringSub
+tixSubwidgetRef
+tixSubwidgetRetCreate
+tixSubwidgetRetDelete
+tixTList
+tixTList:AutoScan
+tixTList:B1-Enter
+tixTList:B1-Leave
+tixTList:B1-Motion
+tixTList:Button-1
+tixTList:ButtonRelease-1
+tixTList:CallBrowseCmd
+tixTList:CallCommand
+tixTList:Control-B1-Enter
+tixTList:Control-B1-Leave
+tixTList:Control-B1-Motion
+tixTList:Control-Button-1
+tixTList:DirKey
+tixTList:DoScan
+tixTList:Double-1
+tixTList:GetState
+tixTList:GoState
+tixTList:GoState-b0
+tixTList:GoState-b1
+tixTList:GoState-b10
+tixTList:GoState-b2
+tixTList:GoState-b3
+tixTList:GoState-b4
+tixTList:GoState-b5
+tixTList:GoState-b6
+tixTList:GoState-b7
+tixTList:GoState-b8
+tixTList:GoState-b9
+tixTList:GoState-e0
+tixTList:GoState-e1
+tixTList:GoState-e10
+tixTList:GoState-e2
+tixTList:GoState-e3
+tixTList:GoState-e4
+tixTList:GoState-e5
+tixTList:GoState-e6
+tixTList:GoState-e7
+tixTList:GoState-e8
+tixTList:GoState-e9
+tixTList:GoState-m0
+tixTList:GoState-m1
+tixTList:GoState-m2
+tixTList:GoState-m3
+tixTList:GoState-m4
+tixTList:GoState-m5
+tixTList:GoState-m6
+tixTList:GoState-m7
+tixTList:GoState-m8
+tixTList:GoState-m9
+tixTList:GoState-s0
+tixTList:GoState-s1
+tixTList:GoState-s10
+tixTList:GoState-s2
+tixTList:GoState-s3
+tixTList:GoState-s4
+tixTList:GoState-s5
+tixTList:GoState-s6
+tixTList:GoState-s7
+tixTList:GoState-s8
+tixTList:GoState-s9
+tixTList:GoState-xm7
+tixTList:Return
+tixTList:Select
+tixTList:SetAnchor
+tixTList:SetState
+tixTList:Shift-Button-1
+tixTList:Space
+tixTList:StartScan
+tixTListBind
+tixTmpLine
+tixTopLevel
+tixTraverseToNoteBook
+tixTree
+tixTree:AutoLoad
+tixTree:BrowseCmd
+tixTree:CallSwitchCmd
+tixTree:CloseCmd
+tixTree:Command
+tixTree:ConstructWidget
+tixTree:InitWidgetRec
+tixTree:OpenCmd
+tixTree:SetBindings
+tixTree:SetModes
+tixTree:addchild
+tixTree:anchor
+tixTree:autosetmode
+tixTree:close
+tixTree:column
+tixTree:delete
+tixTree:entrycget
+tixTree:entryconfigure
+tixTree:getmode
+tixTree:header
+tixTree:hide
+tixTree:indicator
+tixTree:info
+tixTree:item
+tixTree:nearest
+tixTree:open
+tixTree:see
+tixTree:selection
+tixTree:setmode
+tixTree:show
+tixTrue
+tixUnmapWindow
+tixUnsetMegaWidget
+tixVResize
+tixVResize:AutoLoad
+tixVResize:DragCompressed
+tixVResize:InitWidgetRec
+tixVResize:drag
+tixVResize:dragend
+tixVResize:dragstart
+tixVStack
+tixVStack:AutoLoad
+tixVStack:ClientGeomProc
+tixVStack:CreateChildFrame
+tixVStack:DestroyTop
+tixVStack:InitGeometryManager
+tixVStack:InitWidgetRec
+tixVStack:MasterGeomProc
+tixVStack:RaiseChildFrame
+tixVStack:Resize
+tixVStack:SetBindings
+tixVStack:add
+tixVStack:delete
+tixVStack:pagecget
+tixVStack:pageconfigure
+tixVStack:pages
+tixVStack:raise
+tixVStack:raised
+tixVTree
+tixVTree:Activate
+tixVTree:AutoLoad
+tixVTree:BrowseCmd
+tixVTree:BrowseCmdHook
+tixVTree:CloseCmd
+tixVTree:Command
+tixVTree:CommandHook
+tixVTree:ConstructWidget
+tixVTree:GetType
+tixVTree:IndicatorCmd
+tixVTree:InitWidgetRec
+tixVTree:OpenCmd
+tixVTree:SetBindings
+tixVTree:SetMode
+tixVariable:ConfigVariable
+tixVariable:DeleteVariable
+tixVariable:TraceProc
+tixVariable:UpdateVariable
+tixVerifyBoolean
+tixWInfo
+tixWidgetClass
+tixWidgetClassEx
+tixWidgetDoWhenIdle
+tixWinCmd
+tixWinHeight
+tixWinWidth
+tixWithinWindow
+tk
+tkButtonInvoke
+tkButtonUp
+tkCancelRepeat
+tkListboxUpDown
+tkMbButtonUp
+tkMbEnter
+tkMbPost
+tkMenuFind
+tkMenuUnpost
+tkTextSetCursor
+tk_bisque
+tk_chooseColor
+tk_chooseDirectory
+tk_getOpenFile
+tk_getSaveFile
+tk_menuSetFocus
+tk_messageBox
+tk_popup
+tk_setPalette
+tk_tableCopy
+tk_tableCut
+tk_tablePaste
+tk_tablePasteHandler
+tk_textCopy
+tk_textCut
+tk_textPaste
+tkerror
+tkwait
+tm_container
+toplevel
 transform_polygons -coordinate (Relative coordinate to shift geometry by)
 transform_polygons -inverse (Inverts the provided transformation)
 transform_polygons -objects (Use as input geometry)
@@ -9060,6 +11693,7 @@ trim_pg_mesh -trim_to
 trim_pg_mesh -types (Object types for trimming)
 trim_pg_mesh -undo (restore trimmed shapes and vias)
 trim_pg_mesh -verbose (Verbose option for trimming: none | dangling | drc | {dangling drc})
+unalias
 uncommit_block -design 
 uncommit_block -remove_design (remove design after physical hierarchy is removed)
 uncommit_block -type 
@@ -9074,15 +11708,35 @@ ungroup_cells -simple_names (Do not use hierarchy separator in names)
 uniquify -uniquify_children (Include children instances for uniquification)
 uniquify -verbose (Show detailed information)
 uniquify_block -library (Library for the new design)
+unknown
+unset_tmp_var
+unsetenv
 unsetvar -array (Consider the parameter as an array)
+unsuppress_message
 update_constraint_mapping_file -remove_all (Remove all constraint files from all blocks)
 update_constraint_mapping_file -remove_blocks (Remove constraints in the block constraint map for specified blocks)
 update_constraint_mapping_file -remove_types 
+update_local_config_for_mcmm_run
 update_timing -full (Update entire design from scratch)
+upf_version
+v_mod_list
 verify_rail_integrity -integrity_layout_strategies 
 verify_rail_integrity -script_only ((default false))
 verify_via_ladders -nets (the nets for via ladder verification (default all))
 verify_via_ladders -shift_vias_on_transition_layers (false|true)]
+visa_clocks_in_path_groups
+visa_constraints
+visa_create_clock_and_constraints
+visa_filter_clocks
+visa_find_outlane_number
+visa_get_unit_name
+visa_setup_tool
+visa_uncertainty
+visa_uncertainty_post_cts
+visa_uncertainty_post_process
+visa_unset_tool
+visa_write_need_visa_report
+which
 widen_wires -spreading_widening_relative_weight 
 widen_wires -timing_preserve_hold_slack_threshold 
 widen_wires -timing_preserve_nets 
@@ -9112,6 +11766,8 @@ win_set_filter -user_filter_cmd
 win_set_filter -visible (Specified filters are for visible objects. By default the filters are for selectable objects.)
 win_set_select_class -all (Allow selection of all classes)
 win_set_select_class -visible (Specified classes are for visible objects. By default the classes are for selectable objects.)
+winfo
+wm
 write_aif -bumps 
 write_aif -hierarchy (Consider bumps across all hierarchy levels)
 write_aif -use_port_name (Write port connection instead of net connection of the bump)
@@ -9120,6 +11776,7 @@ write_app_var -only_changed_vars (Only write changed variables)
 write_app_var -output (File to write script to)
 write_blackbox_timing_script -qtm_directory 
 write_blackbox_timing_script -qtm_format (Write out blackbox timing data in QTM format)
+write_bound
 write_budgets -blocks (List of cell instances to write budgets for)
 write_budgets -compress (File compression method: 
 write_budgets -design_subblocks 
@@ -9141,6 +11798,7 @@ write_checksum -scenario (Optional, scenario for which report needs to be genera
 write_checksum -type (Optional, one of the following checksum type "library design parasitics constraints". If this option is not used, all checksums are generated.)
 write_clock_trunks -clock (List of clocks for which to write the clock trunk.)
 write_clock_trunks -file (File to write TCL commands to.)
+write_create_clock_for_feedthroughs
 write_def -bus_delimiters 
 write_def -compress (File compression method: 
 write_def -convert_sites 
@@ -9161,6 +11819,7 @@ write_default_pg_pattern -type (list of pattern types)
 write_dff_trace_filters -filename (Write patterns to this file)
 write_dff_trace_filters -overwrite (Overwrite file if it exists.)
 write_dff_trace_filters -type (type of filter: net or pin: 
+write_dim
 write_drc_error_data -error_data 
 write_drc_error_data -file_name (Error data XML file to which to write)
 write_drc_error_data -overwrite (Overwrite any existing file by the same name)
@@ -9226,6 +11885,7 @@ write_gds -view (name of the design view to be exported:
 write_gds -write_default_layers 
 write_gds -write_instance_blockage_mask 
 write_gds -write_instance_via_mask 
+write_hidden_app_var
 write_inc_srsn_for_eco -blocks 
 write_io_constraints -filename 
 write_io_constraints -format (Specifies the format used to generated io constraints)
@@ -9244,6 +11904,7 @@ write_macro_relative_location -file (Specifies the output file name)
 write_macro_relative_location -hierarchical (output hierarchical)
 write_matching_types -file_name (Required option to specify a file name for the output file)
 write_matching_types -from_existing_assignment 
+write_name_map
 write_net_estimation_rules -format (Format of output (tcl or xml))
 write_net_estimation_rules -net_estimation_rule 
 write_net_estimation_rules -script (Name of script to write)
@@ -9303,6 +11964,7 @@ write_pin_constraints -pins (write pin constraints that associated with pins.)
 write_pin_constraints -ports 
 write_pin_constraints -self (Only write out pin constraint for current design)
 write_pin_constraints -topological_map (Write out topological map constraints into constraint file name
+write_placement
 write_pt_checksum -output_directory 
 write_pt_checksum -pt_exec_path (Path to PT shell executable)
 write_pt_checksum -pt_user_script 
@@ -9368,3 +12030,4 @@ write_verilog -only_master_variant (Replace all variant instances by the master 
 write_verilog -split_bus (Write bus as single bits)
 write_verilog -switch_view_list 
 write_verilog -top_module_first (Write top module first)
+write_virtual_pad_file

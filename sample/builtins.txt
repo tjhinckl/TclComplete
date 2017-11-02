@@ -1,3 +1,6 @@
+after
+append
+apply
 array anymore
 array donesearch
 array exists
@@ -13,6 +16,8 @@ binary format
 binary scan
 binary encode
 binary decode
+break
+case
 catch -code
 chan blocked
 chan close
@@ -34,6 +39,10 @@ chan seek
 chan tell
 chan truncate
 chan configure
+close
+concat
+continue
+coroutine
 dict append
 dict create
 dict exists
@@ -54,7 +63,10 @@ dict unset
 dict update
 dict values
 dict with
+encoding
+eof
 error -errorcode
+eval
 exec -ignorestderr
 exec -keepnewline
 expr abs
@@ -88,6 +100,7 @@ expr srand
 expr tan
 expr tanh
 expr wide
+fblocked
 fconfigure -blocking
 fconfigure -buffering
 fconfigure -buffersize
@@ -130,6 +143,12 @@ file tempfile
 file type
 file volumes
 file writable
+fileevent
+flush
+for
+foreach
+format
+gets
 glob -directory
 glob -join
 glob -nocomplain
@@ -137,6 +156,9 @@ glob -path
 glob -tails
 glob -type
 glob -types
+global
+if
+incr
 info args
 info body
 info class
@@ -171,6 +193,18 @@ interp -namespace
 interp -option
 interp -seconds
 interp -value
+join
+lappend
+lassign
+lindex
+linsert
+list
+llength
+lmap
+lrange
+lrepeat
+lreplace
+lreverse
 lsearch -all
 lsearch -ascii
 lsearch -bisect
@@ -189,6 +223,7 @@ lsearch -regexp
 lsearch -sorted
 lsearch -start
 lsearch -subindices
+lset
 lsort -ascii
 lsort -command
 lsort -decreasing
@@ -240,7 +275,10 @@ package unknown
 package vcompare
 package versions
 package vsatisfies
+pid
+proc
 puts -translation
+read
 regexp -about
 regexp -all
 regexp -expanded
@@ -264,12 +302,16 @@ return -errorinfo
 return -errorstack
 return -level
 return -options
+scan
+seek
+set
 socket -async
 socket -error
 socket -myaddr
 socket -myport
 socket -peername
 socket -sockname
+split
 string bytelength
 string cat
 string compare
@@ -293,15 +335,28 @@ string trimleft
 string trimright
 string wordend
 string wordstart
+subst
 switch -exact
 switch -glob
 switch -indexvar
 switch -matchvar
 switch -nocase
 switch -regexp
+tailcall
+tell
+throw
+time
+trace
 try -errorcode
 unset -nocomplain
+update
+uplevel
+upvar
+variable
 vwait -server
+while
+yield
+yieldto
 zlib -checksum
 zlib -dictionary
 zlib -finalize
