@@ -10,34 +10,62 @@ function! TclComplete#GetData()
    " and make it easier to code the autocomplete function.
     let l:dir = g:TclComplete#dir
 
-
+    return
     " Builtins, procs, and commands all
-    "  cmdname -opt1 -opt2 -opt3 # Description of the command
-    let l:builtin_data  = readfile(l:dir."/builtins.txt")
-    let l:proc_data     = readfile(l:dir."/procs.txt")
-    let l:command_data  = readfile(l:dir."/commands.txt")
+    let l:alias_data      = readfile(l:dir."/aliases.txt")
+    let l:builtin_data    = readfile(l:dir."/builtins.txt")
+    let l:command_data    = readfile(l:dir."/commands.txt")
+    let l:proc_data       = readfile(l:dir."/procs.txt")
+    let l:descript_data   = readfile(l:dir."/descriptions.txt")
+    let l:namespace_data  = readfile(l:dir."/namespaces.txt")
 
     let g:TclComplete#cmds         = []    
     let g:TclComplete#options      = {}
     let g:TclComplete#description  = {}
-
+    let g:TclComplete#details      = {}
+    let g:TclComplete#aliases      = {}
+    
     " Packages are simple, just a list
-    let g:TclComplete#packs    = readfile(l:dir."/packages.txt")
-    let g:TclComplete#options['package require'] = join(g:TclComplete#packs,' ')
+    " let g:TclComplete#packs    = readfile(l:dir."/packages.txt")
+    " let g:TclComplete#options['package require'] = join(g:TclComplete#packs,' ')
 
-    for data in l:builtin_data+l:command_data+l:proc_data
-        let fields = split(data,"%")
-        let l:cmd  = get(fields,0,'')
-        let l:opts = get(fields,1,'')
-        let l:desc = get(fields,2,'')
+    " Aliases will be put into abbreviations
+    for entry in l:alias_data
+        let l:matches = matchlist(entry,'\v(\S*)\s*(.*$)')
+        let [l:alias, l:alias_def] = l:matches[1:2]
+        let g:TclComplete#aliases[l:alias] = l:alias_def
+        execute "iabbrev ".l:alias" ".l:alias_def
+    endfor
+    " Descriptions are pretty simple too.  Just a list of commands with 
+    " an optional " # Description " following it.
+    for entry in l:descript_data 
+        let l:matches = matchlist(entry,'\v(\S*)\s*(.*$)')
+        let [l:cmd, l:description] = l:matches[1:2]
+        if len(l:description)>0
+            let g:TclComplete#description[l:cmd] = l:description
+        endif
+    endfor
+
+    " Fill up the g:TclComplete#cmds list in the built->command->proc sequence
+    for entry in l:builtin_data+l:command_data+l:proc_data
+        let l:matches = matchlist(entry,'\v(\S*)\s*(\S*)\s*(.*$)')
+        let [l:cmd, l:opt, l:detail] = l:matches[1:3]
+        " Add to the command list
         if len(l:cmd)>0
-            call add(g:TclComplete#cmds,l:cmd)
+            call uniq(add(g:TclComplete#cmds,l:cmd))
         endif
-        if len(l:opts)>0
-            let g:TclComplete#options[l:cmd] = l:opts
+        " Add to the value list in the options dictionary
+        if len(l:opt)>0
+            if has_key(g:TclComplete#options,l:cmd)
+                call add(g:TclComplete#options[l:cmd], l:opt)
+            else
+                let g:TclComplete#options[l:cmd] = [l:opt]
+                let g:TclComplete#details[l:cmd] = {}
+            endif
         endif
-        if len(l:desc)>0
-            let g:TclComplete#description[l:cmd] = l:desc
+        " Add a value to the descript dictionary, using a "cmd:option" key
+        if len(l:detail)>0
+            let g:TclComplete#details[l:cmd][l:opt] = l:detail
         endif
     endfor
 endfunction
@@ -112,8 +140,10 @@ function! TclComplete#Complete(findstart, base)
         " Complete either as a command or an option (or a package)
         if l:active_cmd_start==s:start
             let l:complete_list = g:TclComplete#cmds
+            let l:menu_dict     = g:TclComplete#description
         else
-            let l:complete_list = split(get(g:TclComplete#options,l:active_cmd,''))
+            let l:complete_list = get(g:TclComplete#options,l:active_cmd,[])
+            let l:menu_dict     = get(g:TclComplete#details,l:active_cmd,[])
         endif
 
         " Weird Vim bug?  If you type a dash '-' and then trigger auto-complete,
@@ -133,10 +163,13 @@ function! TclComplete#Complete(findstart, base)
         for m in l:complete_list
             " if m=~ '^' . escape(l:base,'-')
             if m=~ '^' .l:base
-                let menu = get(g:TclComplete#description,m,'')
+                let menu = get(l:menu_dict,m,'')
                 if menu =~ 'Synonym' 
                     continue
                 else
+                    " Option1: Use this function.
+                    " call complete_add({'word':m, 'menu':menu})
+                    " Option2: Add to the res list (this is faster)
                     call add(res, {'word':m, 'menu':menu})
                 endif
             endif
