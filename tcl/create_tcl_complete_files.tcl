@@ -9,7 +9,7 @@
 #                command_name -option1 -option2 -option3
 #                proc_name    -option1 -option2 -option3
 #                .....
-# Date of latest revision: 27-Oct-2017
+# Date of latest revision: 01-Nov-2017
 
 ##############################
 # Helpers procs defined first 
@@ -116,9 +116,16 @@ foreach cmd $all_command_list {
 redirect -variable namespace_list {lsort -u [namespace children]}
 set namespace_list [string trim $namespace_list]
 
-# Form a list of all procs
-redirect -variable proc_list {lsort -u [info proc]}
-set proc_list [string trim $proc_list]
+# Form a list of all procs (some procs appear in the all_command_list so remove those)
+redirect -variable all_proc_list {lsort -u [info proc]}
+set all_proc_list [string trim $all_proc_list]
+set proc_list {}
+foreach proc $all_proc_list {
+    if {$proc ni $all_command_list} {
+        lappend proc_list $proc
+    }
+}
+
 # Also add procs within namespaces
 foreach namespace $namespace_list {
     # string trim $namespace "::"
@@ -151,8 +158,13 @@ mkdir_fresh $outdir
 # 2)  Write out the list of commands with options.
 set f [open $outdir/commands.txt w]
 foreach cmd $command_list {
-    foreach opt [get_options_from_help $cmd] {
-        puts $f "$cmd $opt"
+    set opts [get_options_from_help $cmd]
+    if {[llength $opts]==0} {
+        puts $f "$cmd"
+    } else {
+        foreach opt [get_options_from_help $cmd] {
+            puts $f "$cmd $opt"
+        }
     }
 }
 close $f
@@ -160,8 +172,13 @@ close $f
 # 3)  Write out the list of procs with options.
 set f [open $outdir/procs.txt w]
 foreach proc $proc_list {
-    foreach opt [get_options_from_help $proc] {
-        puts $f "$proc $opt"
+    set opts [get_description_from_help $proc] 
+    if {[llength $opts]==0} {
+        puts $f "$proc"
+    } else {
+        foreach opt $opts {
+            puts $f "$proc $opt"
+        }
     }
 }
 close $f
@@ -192,8 +209,12 @@ foreach bi $builtin_list {
         set opts [lsort "ifneeded names present provide require unknown vcompare versions vsatisfies prefer"]
     }
 
-    foreach opt $opts {
-        puts $f "$bi $opt"
+    if {[llength $opts]==0} {
+        puts $f "$bi"
+    } else {
+        foreach opt $opts {
+            puts $f "$bi $opt"
+        }
     }
 }
 close $f
