@@ -8,9 +8,9 @@
 function! TclComplete#GetData()
    " Read the files into Vim memory.  This should speed up performance
    " and make it easier to code the autocomplete function.
+    echo "Loading TclComplete data.  Please be patient..."
     let l:dir = g:TclComplete#dir
 
-    return
     " Builtins, procs, and commands all
     let l:alias_data      = readfile(l:dir."/aliases.txt")
     let l:builtin_data    = readfile(l:dir."/builtins.txt")

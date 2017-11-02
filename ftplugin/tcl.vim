@@ -3,7 +3,7 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 setlocal omnifunc=TclComplete#Complete
 
-setlocal completeopt=menuone,listlongest
+setlocal completeopt=menuone,longest
 
 " Let <tab> activate and advance through the popup menu.  
 "   I would Shift-Tab to go backwards, but that's a Konsole shortcut
