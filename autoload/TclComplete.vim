@@ -6,8 +6,9 @@
 "
 function! TclComplete#GetData()
     let l:dir = g:TclComplete#dir
-    execute "source ".g:TclComplete#dir."/commands.vim"
     execute "source ".g:TclComplete#dir."/descriptions.vim"
+    execute "source ".g:TclComplete#dir."/attributes.vim"
+    execute "source ".g:TclComplete#dir."/commands.vim"
     execute "source ".g:TclComplete#dir."/options.vim"
     execute "source ".g:TclComplete#dir."/details.vim"
     execute "source ".g:TclComplete#dir."/aliases.vim"

@@ -3,7 +3,6 @@ iabbrev alc	als_add_to_last_command
 iabbrev cb	current_block 
 iabbrev ch	als_change_highlight 
 iabbrev cl	current_lib 
-iabbrev cr	::fp::create_row 
 iabbrev cs	change_selection 
 iabbrev csa	change_selection -add 
 iabbrev fc	filter_collection 
@@ -31,3 +30,4 @@ iabbrev report_aocvm	report_ocvm {-type} {aocvm}
 iabbrev sa	set_attribute 
 iabbrev sc	sizeof_collection 
 iabbrev fic foreach_in_collection
+iabbrev cr  cr_create_trunk_from_here_to_there

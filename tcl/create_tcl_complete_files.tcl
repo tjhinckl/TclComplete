@@ -346,7 +346,7 @@ echo "Making new \$WARD/TclComplete directory..."
 #----------------------------------------------------
     set f   [open $outdir/aliases.vim w]
     # Some aliases are useless in a script
-    set alias_exclusion_list { 2D_check_legality 2D_legalizer_toolbox h hg lag lcg pac pc pl pop push qtcl_activate_widget_slot qtcl_add_widget_property qtcl_check_widget qtcl_connect_widgets qtcl_create_widget qtcl_destroy_widget qtcl_disconnect_widgets qtcl_get_widget_data qtcl_get_widget_property qtcl_operate_widget qtcl_remove_widget_property qtcl_set_widget_property ra rc rt rtmax rtmin s_cell s_net s_port s_terminal sg st stages steps zs} 
+    set alias_exclusion_list { 2D_check_legality 2D_legalizer_toolbox cr h hg lag lcg pac pc pl pop push qtcl_activate_widget_slot qtcl_add_widget_property qtcl_check_widget qtcl_connect_widgets qtcl_create_widget qtcl_destroy_widget qtcl_disconnect_widgets qtcl_get_widget_data qtcl_get_widget_property qtcl_operate_widget qtcl_remove_widget_property qtcl_set_widget_property ra rc rt rtmax rtmin s_cell s_net s_port s_terminal sg st stages steps zs} 
         
     foreach entry $alias_list {
         if {[regexp {(\S+)\s+(.*$)} $entry -> alias_name alias_def]} {
@@ -357,6 +357,7 @@ echo "Making new \$WARD/TclComplete directory..."
     }
     # Add some special cases
     puts $f "iabbrev fic foreach_in_collection"
+    puts $f "iabbrev cr  cr_create_trunk_from_here_to_there"
     
     close $f
     echo "...aliases.vim file complete."
