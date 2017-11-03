@@ -4,12 +4,9 @@
 
 # Author: Chris Heithoff
 # Description:  Source this from the icc2_shell (or dc or pt?) to 
-#               create a file that can be used for tcl omnicompletion.
-#               The format of the output file is:
-#                command_name -option1 -option2 -option3
-#                proc_name    -option1 -option2 -option3
-#                .....
-# Date of latest revision: 01-Nov-2017
+#               create a file that can be used for tcl omnicompletion
+#               in Vim.
+# Date of latest revision: 02-Nov-2017
 
 ##############################
 # Helpers procs defined first 
@@ -24,17 +21,18 @@ proc mkdir_fresh {dir} {
 }
 
         
-# Run "help -v  <command>".  Parse and return the options.
+# Run "help <command>".  Parse and return the description
+#  Corner case:  "help help" returns help for three commands
+#  TODO Attributes are listed with help_attributes classnames!!!
 proc get_description_from_help {cmd} {
-    redirect -variable help_text {help $cmd}
-    if {[regexp "CMD-040" $help_text]} {
-        return {}
-    }
     set result ""
+    redirect -variable help_text {help $cmd}
+    # Look for <cmdname>     # Description of the command
     foreach line [split $help_text "\n"] {
-        if {[regexp {^\s+([a-zA-Z0-9_]+)\s+(#.*$)} $line -> cmd_name description]} {
+        if {[regexp {^\s*(\S+)\s+(#.*$)} $line -> cmd_name description]} {
             if {$cmd_name == $cmd} {
-                set result $description
+                set result [regsub -all {"} $description {\"}]
+                #" Comment to fix Vim syntax coloring
             }
         }
     }
@@ -42,30 +40,38 @@ proc get_description_from_help {cmd} {
 }
 
 proc get_options_from_help {cmd} {
-    set result {}
+    # Returns a dictionary.  Key = option name  Value = option detail
+    set result [dict create]
+
+    # Parse the "help -v" text for this command
     redirect -variable help_text {help -v $cmd}
     if {[regexp "CMD-040" $help_text]} {return ""}
 
+    # First look for the command name, then look for options
     set looking_for_command 1
-    set looking_for_option  0
+    set looking_for_options 0
 
     foreach line  [split $help_text "\n"] {
         # We need to look only in the correct section. 
         # Some help results list multiple helps (like "help -v help")
+        #   This only works when the descripion is there too, preceded by #
         if {$looking_for_command} {
-            if {[regexp {^\s+([a-zA-Z0-9_:]+)\s+(#.*$)} $line -> cmd_name description]} {
+            if {[regexp {^\s+(\S+)\s+(#.*$)} $line -> cmd_name description]} {
                 if {$cmd_name == $cmd} {
                     set looking_for_command 0
-                    set looking_for_option  1
+                    set looking_for_options  1
                     continue
                 }
             }
         }
-
-        # Now get the command options.  They might be surround by [ and ].
-        if {$looking_for_option} {
-            if {[regexp {^\s+\[?(-[a-zA-Z0-9_]+)[^(]*(.*$)} $line -> opt detail] } {
-                lappend result "$opt $detail"
+        # Now get the command options. This start with a dash.
+        #  They might be surrounded by brackets.
+        #  The option is first, then the details, surrounded by parentheses.
+        if {$looking_for_options} {
+            if {[regexp {^\s*\[?(-[a-zA-Z0-9_]+)[^(]*(.*$)} $line -> opt detail] } {
+                set detail [regsub -all {"} $detail {\"}]
+                #" (comment to correct Vim syntax coloring)
+                dict set result $opt $detail
             }
             # Exit loop if there is an empty line.
             if {[regexp {^\s*$} $line]} {
@@ -73,7 +79,7 @@ proc get_options_from_help {cmd} {
             }
         }
     }
-    return [lsort -u $result]
+    return $result
 }
 
 # Run "man <command>".  Parse and return the options.
@@ -93,148 +99,223 @@ proc get_options_from_man {cmd} {
 # Ask the synopsys tool for commands, procs, packages, and functions
 ####################################################################
 # Form a list of all commands (and remove the . command at the beginning.
+#
+#  Try to get an order like this:
+#     Tcl built ins   ($builtin_list)
+#     Synopsys commands     ($command_list)
+#     procs in the current namespace   ($proc_list)
+#     procs in the child namespaces    (proc_list)
+echo "TclComplete:  querying SynopsysTcl for data..."
 redirect -variable all_command_list {lsort -u [info command]}
-if {[lindex $all_command_list 0]=="."} {
-    set all_command_list [lrange $all_command_list 1 end]
-    set all_command_list [string trim $all_command_list]
-}
 
 # Divide all_command_list into builtin and regular commands
 # The first uses the 'man' command, the other uses the 'help -v' 
 # command to list the options.
 set builtin_list {} 
 set command_list {}
+set proc_list    {}
+
+# Initial some dicts
+set desc_dict [dict create]
+set namespace_children_dict [dict create]
+
+## Split up all the commands into three lists (just for priority in the final list order)
 foreach cmd $all_command_list {
-    if {[regexp "Builtin" [get_description_from_help $cmd]]} {
+    set description [get_description_from_help $cmd]
+    dict set desc_dict $cmd $description
+    if {[regexp "Builtin" $description]} {
         lappend builtin_list $cmd
-    } else {
+    } elseif {[info procs $cmd]==""} {
         lappend command_list $cmd
+    } else {
+        lappend proc_list $cmd
     }
 }
+echo " ...\$builtin_list built"
+echo " ...\$command_list built"
 
-# Form a list of namespace children relative to ::
-redirect -variable namespace_list {lsort -u [namespace children]}
-set namespace_list [string trim $namespace_list]
-
-# Form a list of all procs (some procs appear in the all_command_list so remove those)
-redirect -variable all_proc_list {lsort -u [info proc]}
-set all_proc_list [string trim $all_proc_list]
-set proc_list {}
-foreach proc $all_proc_list {
-    if {$proc ni $all_command_list} {
-        lappend proc_list $proc
-    }
-}
-
-# Also add procs within namespaces
+# We're not done with procs!  There are more procs inside namespaces.
+set namespace_list [lsort -u [namespace children]]
+echo " ...\$namespace_list built"
 foreach namespace $namespace_list {
-    # string trim $namespace "::"
     redirect -variable namespace_procs {lsort -u [eval "info proc {${namespace}::*}"]}
-    foreach n $namespace_procs {
-        lappend proc_list [string trim $n "::"]
+    foreach proc_name $namespace_procs {
+        set proc_name [string trim $proc_name "::"]
+        lappend proc_list $proc_name
+        set description [get_description_from_help $proc_name]
+        dict set desc_dict $proc_name $description
     }
 }
+echo "...\$proc_list built"
+echo "...\$desc_dict built"
 
+
+######################################################################
+# Form some other data structures for use later
+######################################################################
 # Form a list of expr functions
-redirect -variable func_list {lsort -u [info function]}
-set func_list [string trim $func_list]
+set func_list [ lsort -u [info function] ]
+echo "...\$func_list built"
 
 # Form a list of packages
-redirect -variable package_list {lsort -u [package names]}
-set package_list [string trim $package_list]
+set package_list [ lsort -u [package names] ]
+echo "...\$package_list built"
 
 # Form a list of aliases
-redirect -variable alias_list {alias}
-set alias_list [string trim $alias_list]
+redirect -variable alias_string {alias}
+set alias_list [split $alias_string "\n"]
+echo "...\$alias_list built"
 
 ######################################################################
-# Now that we have all the commands and stuff, let's write it all out.
+# Now that we have all the commands and some other stuff, 
+# let's figure out the command descriptions, options, and option details
 ######################################################################
-# 1)  Setup the output directory
-set outdir $::env(WARD)/TclComplete
-mkdir_fresh $outdir
+echo "TclComplete....building commands options"
+set opt_dict     [dict create]
+set details_dict [dict create]
+echo "...\$opt_dict initialized"
+echo "...\$details_dict initialized"
 
-
-# 2)  Write out the list of commands with options.
-set f [open $outdir/commands.txt w]
-foreach cmd $command_list {
-    set opts [get_options_from_help $cmd]
-    if {[llength $opts]==0} {
-        puts $f "$cmd"
-    } else {
-        foreach opt [get_options_from_help $cmd] {
-            puts $f "$cmd $opt"
-        }
-    }
-}
-close $f
-
-# 3)  Write out the list of procs with options.
-set f [open $outdir/procs.txt w]
-foreach proc $proc_list {
-    set opts [get_description_from_help $proc] 
-    if {[llength $opts]==0} {
-        puts $f "$proc"
-    } else {
-        foreach opt $opts {
-            puts $f "$proc $opt"
-        }
-    }
-}
-close $f
-
-# 4)  Write out all the descriptions (only applies to non-builtin commands and procs)
-set f [open $outdir/descriptions.txt w]
+# non-builtins use "help" to get options 
 foreach cmd [concat $command_list $proc_list] {
-    set description [get_description_from_help $cmd]
-    puts $f "$cmd $description"
-}
-close $f
+    dict set opt_dict     $cmd {}
+    dict set details_dict $cmd [dict create]
+    dict for {opt_name details} [get_options_from_help $cmd] {
+        # APPEND this opt to this command's entry in opt_dict
+        dict lappend opt_dict $cmd $opt_name
+
+        # CREATE a dictionary to thi commands entry in details_dict
+        dict set details_dict $cmd $opt_name $details
+    }
+} 
+echo "...completed options for commands and proc"
+
     
-# 5)  Write out the list of builtins.  "help" shows no options for builtins,
-#       so "man" or namespace ensembles are used.
-set f [open $outdir/builtins.txt w]
+# builtins use "man" or "namespace ensembles" to get options.  
+#  (some special cases are hard coded)
 foreach bi $builtin_list {
     if {[namespace ensemble exists $bi]} {
         set opts [dict keys [namespace ensemble configure $bi -map]]
     } else {
         set opts [get_options_from_man $bi]
     }
-    # Special cases
-    if {$bi == "expr"} {
-        set opts $func_list
-    } elseif {$bi == "info"} {
-        set opts [lsort "args body class cmdcount commands complete coroutine default errorstack exists frame functions globals hostname level library loaded locals nameofexecutable object patchlevel procs script sharelibextension tclversion vars"]
-    } elseif {$bi == "package"} {
-        set opts [lsort "ifneeded names present provide require unknown vcompare versions vsatisfies prefer"]
-    }
+    dict set opt_dict $bi $opts
+}
+echo "...completed options for builtins"
 
-    if {[llength $opts]==0} {
-        puts $f "$bi"
-    } else {
-        foreach opt $opts {
-            puts $f "$bi $opt"
+# Special cases for options
+dict set opt_dict "expr" $func_list
+dict set opt_dict "info"    [lsort "args body class cmdcount commands complete coroutine default errorstack exists frame functions globals hostname level library loaded locals nameofexecutable object patchlevel procs script sharelibextension tclversion vars"]
+dict set opt_dict "package" [lsort "ifneeded names present provide require unknown vcompare versions vsatisfies prefer"]
+dict set opt_dict "package require" $package_list
+echo "...completed options for special cases"
+
+################################################################################
+### Now  write out sourceable Vimscript code!!! 
+###  - An earlier version of this script wrote out text files to be parse in Vim
+###    Why not just directly write it out as Vimscript so that the Vim plugin 
+###    runs faster ??!!
+################################################################################
+# 1)  Setup the output directory
+set outdir $::env(WARD)/TclComplete
+mkdir_fresh $outdir
+echo "Making new \$WARD/TclComplete directory..."
+
+# 2) Write data structures out in Vim format.
+#    WARNING!  This is a backslash hellscape!
+#       - Key names, value names and list elements must be
+#         in quotes because they will be treated as strings in Vim.
+#       - The command descriptions and option details will possibly
+#         have either single quotes (apostrophes) or doubt quotes, 
+#         these must be escaped.  (is regsub the best choice?)
+#       - The puts string must be in double quotes instead of {} 
+#         because variables need to be expanded.
+#       - Square brackets must be escaped so Tcl ignore command substitution.
+#       - Double quotes inside the string must be escaped so they 
+#         don't close the surrounding double quotes.
+#       - Vim comments are a start-of-string double quote
+#       - Vim line continuation is a \ at beginning on next line
+#            (not like Tcl or shell, which is end of previous line)
+         
+#-------------------------------------
+#  All the commands in a Vim ordered list
+#    g:TclComplete#cmds
+#-------------------------------------
+    set f [open $outdir/commands.vim w]
+    puts $f "let g:TclComplete#cmds = \["
+    foreach cmd [concat $builtin_list $command_list $proc_list] {
+        puts $f "   \\ \"$cmd\"," 
+    }
+    puts $f "   \\]"
+    close $f
+    echo "...commands.vim file complete."
+
+#-----------------------------------------
+# Command options in a Vim dictionary.
+#   key = command name
+#   value = ordered list of options
+#   g:TclComplete#options['cmd'] = ['opt1', 'opt2',]
+#-----------------------------------------
+    set f [open $outdir/options.vim w]
+    # initialize details and opts dicts
+    puts $f "let options = {}"
+    foreach cmd [dict keys $opt_dict] {
+        set option_string "\["
+        foreach opt [dict get $opt_dict $cmd] {
+            append option_string "\"$opt\","
+        }
+        puts $f "let options\[\"$cmd\"\] = $option_string\]"
+    }
+    puts $f "\"\" Reassign to a global variable \"\""
+    puts $f "let g:TclComplete#options = options"
+    close $f
+    echo "...options.vim file complete."
+
+#-----------------------------------------
+# Command option details in a Vim dictionary of dictionaries
+#   key = command name
+#   value = dictionary with key=option and value=details
+#   g:TclComplete#details['cmd']['opt1'] = "details of the option"
+#-----------------------------------------
+    set f [open $outdir/details.vim w]
+    puts $f "let details = {}"
+    dict for {cmd opt_detail_dict} $details_dict {
+        puts $f "   let details\[\"$cmd\"\]={}"
+        dict for {opt detail} $opt_detail_dict {
+            puts $f "        let details\[\"$cmd\"\]\[\"$opt\"\] = \"$detail\""
         }
     }
-}
-close $f
+    puts $f "\"\" Reassign to a global variable \"\""
+    puts $f "let g:TclComplete#details = details"
+    close $f
+    echo "...details.vim file complete."
 
-# 6)  Write out the list of packages
-set f [open $outdir/packages.txt w]
-foreach pack $package_list {
-    puts $f "$pack"
-}
-close $f
+#-----------------------------------------
+# Command descriptions in a Vim dictionary
+#   key = command name
+#   value = command description
+#   g:TclComplete#descriptions['cmd'] = "description of the command"
+#-----------------------------------------
+    set f   [open $outdir/descriptions.vim w]
+    puts $f "let description = {}"
+    dict for {cmd description} $desc_dict {
+        puts $f "let description\[\"$cmd\"\] = \"$description\""
+    }
+    puts $f "\"\" Reassign to a global variable \"\""
+    puts $f "let g:TclComplete#descriptions = description"
+    close $f
+    echo "...descriptions.vim file complete."
+
+#----------------------------------------------------
+# Write out aliases as Vim insert mode abbreviations
+#----------------------------------------------------
+    set f   [open $outdir/aliases.vim w]
+    foreach entry $alias_list {
+        if {[string length $entry]>0} {
+            puts $f "iabbrev $entry"
+        }
+    }
+    close $f
+    echo "...alises.vim file complete."
 
 
-# 7)  Write out the list of namespaces
-set f [open $outdir/namespaces.txt w]
-foreach namespace $namespace_list {
-    puts $f "$namespace [namespace children $namespace]"
-}
-close $f
-
-# 8)  Write out the list of aliases
-set f [open $outdir/aliases.txt w]
-puts $f $alias_list
-close $f

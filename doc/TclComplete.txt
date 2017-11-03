@@ -2,7 +2,7 @@
 
 Author:  Chris Heithoff ( christopher.b.heithoff@intel.com )
 Initial Date:  10/31/2017
-Latest Rev:    10/31/2017
+Latest Rev:    11/3/2017
    
 ==============================================================================
 1. Intro                                          *TclComplete*
@@ -27,13 +27,13 @@ Latest Rev:    10/31/2017
    and source the tcl/create_tcl_complete_files.tcl file.
 
    This will create a directory $WARD/TclComplete and populate it with
-   lists of commands, procs, builtins, namespaces, and packages.
+   sourceable .vim files defining a data structure for commands, 
+   options, commands descriptions, options details, etc.
     (NOTE:  This expects user to be an Intel back-end engineer who works
      in a back-end environment, where the $WARD is your work area. If 
      you need this changed, then modify the tcl script or fake it out
      by defining an environment variable called WARD.)
 
-   
 ==============================================================================
 3) Configuring TclComplete in Vim             *TclComplete:config*
 
@@ -107,17 +107,25 @@ you would use in Tcl scripts for Synopsys tools.
    (there's no regex mode)
 
 ==============================================================================
-6) Call to action!
+6) Aliases become insert mode abbreviations!
+     Any Tcl aliases you defined when the $WARD/TclComplete collateral was
+     generated will be converted into iabbrev commands in $WARD/TclComplete/aliases.vim.
+
+     In other words, type 'gc' followed by <space> and the 'gc' gets 
+     replaced by 'get_cells'.  Very cool!
+==============================================================================
+7) Call to action!
      If you like this, let me know!   christopher.b.heithoff@intel.com 
     
     Future plans for improvements:
-    - can it run faster?  
-    - add namespaces
-    - add descriptions for options, not just built-ins/commands/procs
+    - add namespaces to auto-complete upon ::
     - identify any compound commands that are not namespace ensembles.
       for example, "file" is a namespace ensemble, but "info" and "package"
           are not.  I hardcoded to "info" and "package" subcommands into
           the tcl script.
+    - Auto-complete variable in your buffers, triggered by $
+    - Auto-complete attributes!  
+    - Auto-complete G_variables!
 
 
 
