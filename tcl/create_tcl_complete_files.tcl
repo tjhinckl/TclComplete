@@ -16,14 +16,12 @@ proc mkdir_fresh {dir} {
         echo "Deleting previous $dir"
         file delete -force $dir
     }
-
     file mkdir $dir
 }
 
         
 # Run "help <command>".  Parse and return the description
 #  Corner case:  "help help" returns help for three commands
-#  TODO Attributes are listed with help_attributes classnames!!!
 proc get_description_from_help {cmd} {
     set result ""
     redirect -variable help_text {help $cmd}
@@ -167,6 +165,43 @@ set alias_list [split $alias_string "\n"]
 echo "...\$alias_list built"
 
 ######################################################################
+# Form a multi-level dictionary of attributes
+#  attribute_dict['class']['attr_name']['type']
+#  attribute_dict['class']['attr_name']['constraints']
+######################################################################
+set attribute_dict [dict create]
+
+# Dump list_attributes 
+redirect -variable attribute_list {list_attributes -nosplit}
+set attribute_list [split $attribute_list "\n"]
+set start [expr {[lsearch -glob $attribute_list "-----*"]+1}]
+set attribute_list [lrange $attribute_list $start end]
+
+# ...again but for -application
+redirect -variable attribute_class_list {list_attributes -nosplit -application}
+set attribute_class_list [split $attribute_class_list "\n"]
+set start [expr {[lsearch -glob $attribute_class_list "-----*"]+1}]
+set attribute_class_list [lrange $attribute_class_list $start end]
+
+# Now iterate over these lists to fill up the attribute dictionary
+foreach entry [concat $attribute_list $attribute_class_list] {
+    if {[llength $entry]<3} {continue}
+    set attr_name  [lindex $entry 0]                                                 
+    set attr_class [lindex $entry 1]
+    set attr_type  [lindex $entry 2]
+    if {[llength $entry]>=5} {
+        set attr_constraints [list {*}[join [split [lrange $entry 5 end] ","]]]
+    }
+    if {![dict exists $attribute_dict $attr_class]} {
+        dict set attribute_dict $attr_class [dict create]
+    }
+    dict set attribute_dict $attr_class $attr_name [dict create]
+    dict set attribute_dict $attr_class $attr_name "type" $attr_type
+    dict set attribute_dict $attr_class $attr_name "constraints" $attr_constraints
+}
+
+
+######################################################################
 # Now that we have all the commands and some other stuff, 
 # let's figure out the command descriptions, options, and option details
 ######################################################################
@@ -261,7 +296,7 @@ echo "Making new \$WARD/TclComplete directory..."
     puts $f "let options = {}"
     foreach cmd [dict keys $opt_dict] {
         set option_string "\["
-        foreach opt [dict get $opt_dict $cmd] {
+        foreach opt [lsort [dict get $opt_dict $cmd]] {
             append option_string "\"$opt\","
         }
         puts $f "let options\[\"$cmd\"\] = $option_string\]"
@@ -310,12 +345,45 @@ echo "Making new \$WARD/TclComplete directory..."
 # Write out aliases as Vim insert mode abbreviations
 #----------------------------------------------------
     set f   [open $outdir/aliases.vim w]
+    # Some aliases are useless in a script
+    set alias_exclusion_list { 2D_check_legality 2D_legalizer_toolbox h hg lag lcg pac pc pl pop push qtcl_activate_widget_slot qtcl_add_widget_property qtcl_check_widget qtcl_connect_widgets qtcl_create_widget qtcl_destroy_widget qtcl_disconnect_widgets qtcl_get_widget_data qtcl_get_widget_property qtcl_operate_widget qtcl_remove_widget_property qtcl_set_widget_property ra rc rt rtmax rtmin s_cell s_net s_port s_terminal sg st stages steps zs} 
+        
     foreach entry $alias_list {
-        if {[string length $entry]>0} {
-            puts $f "iabbrev $entry"
+        if {[regexp {(\S+)\s+(.*$)} $entry -> alias_name alias_def]} {
+            if {$alias_name ni $alias_exclusion_list} {
+                puts $f "iabbrev $entry"
+            }
         }
     }
+    # Add some special cases
+    puts $f "iabbrev fic foreach_in_collection"
+    
     close $f
-    echo "...alises.vim file complete."
+    echo "...aliases.vim file complete."
 
 
+#----------------------------------------------------
+# Write out attributes as a big fat Vim dictionary
+#----------------------------------------------------
+    set f [open $outdir/attributes.vim w]
+    puts $f "let attributes = {}"
+    dict for {class class_dict} $attribute_dict {
+        puts  $f "let attributes\[\"$class\"\]={}"
+        dict for {name name_dict} $class_dict {
+            puts  $f "let attributes\[\"$class\"\]\[\"$name\"\]={}"
+            set constraints [lsort [dict get $name_dict constraints]]
+            set constraints_string "\["
+            foreach c $constraints {
+                append constraints_string "\"$c\","
+            }
+            append constraints_string "\]"
+
+            set type        [dict get $name_dict type]
+            puts $f "let attributes\[\"$class\"\]\[\"$name\"\]\[\"type\"]=\"$type\""
+            puts $f "let attributes\[\"$class\"\]\[\"$name\"\]\[\"constraints\"]=$constraints_string"
+        }
+    }
+    puts $f "\"\" Reassign to a global variable \"\""
+    puts $f "let g:TclComplete#attributes = attributes"
+    close $f
+    echo "...attributes.vim file complete."
