@@ -351,7 +351,7 @@ echo "Making new \$WARD/TclComplete directory..."
     foreach entry $alias_list {
         if {[regexp {(\S+)\s+(.*$)} $entry -> alias_name alias_def]} {
             if {$alias_name ni $alias_exclusion_list} {
-                puts $f "iabbrev $entry"
+                puts $f "iabbrev [string trim $entry]"
             }
         }
     }
