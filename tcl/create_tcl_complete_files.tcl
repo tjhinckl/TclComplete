@@ -166,8 +166,7 @@ echo "...\$alias_list built"
 
 ######################################################################
 # Form a multi-level dictionary of attributes
-#  attribute_dict['class']['attr_name']['type']
-#  attribute_dict['class']['attr_name']['constraints']
+#  attribute_dict['class']['attr_name'] = choices
 ######################################################################
 set attribute_dict [dict create]
 
@@ -185,21 +184,30 @@ set attribute_class_list [lrange $attribute_class_list $start end]
 
 # Now iterate over these lists to fill up the attribute dictionary
 foreach entry [concat $attribute_list $attribute_class_list] {
+    # Skip invalid entries
     if {[llength $entry]<3} {continue}
-    set attr_name  [lindex $entry 0]                                                 
-    set attr_class [lindex $entry 1]
-    set attr_type  [lindex $entry 2]
-    if {[llength $entry]>=5} {
-        set attr_constraints [list {*}[join [split [lrange $entry 5 end] ","]]]
-    }
+
+    # Parse entry for attr_name(like "length"), attr_class(like "wire"), and attr_datatype(like "float")
+    set attr_name      [lindex $entry 0]                                                 
+    set attr_class     [lindex $entry 1]
+    set attr_datatype  [lindex $entry 2]
+
+    # If necessary, initialize a dict for the class of this entry
+    #   and also a subdict "choices".  
     if {![dict exists $attribute_dict $attr_class]} {
         dict set attribute_dict $attr_class [dict create]
     }
-    dict set attribute_dict $attr_class $attr_name [dict create]
-    dict set attribute_dict $attr_class $attr_name "type" $attr_type
-    dict set attribute_dict $attr_class $attr_name "constraints" $attr_constraints
-}
 
+    # Derive the attribute possible values (data type, or constrained list)
+    if {[llength $entry]>=5} {
+        set attr_choices [lrange $entry 5 end]
+    } else {
+        set attr_choices $attr_datatype
+    }
+
+    # Fill up the class dict: key=attr-name, value=attr_choices
+    dict set attribute_dict $attr_class $attr_name $attr_choices
+}
 
 ######################################################################
 # Now that we have all the commands and some other stuff, 
@@ -370,21 +378,51 @@ echo "Making new \$WARD/TclComplete directory..."
     puts $f "let attributes = {}"
     dict for {class class_dict} $attribute_dict {
         puts  $f "let attributes\[\"$class\"\]={}"
-        dict for {name name_dict} $class_dict {
-            puts  $f "let attributes\[\"$class\"\]\[\"$name\"\]={}"
-            set constraints [lsort [dict get $name_dict constraints]]
-            set constraints_string "\["
-            foreach c $constraints {
-                append constraints_string "\"$c\","
-            }
-            append constraints_string "\]"
 
-            set type        [dict get $name_dict type]
-            puts $f "let attributes\[\"$class\"\]\[\"$name\"\]\[\"type\"]=\"$type\""
-            puts $f "let attributes\[\"$class\"\]\[\"$name\"\]\[\"constraints\"]=$constraints_string"
+        # class is 'cell', 'pin', etc
+        # class_dict :  key=attr_name    key=attr_choices
+
+        dict for {attr_name attr_choices} $class_dict {
+            puts $f "let attributes\[\"$class\"\]\[\"$attr_name\"\] = \"$attr_choices\""
         }
+
     }
     puts $f "\"\" Reassign to a global variable \"\""
     puts $f "let g:TclComplete#attributes = attributes"
     close $f
     echo "...attributes.vim file complete."
+
+#----------------------------------------------------
+# Write out syntax highlighting commands
+#----------------------------------------------------
+    file mkdir "$outdir/syntax"
+    set f [open "$outdir/syntax/tcl.vim" w]
+    puts $f "\"Syntax coloring for G_variables"
+    puts $f "\"-------------------------------"
+    puts $f "syntax match G_var /G_\\w\\+/"
+    puts $f "highlight link G_var Identifier"
+
+    puts $f "\"Syntax coloring for keywords"
+    puts $f "\"-------------------------------"
+    foreach command $command_list  {
+        if {$command in "foreach foreach_in_collection while"} {continue}
+        puts $f "syn keyword tclCommand $command"
+    }
+    foreach proc_name $proc_list {
+        puts $f "syn keyword tclProcCommand $proc_name"
+    }
+    set attr_syntax_list {}
+    dict for {class class_dict} $attribute_dict {
+        foreach attr_name [dict keys $class_dict] {
+            lappend attr_syntax_list $attr_name
+        }
+    }
+    puts $f "\"Syntax coloring for attributes"
+    puts $f "\"-------------------------------"
+    set attr_syntax_list [lsort -unique $attr_syntax_list]
+    foreach attr_name $attr_syntax_list {
+        puts $f "syn keyword tclExpand $attr_name"
+    }
+
+    echo "...syntax/tcl.vim file complete."
+    close $f

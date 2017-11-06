@@ -21,10 +21,11 @@ if !exists("g:TclComplete#dir")
     endif
 endif
 
-" Default the completion mode to wildcard glob style, not regex
+execute "set runtimepath+=".g:TclComplete#dir
+
+" How far does ctrl-d and ctrl-u move the popup menu?
 if !exists("g:TclComplete#popupscroll")
     let g:TclComplete#popupscroll = 10
 endif
-
 
                                                
