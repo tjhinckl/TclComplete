@@ -14,8 +14,8 @@
 if !exists("g:TclComplete#dir")
     if isdirectory($WARD."/TclComplete")
         let g:TclComplete#dir = $WARD."/TclComplete"
-    elseif isdirectory($WARD."/dp/inputs/TclComplete")
-        let g:TclComplete#dir = $WARD."/dp/inputs/TclComplete"
+    elseif isdirectory($WARD."/dp/user_scripts/TclComplete")
+        let g:TclComplete#dir = $WARD."/dp/user_scripts/TclComplete"
     else
         let g:TclComplete#dir = expand("<sfile>:p:h:h")."/sample"
     endif
