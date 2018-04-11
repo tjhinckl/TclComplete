@@ -32,8 +32,19 @@ function! TclComplete#GetData()
     "           value = description of option 
     execute "source ".g:TclComplete#dir."/details.vim"
 
+    "  g:TclComplete#iccpp
+    "     list:  iccpp parameters
+    execute "source ".g:TclComplete#dir."/iccpp.vim"
+    execute "source ".g:TclComplete#dir."/iccpp_dict.vim"
+
+    "  g:TclComplete#g_vars and g:TclComplete#g_var_arrays
+    "     list:  iccpp parameters
+    execute "source ".g:TclComplete#dir."/g_vars.vim"
+    execute "source ".g:TclComplete#dir."/g_var_arrays.vim"
+
     " This depends on the taglist containing G_variables.  rdt_tags does that.
-    let g:TclComplete#g_vars = map(taglist('^G_'),"v:val['name']")
+    " let g:TclComplete#g_vars = map(taglist('^G_'),"v:val['name']")
+    
 endfunction                                                            l
 
 function! TclComplete#AttrChoices(A,L,P)
@@ -90,7 +101,7 @@ function! TclComplete#FindStart()
     let l:index = col('.') - 1
     " Important:  We need to search for :: for namespaces, $ for var names
     "             and * for the wildcard mode, and -dashes for options
-    let l:valid_chars = '[\-a-zA-Z0-9:_*$]'
+    let l:valid_chars = '[\-a-zA-Z0-9:_*$(]'
 
     " Move backward as long as the previous character(index-1)  is part of valid_chars
     while  l:index>0 && l:line[l:index - 1]=~l:valid_chars
@@ -178,7 +189,11 @@ function! TclComplete#Complete(findstart, base)
         " Many types of completion.
         "  1) G_var style
         if l:base =~# '^G'
-            let l:complete_list = g:TclComplete#g_vars
+            if l:base =~# '('
+                let l:complete_list = g:TclComplete#g_var_arrays
+            else
+                let l:complete_list = g:TclComplete#g_vars
+            endif
 
         "  2) $var style
         elseif l:base=~ '^\\\$'
@@ -205,12 +220,16 @@ function! TclComplete#Complete(findstart, base)
             elseif s:active_cmd =~# '\v^(unset|lappend|dict set)$'
                 let l:complete_list = TclComplete#ScanBufferForVariableNames()
 
-            elseif s:active_cmd =~# '\v(set|get)_attribute'
+            elseif s:active_cmd =~# '\v(set_attribute|get_attribute|filter_collection)'
                 call TclComplete#AskForAttribute()
                 let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
                 let l:menu_dict     = get(g:TclComplete#attributes,g:TclComplete#attr_class,{})
                 let g:TclComplete#attr_flag = 'no'
                 
+            elseif s:active_cmd =~# '\viccpp_com::(set|get)_param'
+                let l:complete_list = sort(keys(g:TclComplete#iccpp_dict))
+                let l:menu_dict = g:TclComplete#iccpp_dict
+               
             " Complete everything else with just the command list
             else
                 let l:complete_list = get(g:TclComplete#options,s:active_cmd,[])
@@ -224,7 +243,7 @@ function! TclComplete#Complete(findstart, base)
         let res = []
         for m in l:complete_list
             if m=~# '^'.l:base
-                let menu = get(l:menu_dict,m,'')
+                let menu = get(l:menu_dict,m,'')[0:30]
                 if menu =~ 'Synonym' 
                     continue
                 else
