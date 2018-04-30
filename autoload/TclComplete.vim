@@ -148,9 +148,13 @@ function! TclComplete#FindStart()
     " All done moving the index. Save s:active_cmd as a script variable
     if l:index==s:start_of_completion
         let s:active_cmd = ''
+        let s:last_completed_word = ''
     else
         let s:active_cmd = matchstr(l:line, '[\-a-zA-Z0-9:_]\+',l:index)
+        let s:last_completed_word = split(l:line[0:s:start_of_completion-1])[-1]
     endif
+
+    " Let's also figure out the last completed word
 
     " Finally, return the start which is required for a completion function
     return s:start_of_completion
