@@ -6,7 +6,7 @@
 # Description:  Source this from the icc2_shell (or dc or pt?) to 
 #               create a file that can be used for tcl omnicompletion
 #               in Vim.
-# Date of latest revision: 02-Nov-2017
+# Date of latest revision: 11-April-2018
 
 ##############################
 # Helpers procs defined first 
@@ -244,6 +244,44 @@ echo "...\$package_list built"
 redirect -variable alias_string {alias}
 set alias_list [split $alias_string "\n"]
 echo "...\$alias_list built"
+
+#####################
+# Application options
+#####################
+proc get_app_option_from_man_page {app_option} {
+    redirect -variable man_text {man $app_option}
+    set TYPE_flag 0
+    set DEFAULT_flag 0
+    set TYPE    ""
+    set DEFAULT ""
+    foreach line [split $man_text "\n"] {
+        if {[regexp "^TYPE" $line]} { 
+            set TYPE_flag 1
+        } elseif {[regexp "^DEFAULT" $line]} { 
+            set DEFAULT_flag 1
+        } elseif {$TYPE_flag==1} {
+            set TYPE [lindex $line 0]
+            set TYPE_flag 0
+        } elseif {$DEFAULT_flag==1} {
+            set DEFAULT [lindex $line 0]
+            set DEFAULT_flag 0
+            break
+        }
+    }
+    if {$TYPE!=""} {
+        return "$TYPE:default=$DEFAULT"
+    } else {
+        return "unknown type"
+    }
+}
+
+redirect -variable app_option_list {lsort -u [get_app_options]}
+set app_option_dict [dict create]
+foreach app_option $app_option_list {
+    dict set app_option_dict $app_option [get_app_option_from_man_page $app_option]
+}
+
+    
 
 ####################################################################
 # ICCPP parameters (this will be empty if ::iccpp_com doesn't exist)
@@ -576,6 +614,11 @@ close $log
     close $f
     echo "...iccpp_dict.vim file complete."
 
+#-------------------------------------
+#  icc2 app options
+#-------------------------------------
+    echo [dict_to_json $app_option_dict] > $outdir/app_options.json
+    echo "...iccpp_dict.json file complete."
 #----------------------------------------------------
 # write out syntax highlighting commands
 #----------------------------------------------------

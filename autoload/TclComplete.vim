@@ -44,6 +44,7 @@ function! TclComplete#GetData()
 
     " This depends on the taglist containing G_variables.  rdt_tags does that.
     " let g:TclComplete#g_vars = map(taglist('^G_'),"v:val['name']")
+    let g:TclComplete#app_options_dict  = json_decode(join(readfile(g:TclComplete#dir.'/app_options.json')))
     
 endfunction                                                            l
 
@@ -212,8 +213,13 @@ function! TclComplete#Complete(findstart, base)
 
         "  5) Options of a previous command.
         else
+            " If the user started typing a hyphen, then use the command options and details
+            if l:base[0] == '-' 
+                let l:complete_list = get(g:TclComplete#options,s:active_cmd,[])
+                let l:menu_dict     = get(g:TclComplete#details,s:active_cmd,[])
+
             " Complete package require with packages
-            if getline('.') =~# '^package require'
+            elseif getline('.') =~# '^package require'
                 let l:complete_list = g:TclComplete#options['package require']
 
             " Complete unset, lappend and dict set with variable names
@@ -229,6 +235,10 @@ function! TclComplete#Complete(findstart, base)
             elseif s:active_cmd =~# '\viccpp_com::(set|get)_param'
                 let l:complete_list = sort(keys(g:TclComplete#iccpp_dict))
                 let l:menu_dict = g:TclComplete#iccpp_dict
+
+            elseif s:active_cmd =~# '\v(get|set|report|reset)_app_options(_value)?'
+                let l:complete_list = sort(keys(g:TclComplete#app_options_dict))
+                let l:menu_dict = g:TclComplete#app_options_dict
                
             " Complete everything else with just the command list
             else
@@ -243,7 +253,7 @@ function! TclComplete#Complete(findstart, base)
         let res = []
         for m in l:complete_list
             if m=~# '^'.l:base
-                let menu = get(l:menu_dict,m,'')[0:30]
+                let menu = get(l:menu_dict,m,'')
                 if menu =~ 'Synonym' 
                     continue
                 else
