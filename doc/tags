@@ -6,5 +6,4 @@ TclComplete:Populate	TclComplete.txt	/*TclComplete:Populate*
 TclComplete:config	TclComplete.txt	/*TclComplete:config*
 TclComplete:ctrl-d	TclComplete.txt	/*TclComplete:ctrl-d*
 TclComplete:ctrl-u	TclComplete.txt	/*TclComplete:ctrl-u*
-cells	TclComplete.txt	/*cells*
 g:TclComplete#dir	TclComplete.txt	/*g:TclComplete#dir*

@@ -2,7 +2,7 @@
 
 Author:  Chris Heithoff ( christopher.b.heithoff@intel.com )
 Initial Date:  10/31/2017
-Latest Rev:    11/3/2017
+Latest Rev:    05/01/2018
    
 ==============================================================================
 1. Intro                                          *TclComplete*
@@ -24,11 +24,16 @@ Latest Rev:    11/3/2017
    Because there can be different versions of Tcl, and also many
    possible procs that may vary from project to project, it is
    recommended to open up your Tcl shell (or icc2_shell or pt_shell..)
-   and source the tcl/create_tcl_complete_files.tcl file.
+   and source the tcl/WriteTclCompleteFiles.tcl file.
 
    This will create a directory $WARD/TclComplete and populate it with
    sourceable .vim files defining a data structure for commands, 
    options, commands descriptions, options details, etc.
+   
+   The Tcl script will also create .json files.   The .json files are
+   easier to dump out than Vim files and can be used by Emacs too.
+   Eventually, this plugin will only rely on .json, but it's not fully
+   converted yet.
     (NOTE:  This expects user to be an Intel back-end engineer who works
      in a back-end environment, where the $WARD is your work area. If 
      you need this changed, then modify the tcl script or fake it out
@@ -41,7 +46,7 @@ Latest Rev:    11/3/2017
    - Tell Vim how to find the TclComplete directory
        defaults (in order of descending priority)
           $WARD/TclComplete
-          $WARD/dp/inputs/TclComplete
+          $WARD/dp/user_scripts/TclComplete
           <location_of_plugin>/sample
 
        to override default:   
@@ -102,7 +107,7 @@ ctrl-u   Scroll the pop-up menu up by 10 choices.
   By default, the auto-completion takes wilcard (glob) patterns similar to what 
 you would use in Tcl scripts for Synopsys tools.
 
-  *cells* <tab>  --> popup menu will show all matching commands
+  *cells*<tab>  --> popup menu will show all matching commands
 
    (there's no regex mode)
 
@@ -114,7 +119,19 @@ you would use in Tcl scripts for Synopsys tools.
      In other words, type 'gc' followed by <space> and the 'gc' gets 
      replaced by 'get_cells'.  Very cool!
 ==============================================================================
-7) Call to action!
+7) Special categories of completion:
+     
+      - variable names starting with $
+      - G_variables
+      - attributes in the get_attribute/set_attribute commands
+      - expr functions
+      - command ensembles (dict, string, package, etc)
+      - package require <your_list_of_packages_here>
+      - iccpp parameters with iccpp_com::get_param and iccpp_com::set_param
+      - tech::get_techfile_info autocompletion 
+
+==============================================================================
+8) Call to action!
      If you like this, let me know!   christopher.b.heithoff@intel.com 
     
     Future plans for improvements:
@@ -123,9 +140,6 @@ you would use in Tcl scripts for Synopsys tools.
       for example, "file" is a namespace ensemble, but "info" and "package"
           are not.  I hardcoded to "info" and "package" subcommands into
           the tcl script.
-    - Auto-complete variable in your buffers, triggered by $
-    - Auto-complete attributes!  
-    - Auto-complete G_variables!
 
 
 
