@@ -46,6 +46,10 @@ function! TclComplete#GetData()
     " let g:TclComplete#g_vars = map(taglist('^G_'),"v:val['name']")
     let g:TclComplete#app_options_dict  = json_decode(join(readfile(g:TclComplete#dir.'/app_options.json')))
     
+    " Tech file information from the ::techfile_info array (rdt thing)
+    let g:TclComplete#techfile_types      = json_decode(join(readfile(g:TclComplete#dir.'/techfile_types.json')))
+    let g:TclComplete#techfile_layer_dict = json_decode(join(readfile(g:TclComplete#dir.'/techfile_layer_dict.json')))
+    let g:TclComplete#techfile_attr_dict  = json_decode(join(readfile(g:TclComplete#dir.'/techfile_attr_dict.json')))
 endfunction                                                            l
 
 function! TclComplete#AttrChoices(A,L,P)
@@ -148,10 +152,10 @@ function! TclComplete#FindStart()
     " All done moving the index. Save s:active_cmd as a script variable
     if l:index==s:start_of_completion
         let s:active_cmd = ''
-        let s:last_completed_word = ''
+        let g:last_completed_word = ''
     else
         let s:active_cmd = matchstr(l:line, '[\-a-zA-Z0-9:_]\+',l:index)
-        let s:last_completed_word = split(l:line[0:s:start_of_completion-1])[-1]
+        let g:last_completed_word = split(l:line[0:s:start_of_completion-1])[-1]
     endif
 
     " Let's also figure out the last completed word
@@ -243,7 +247,26 @@ function! TclComplete#Complete(findstart, base)
             elseif s:active_cmd =~# '\v(get|set|report|reset)_app_options(_value)?'
                 let l:complete_list = sort(keys(g:TclComplete#app_options_dict))
                 let l:menu_dict = g:TclComplete#app_options_dict
-               
+
+            " Techfile stuff
+            elseif s:active_cmd =~ 'tech::get_techfile_info'
+                if g:last_completed_word=='-type'
+                    let l:complete_list = g:TclComplete#techfile_types
+                elseif g:last_completed_word=='-layer'
+                    let l:tech_file_type = matchstr(getline('.'), '-type\s\+\zs\w\+')
+                    let l:menu_dict = g:TclComplete#techfile_layer_dict
+                    let l:complete_list = sort(get(g:TclComplete#techfile_layer_dict,l:tech_file_type,[]))
+                else
+                    let l:tech_file_type  = matchstr(getline('.'), '-type\s\+\zs\w\+')
+                    let l:tech_file_layer = matchstr(getline('.'), '-layer\s\+\zs\w\+')
+                    let l:tech_file_key = l:tech_file_type.":".l:tech_file_layer
+                    let l:tech_file_dict = g:TclComplete#techfile_attr_dict
+                    let l:complete_list =  sort(get(g:TclComplete#techfile_attr_dict,l:tech_file_key,['-type','-layer']))
+                endif
+                let l:menu_dict     = {}
+
+
+
             " Complete everything else with just the command list
             else
                 let l:complete_list = get(g:TclComplete#options,s:active_cmd,[])
