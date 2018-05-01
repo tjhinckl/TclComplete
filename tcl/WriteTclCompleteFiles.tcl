@@ -127,6 +127,8 @@ proc dict_to_json {dict} {
     set result "{\n"
     foreach key [lsort [dict keys $dict]] {
         set value [dict get $dict $key]
+        set key   [string trim $key   "\""]
+        set value [string trim $value "\""]
         append result "${indent}\"${key}\":\"${value}\",\n"
     }
     set result [remove_final_comma $result]
@@ -353,7 +355,7 @@ foreach entry [concat $attribute_list $attribute_class_list] {
 # Form data structures from the ::techfile_info array
 #   techfile_types - List
 #   techfile_layers - Dict (keys = types, values = list of layers)
-#   techfile_attributes - Dict (keys = "type:layer" - values = dict (key=attr name, value=default value))
+#   techfile_attributes - Dict (keys = "type:layer" - values = list of attributes)
 ######################################################################
 # This command creates the ::techfile_info array
 catch {::tech::read_techfile_info}
@@ -366,7 +368,7 @@ foreach name [lsort [array names ::techfile_info]] {
         lappend techfile_types $Type
     }
     dict lappend techfile_layer_dict $Type $Layer
-    dict set techfile_attr_dict $name $::techfile_info($name)
+    dict set techfile_attr_dict $name [dict keys $::techfile_info($name)]
 }
 
 ######################################################################
@@ -647,7 +649,7 @@ close $log
     echo "...techfile_types.json file complete."
     echo [dict_of_lists_to_json $techfile_layer_dict] > $outdir/techfile_layer_dict.json
     echo "...techfile_layer_dict.json file complete."
-    echo [dict_of_dicts_to_json $techfile_attr_dict] > $outdir/techfile_attr_dict.json
+    echo [dict_of_lists_to_json $techfile_attr_dict] > $outdir/techfile_attr_dict.json
     echo "...techfile_attr_dict.json file complete."
 #----------------------------------------------------
 # write out syntax highlighting commands
