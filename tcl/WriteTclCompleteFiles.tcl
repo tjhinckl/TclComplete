@@ -350,6 +350,26 @@ foreach entry [concat $attribute_list $attribute_class_list] {
 }
 
 ######################################################################
+# Form data structures from the ::techfile_info array
+#   techfile_types - List
+#   techfile_layers - Dict (keys = types, values = list of layers)
+#   techfile_attributes - Dict (keys = "type:layer" - values = dict (key=attr name, value=default value))
+######################################################################
+# This command creates the ::techfile_info array
+catch {::tech::read_techfile_info}
+set techfile_types {}
+set techfile_layer_dict [dict create]
+set techfile_attr_dict  [dict create]
+foreach name [lsort [array names ::techfile_info]] {
+    lassign [split $name ":"] Type Layer
+    if {$Type ni $techfile_types} {
+        lappend techfile_types $Type
+    }
+    dict lappend techfile_layer_dict $Type $Layer
+    dict set techfile_attr_dict $name $::techfile_info($name)
+}
+
+######################################################################
 # Now that we have all the commands and some other stuff, 
 # let's figure out the command descriptions, options, and option details
 ######################################################################
@@ -619,6 +639,16 @@ close $log
 #-------------------------------------
     echo [dict_to_json $app_option_dict] > $outdir/app_options.json
     echo "...iccpp_dict.json file complete."
+    
+#-------------------------------------
+#  techfile information
+#-------------------------------------
+    echo [list_to_json $techfile_types] > $outdir/techfile_types.json
+    echo "...techfile_types.json file complete."
+    echo [dict_of_lists_to_json $techfile_layer_dict] > $outdir/techfile_layer_dict.json
+    echo "...techfile_layer_dict.json file complete."
+    echo [dict_of_dicts_to_json $techfile_attr_dict] > $outdir/techfile_attr_dict.json
+    echo "...techfile_attr_dict.json file complete."
 #----------------------------------------------------
 # write out syntax highlighting commands
 #----------------------------------------------------
@@ -626,7 +656,7 @@ close $log
     set f [open "$outdir/syntax/tcl.vim" w]
     puts $f "\"syntax coloring for g_variables"
     puts $f "\"-------------------------------"
-    puts $f "syntax match g_var /g_\\w\\+/"
+    puts $f "syntax match g_var /\\CG_\\w\\+/"
     puts $f "highlight link g_var title"
 
     puts $f "\"syntax coloring for keywords"
