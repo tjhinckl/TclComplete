@@ -6,10 +6,87 @@
 # Description:  Source this from the icc2_shell (or dc or pt?) to 
 #               create a file that can be used for tcl omnicompletion
 #               in Vim.
-# Date of latest revision: 11-April-2018
+# Date of latest revision: 02-May-2018
+
+#---------------------------------------#
+#           JSON procs                  #
+#---------------------------------------#
+# Return a json string for a Tcl list
+proc list_to_json {list} {
+    set indent "    "
+    set result "\[\n"
+    foreach item [lsort $list] {
+        append result "${indent}\"${item}\",\n"
+    }
+    set result [remove_final_comma $result]
+    append result "]"
+    return $result
+}
+
+# Return a json string for a Tcl dict
+proc dict_to_json {dict} {
+    set indent "    "
+    set result "{\n"
+    foreach key [lsort [dict keys $dict]] {
+        set value [dict get $dict $key]
+        append result "${indent}\"${key}\":\"${value}\",\n"
+    }
+    set result [remove_final_comma $result]
+    append result "}"
+    return $result
+}
+
+# Return a json string for a Tcl dictionary of lists
+proc dict_of_lists_to_json {dict_of_lists} {
+    set indent "    "
+    set result "{\n"
+    foreach key [lsort [dict keys $dict_of_lists]] {
+        append result "${indent}\"${key}\":\n"
+        append result "${indent}${indent}\[\n"
+        foreach value [dict get $dict_of_lists $key] {
+            append result "${indent}${indent}\"${value}\",\n"
+        }
+        set result [remove_final_comma $result]
+        append result "${indent}${indent}\],\n"
+    }
+    set result [remove_final_comma $result]
+    append result "}"
+    return $result
+}
+        
+# Return a json string for a Tcl dictionary of dictionaries
+proc dict_of_dicts_to_json {dict_of_dicts} {
+    set indent "    "
+    set result "{\n"
+    foreach key [lsort [dict keys $dict_of_dicts]] {
+        append result "${indent}\"${key}\":\n"
+        append result "${indent}${indent}\{\n"
+        dict for {instance_name ref_name} [dict get $dict_of_dicts $key] {
+            append result "${indent}${indent}\"${instance_name}\":\"${ref_name}\",\n"
+        }
+        set result [remove_final_comma $result]
+        append result "${indent}${indent}\},\n"
+    }
+    set result [remove_final_comma $result]
+    append result "}"
+    return $result
+}
+
+##########################################################################
+# Helper proc to remove a final comma from a json list/dictionary
+#   [               [
+#    d,              d,
+#    e,       ==>    e,
+#    f,              f
+#   ]               ]
+##########################################################################
+proc remove_final_comma {json_string} {
+    set json_string [string trimright $json_string "\n,"]
+    return "$json_string\n"
+}
 
 ##############################
-# Helpers procs defined first 
+# Like shell mkdir
 ##############################
 proc mkdir_fresh {dir} {
     if {[file exists $dir]} {
@@ -20,8 +97,9 @@ proc mkdir_fresh {dir} {
 }
 
         
-# Run "help <command>".  Parse and return the description
-#  Corner case:  "help help" returns help for three commands
+#########################################################
+# Run help on a command.  Return the command's description
+#########################################################
 proc get_description_from_help {cmd} {
     set result ""
     redirect -variable help_text {help $cmd}
@@ -37,6 +115,9 @@ proc get_description_from_help {cmd} {
     return $result 
 }
 
+#####################################################
+# Run help -v on a command and then parse the options
+#####################################################
 proc get_options_from_help {cmd} {
     # Returns a dictionary.  Key = option name  Value = option detail
     set result [dict create]
@@ -80,7 +161,9 @@ proc get_options_from_help {cmd} {
     return $result
 }
 
+#####################################################
 # Run "man <command>".  Parse and return the options.
+#####################################################
 proc get_options_from_man {cmd} {
     set result {}
     redirect -variable man_text {man $cmd}
@@ -93,87 +176,6 @@ proc get_options_from_man {cmd} {
     return [lsort -u $result]
 }
 
-##########################################################################
-# Helper proc to remove a final comma from a json list/dictionary
-#   [               [
-#    d,              d,
-#    e,       ==>    e,
-#    f,              f
-#   ]               ]
-##########################################################################
-proc remove_final_comma {json_string} {
-    set json_string [string trimright $json_string "\n,"]
-    return "$json_string\n"
-}
-#################################
-# Return a json string for a list
-#################################
-proc list_to_json {list} {
-    set indent "    "
-    set result "\[\n"
-    foreach item [lsort $list] {
-        append result "${indent}\"${item}\",\n"
-    }
-    set result [remove_final_comma $result]
-    append result "]"
-    return $result
-}
-
-#################################
-# Return a json string for a dict
-#################################
-proc dict_to_json {dict} {
-    set indent "    "
-    set result "{\n"
-    foreach key [lsort [dict keys $dict]] {
-        set value [dict get $dict $key]
-        set key   [string trim $key   "\""]
-        set value [string trim $value "\""]
-        append result "${indent}\"${key}\":\"${value}\",\n"
-    }
-    set result [remove_final_comma $result]
-    append result "}"
-    return $result
-}
-##########################################################################
-# Return a json string for a dictionary of lists
-##########################################################################
-proc dict_of_lists_to_json {dict_of_lists} {
-    set indent "    "
-    set result "{\n"
-    foreach key [lsort [dict keys $dict_of_lists]] {
-        append result "${indent}\"${key}\":\n"
-        append result "${indent}${indent}\[\n"
-        foreach value [dict get $dict_of_lists $key] {
-            append result "${indent}${indent}\"${value}\",\n"
-        }
-        set result [remove_final_comma $result]
-        append result "${indent}${indent}\],\n"
-    }
-    set result [remove_final_comma $result]
-    append result "}"
-    return $result
-}
-        
-##########################################################################
-# Return a json string for a dictionary of dictionaries
-##########################################################################
-proc dict_of_dicts_to_json {dict_of_dicts} {
-    set indent "    "
-    set result "{\n"
-    foreach key [lsort [dict keys $dict_of_dicts]] {
-        append result "${indent}\"${key}\":\n"
-        append result "${indent}${indent}\{\n"
-        dict for {instance_name ref_name} [dict get $dict_of_dicts $key] {
-            append result "${indent}${indent}\"${instance_name}\":\"${ref_name}\",\n"
-        }
-        set result [remove_final_comma $result]
-        append result "${indent}${indent}\},\n"
-    }
-    set result [remove_final_comma $result]
-    append result "}"
-    return $result
-}
 ####################################################################
 # Ask the synopsys tool for commands, procs, packages, and functions
 ####################################################################
@@ -289,6 +291,8 @@ foreach app_option $app_option_list {
 # ICCPP parameters (this will be empty if ::iccpp_com doesn't exist)
 ####################################################################
 set iccpp_param_list [array names ::iccpp_com::params_map]
+set iccpp_param_dict [array get   ::iccpp_com::params_map]
+
 
 ####################################################################
 # G_variables
@@ -456,14 +460,14 @@ close $log
 #  All the commands in a Vim ordered list
 #    g:TclComplete#cmds
 #-------------------------------------
-    set f [open $outdir/commands.vim w]
-    puts $f "let g:TclComplete#cmds = \["
-    foreach cmd [concat $builtin_list $command_list $proc_list] {
-        puts $f "   \\ \"$cmd\"," 
-    }
-    puts $f "   \\]"
-    close $f
-    echo "...commands.vim file complete."
+    # set f [open $outdir/commands.vim w]
+    # puts $f "let g:TclComplete#cmds = \["
+    # foreach cmd [concat $builtin_list $command_list $proc_list] {
+    #     puts $f "   \\ \"$cmd\"," 
+    # }
+    # puts $f "   \\]"
+    # close $f
+    # echo "...commands.vim file complete."
 
     echo [list_to_json [concat $builtin_list $command_list $proc_list]] > $outdir/commands.json
     echo "...commands.json file complete."
@@ -473,20 +477,20 @@ close $log
 #   value = ordered list of options
 #   g:TclComplete#options['cmd'] = ['opt1', 'opt2',]
 #-----------------------------------------
-    set f [open $outdir/options.vim w]
-    # initialize details and opts dicts
-    puts $f "let options = {}"
-    foreach cmd [dict keys $opt_dict] {
-        set option_string "\["
-        foreach opt [lsort [dict get $opt_dict $cmd]] {
-            append option_string "\"$opt\","
-        }
-        puts $f "let options\[\"$cmd\"\] = $option_string\]"
-    }
-    puts $f "\"\" Reassign to a global variable \"\""
-    puts $f "let g:TclComplete#options = options"
-    close $f
-    echo "...options.vim file complete."
+    # set f [open $outdir/options.vim w]
+    # # initialize details and opts dicts
+    # puts $f "let options = {}"
+    # foreach cmd [dict keys $opt_dict] {
+    #     set option_string "\["
+    #     foreach opt [lsort [dict get $opt_dict $cmd]] {
+    #         append option_string "\"$opt\","
+    #     }
+    #     puts $f "let options\[\"$cmd\"\] = $option_string\]"
+    # }
+    # puts $f "\"\" Reassign to a global variable \"\""
+    # puts $f "let g:TclComplete#options = options"
+    # close $f
+    # echo "...options.vim file complete."
 
     echo [dict_of_lists_to_json $opt_dict] > $outdir/options.json
     echo "...options.json file complete."
@@ -497,18 +501,18 @@ close $log
 #   value = dictionary with key=option and value=details
 #   g:TclComplete#details['cmd']['opt1'] = "details of the option"
 #-----------------------------------------
-    set f [open $outdir/details.vim w]
-    puts $f "let details = {}"
-    dict for {cmd opt_detail_dict} $details_dict {
-        puts $f "   let details\[\"$cmd\"\]={}"
-        dict for {opt detail} $opt_detail_dict {
-            puts $f "        let details\[\"$cmd\"\]\[\"$opt\"\] = \"$detail\""
-        }
-    }
-    puts $f "\"\" Reassign to a global variable \"\""
-    puts $f "let g:TclComplete#details = details"
-    close $f
-    echo "...details.vim file complete."
+    # set f [open $outdir/details.vim w]
+    # puts $f "let details = {}"
+    # dict for {cmd opt_detail_dict} $details_dict {
+    #     puts $f "   let details\[\"$cmd\"\]={}"
+    #     dict for {opt detail} $opt_detail_dict {
+    #         puts $f "        let details\[\"$cmd\"\]\[\"$opt\"\] = \"$detail\""
+    #     }
+    # }
+    # puts $f "\"\" Reassign to a global variable \"\""
+    # puts $f "let g:TclComplete#details = details"
+    # close $f
+    # echo "...details.vim file complete."
 
     echo [dict_of_dicts_to_json $details_dict] > $outdir/details.json
     echo "...details.json file complete."
@@ -518,15 +522,15 @@ close $log
 #   value = command description
 #   g:TclComplete#descriptions['cmd'] = "description of the command"
 #-----------------------------------------
-    set f   [open $outdir/descriptions.vim w]
-    puts $f "let description = {}"
-    dict for {cmd description} $desc_dict {
-        puts $f "let description\[\"$cmd\"\] = \"$description\""
-    }
-    puts $f "\"\" Reassign to a global variable \"\""
-    puts $f "let g:TclComplete#descriptions = description"
-    close $f
-    echo "...descriptions.vim file complete."
+    # set f   [open $outdir/descriptions.vim w]
+    # puts $f "let description = {}"
+    # dict for {cmd description} $desc_dict {
+    #     puts $f "let description\[\"$cmd\"\] = \"$description\""
+    # }
+    # puts $f "\"\" Reassign to a global variable \"\""
+    # puts $f "let g:TclComplete#descriptions = description"
+    # close $f
+    # echo "...descriptions.vim file complete."
 
     echo [dict_to_json $desc_dict] > $outdir/descriptions.json
     echo "...descriptions.json file complete."
@@ -535,18 +539,6 @@ close $log
 # Write out aliases as Vim insert mode abbreviations
 #----------------------------------------------------
     set f   [open $outdir/aliases.vim w]
-    # Some aliases are useless in a script
-    # set alias_exclusion_list { 2D_check_legality 2D_legalizer_toolbox cr h hg lag lcg pac pc pl pop push qtcl_activate_widget_slot qtcl_add_widget_property qtcl_check_widget qtcl_connect_widgets qtcl_create_widget qtcl_destroy_widget qtcl_disconnect_widgets qtcl_get_widget_data qtcl_get_widget_property qtcl_operate_widget qtcl_remove_widget_property qtcl_set_widget_property ra rc rt rtmax rtmin s_cell s_net s_port s_terminal sg st stages steps zs} 
-        
-    # foreach entry $alias_list {
-    #     if {[regexp {(\S+)\s+(.*$)} $entry -> alias_name alias_def]} {
-    #         if {$alias_name ni $alias_exclusion_list} {
-    #             puts $f "iabbrev [string trim $entry]"
-    #         }
-    #     }
-    # }
-    
-    # Forget about the aliases dumped from ICC2.  Let's just do a few.
     puts $f "iabbrev fic foreach_in_collection"
     puts $f "iabbrev ga  get_attribute"
     puts $f "iabbrev cs  change_selection"
@@ -559,23 +551,23 @@ close $log
 #----------------------------------------------------
 # Write out attributes as a big fat Vim dictionary
 #----------------------------------------------------
-    set f [open $outdir/attributes.vim w]
-    puts $f "let attributes = {}"
-    dict for {class class_dict} $attribute_dict {
-        puts  $f "let attributes\[\"$class\"\]={}"
+    # set f [open $outdir/attributes.vim w]
+    # puts $f "let attributes = {}"
+    # dict for {class class_dict} $attribute_dict {
+    #     puts  $f "let attributes\[\"$class\"\]={}"
 
-        # class is 'cell', 'pin', etc
-        # class_dict :  key=attr_name    key=attr_choices
+    #     # class is 'cell', 'pin', etc
+    #     # class_dict :  key=attr_name    key=attr_choices
 
-        dict for {attr_name attr_choices} $class_dict {
-            puts $f "let attributes\[\"$class\"\]\[\"$attr_name\"\] = \"$attr_choices\""
-        }
+    #     dict for {attr_name attr_choices} $class_dict {
+    #         puts $f "let attributes\[\"$class\"\]\[\"$attr_name\"\] = \"$attr_choices\""
+    #     }
 
-    }
-    puts $f "\"\" Reassign to a global variable \"\""
-    puts $f "let g:TclComplete#attributes = attributes"
-    close $f
-    echo "...attributes.vim file complete."
+    # }
+    # puts $f "\"\" Reassign to a global variable \"\""
+    # puts $f "let g:TclComplete#attributes = attributes"
+    # close $f
+    # echo "...attributes.vim file complete."
 
     echo [dict_of_dicts_to_json $attribute_dict] > $outdir/attributes.json
     echo "...attributes.json file complete."
@@ -583,23 +575,23 @@ close $log
 #-------------------------------------
 #  G variables (these are only the ones that exist in the session)
 #-------------------------------------
-    set f [open $outdir/g_vars.vim w]
-    puts $f "let g:TclComplete#g_vars = \["
-    foreach g_var $Gvar_list {
-        puts $f "   \\ \"$g_var\"," 
-    }
-    puts $f "   \\]"
-    close $f
-    echo "...g_vars.vim file complete."
+    # set f [open $outdir/g_vars.vim w]
+    # puts $f "let g:TclComplete#g_vars = \["
+    # foreach g_var $Gvar_list {
+    #     puts $f "   \\ \"$g_var\"," 
+    # }
+    # puts $f "   \\]"
+    # close $f
+    # echo "...g_vars.vim file complete."
 
-    set f [open $outdir/g_var_arrays.vim w]
-    puts $f "let g:TclComplete#g_var_arrays = \["
-    foreach g_var_array $Gvar_array_list {
-        puts $f "   \\ \"$g_var_array\"," 
-    }
-    puts $f "   \\]"
-    close $f
-    echo "...g_var_arrays.vim file complete."
+    # set f [open $outdir/g_var_arrays.vim w]
+    # puts $f "let g:TclComplete#g_var_arrays = \["
+    # foreach g_var_array $Gvar_array_list {
+    #     puts $f "   \\ \"$g_var_array\"," 
+    # }
+    # puts $f "   \\]"
+    # close $f
+    # echo "...g_var_arrays.vim file complete."
 
     echo [list_to_json $Gvar_list] > $outdir/g_vars.json
     echo "...g_vars.json file complete."
@@ -612,29 +604,33 @@ close $log
 #    g:tclcomplete#iccpp
 #-------------------------------------
     # list format of just the parameter names.
-    set f [open $outdir/iccpp.vim w]
-    puts $f "let g:TclComplete#iccpp = \["
-    foreach param $iccpp_param_list {
-        puts $f "   \\ \"$param\"," 
-    }
-    puts $f "   \\]"
-    close $f
-    echo "...iccpp.vim file complete."
+    # set f [open $outdir/iccpp.vim w]
+    # puts $f "let g:TclComplete#iccpp = \["
+    # foreach param $iccpp_param_list {
+    #     puts $f "   \\ \"$param\"," 
+    # }
+    # puts $f "   \\]"
+    # close $f
+    # echo "...iccpp.vim file complete."
 
+
+    # set f [open $outdir/iccpp_dict.vim w]
+    # # initialize details and opts dicts
+    # puts $f "let iccpp_dict = {}"
+    # foreach param $iccpp_param_list {
+    #     puts $f "let iccpp_dict\[\"$param\"\] = \"$::iccpp_com::params_map($param)\""
+    # }
+    # # dictionary format to include the default values.
+    # puts $f "\"\" reassign to a global variable \"\""
+    # puts $f "let g:TclComplete#iccpp_dict = iccpp_dict"
+    # close $f
+    # echo "...iccpp_dict.vim file complete."
+
+    # Now the json stuff....
     echo [list_to_json $iccpp_param_list] > $outdir/iccpp.json
+    echo "...iccpp.json file complete."
+    echo [dict_to_json $iccpp_param_dict] > $outdir/iccpp_dict.json
     echo "...iccpp_dict.json file complete."
-
-    set f [open $outdir/iccpp_dict.vim w]
-    # initialize details and opts dicts
-    puts $f "let iccpp_dict = {}"
-    foreach param $iccpp_param_list {
-        puts $f "let iccpp_dict\[\"$param\"\] = \"$::iccpp_com::params_map($param)\""
-    }
-    # dictionary format to include the default values.
-    puts $f "\"\" reassign to a global variable \"\""
-    puts $f "let g:TclComplete#iccpp_dict = iccpp_dict"
-    close $f
-    echo "...iccpp_dict.vim file complete."
 
 #-------------------------------------
 #  icc2 app options
@@ -651,6 +647,19 @@ close $log
     echo "...techfile_layer_dict.json file complete."
     echo [dict_of_lists_to_json $techfile_attr_dict] > $outdir/techfile_attr_dict.json
     echo "...techfile_attr_dict.json file complete."
+
+#-------------------------------------
+#  existing designs in your block
+#-------------------------------------
+    echo [list_to_json [get_object_name [get_designs]]] > $outdir/designs.json
+    echo "...designs.json file complete."
+    
+#-------------------------------------
+#  environment variables
+#-------------------------------------
+    echo [dict_to_json [array get ::env]]  > $outdir/environment.json
+    echo "...environment.json file complete."
+    
 #----------------------------------------------------
 # write out syntax highlighting commands
 #----------------------------------------------------
