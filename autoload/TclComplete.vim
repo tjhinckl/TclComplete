@@ -3,7 +3,15 @@
 " Version: 0.5
 " Last Updated: 06 November 2017
 "
-"
+
+function! TclComplete#ReadJsonFile(json_file)
+    let json_full_path = g:TclComplete#dir.'/'.a:json_file
+    let file_lines = readfile(json_full_path)
+    let file_as_one_string = join(file_lines)
+    let object = json_decode(file_as_one_string)
+    return object
+endfunction
+    
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
 " TclComplete#GetData()
 " - this is called when TclComplete is activated.
@@ -11,47 +19,67 @@
 function! TclComplete#GetData()                                     
     let l:dir = g:TclComplete#dir
 
-    "g:TclComplete#descriptions  
     "   dictionary: key = 'command', value = 'description of command'
-    execute "source ".g:TclComplete#dir."/descriptions.vim"
+    let g:TclComplete#descriptions = TclComplete#ReadJsonFile('descriptions.json')
 
-    "  g:TclComplete#attributes 
     "   multi-level dictionary [object_class][attr_name] = choices
-    execute "source ".g:TclComplete#dir."/attributes.vim"
+    let g:TclComplete#attributes = TclComplete#ReadJsonFile('attributes.json')
+    let g:TclComplete#object_classes = sort(keys(g:TclComplete#attributes))
 
-    "  g:TclComplete#cmds  
     "     list:  builtins first, then commands, then procs inside child namespaces
-    execute "source ".g:TclComplete#dir."/commands.vim"
+    let g:TclComplete#cmds = TclComplete#ReadJsonFile('commands.json')
 
-    "  g:TclComplete#options
     "     dict: key = ['command']  value = alphabetical list of options
-    execute "source ".g:TclComplete#dir."/options.vim"
+    let g:TclComplete#options = TclComplete#ReadJsonFile('options.json')
 
-    "  g:TclComplete#details 
     "     dict: key   = ['command']['option']
     "           value = description of option 
-    execute "source ".g:TclComplete#dir."/details.vim"
+    let g:TclComplete#details = TclComplete#ReadJsonFile('details.json')
 
-    "  g:TclComplete#iccpp
-    "     list:  iccpp parameters
-    execute "source ".g:TclComplete#dir."/iccpp.vim"
-    execute "source ".g:TclComplete#dir."/iccpp_dict.vim"
+    "  g:TclComplete#iccpp (list of iccpp parameters)
+    let g:TclComplete#iccpp = TclComplete#ReadJsonFile('iccpp.json')
 
-    "  g:TclComplete#g_vars and g:TclComplete#g_var_arrays
-    "     list:  iccpp parameters
-    execute "source ".g:TclComplete#dir."/g_vars.vim"
-    execute "source ".g:TclComplete#dir."/g_var_arrays.vim"
+    " dict if iccpp parameters plus their default values
+    let g:TclComplete#iccpp_dict = TclComplete#ReadJsonFile('iccpp_dict.json')
+
+    "  g:TclComplete#g_vars (list of g_vars but no arrays) and 
+    "  g:TclComplete#g_var_arrays (list of g_vars with array names)
+    let g:TclComplete#g_vars = TclComplete#ReadJsonFile('g_vars.json')
+    let g:TclComplete#g_var_arrays = TclComplete#ReadJsonFile('g_var_arrays.json')
 
     " This depends on the taglist containing G_variables.  rdt_tags does that.
     " let g:TclComplete#g_vars = map(taglist('^G_'),"v:val['name']")
     let g:TclComplete#app_options_dict  = json_decode(join(readfile(g:TclComplete#dir.'/app_options.json')))
     
     " Tech file information from the ::techfile_info array (rdt thing)
-    let g:TclComplete#techfile_types      = json_decode(join(readfile(g:TclComplete#dir.'/techfile_types.json')))
-    let g:TclComplete#techfile_layer_dict = json_decode(join(readfile(g:TclComplete#dir.'/techfile_layer_dict.json')))
-    let g:TclComplete#techfile_attr_dict  = json_decode(join(readfile(g:TclComplete#dir.'/techfile_attr_dict.json')))
+    let g:TclComplete#techfile_types      = TclComplete#ReadJsonFile('techfile_types.json')
+    let g:TclComplete#techfile_layer_dict = TclComplete#ReadJsonFile('techfile_layer_dict.json')
+    let g:TclComplete#techfile_attr_dict  = TclComplete#ReadJsonFile('techfile_attr_dict.json')
+
+    " Tech file information from the ::techfile_info array (rdt thing)
+    let g:TclComplete#environment  = TclComplete#ReadJsonFile('environment.json')
+
+    " Design names in your session
+    let g:TclComplete#designs = TclComplete#ReadJsonFile('designs.json')
+
 endfunction                                                            l
 
+function! TclComplete#GetObjectClass(get_command)
+    " Strip off 'get_'
+    let object = a:get_command[4:]
+    if index(g:TclComplete#object_classes, object) >= 0
+        return object
+    endif
+    " Try without the 's'.  get_cells vs get_cell
+    let object = object[0:-2]
+    if index(g:TclComplete#object_classes, object) >= 0
+        return object
+    endif
+
+    " Otherwise...nothing
+    return ''
+endfunction
+    
 function! TclComplete#AttrChoices(A,L,P)
     return join(sort(keys(g:TclComplete#attributes)),"\n")
 endfunction
@@ -62,7 +90,7 @@ function! TclComplete#AttributeComplete()
 endfunction
 
 function! TclComplete#AskForAttribute()
-    " This function doesn't return anything, but instead sets a g: variables
+    " his function doesn't return anything, but instead sets a g: variables
     " behind the scenes
     let g:TclComplete#attr_flag = 'yes'
     let l:message = "Please enter an attribute class (tab for auto-complete, enter to use prev value): "
@@ -196,85 +224,99 @@ function! TclComplete#Complete(findstart, base)
         let l:menu_dict     = {}
     
         " Many types of completion.
-        "  1) G_var style
-        if l:base =~# '^G'
+        "  1) -option completion.
+        if l:base[0] == '-' 
+            let l:complete_list = get(g:TclComplete#options,s:active_cmd,[])
+            let l:menu_dict     = get(g:TclComplete#details,s:active_cmd,[])
+
+        "  2) G_var completion (either array or non-array names)
+        elseif l:base =~# '^G' 
             if l:base =~# '('
                 let l:complete_list = g:TclComplete#g_var_arrays
             else
                 let l:complete_list = g:TclComplete#g_vars
             endif
 
-        "  2) $var style
+        "  3) $variable completion (scan the current buffer for these!)
         elseif l:base=~ '^\\\$'
             let l:complete_list = map(TclComplete#ScanBufferForVariableNames(),"'$'.v:val")
-
-        "  3) Attribute style (dependent on attr_class)
+            
+        "  4) Command completion if no command exists yet.
+        elseif s:active_cmd == ''
+            let l:complete_list = g:TclComplete#cmds
+            let l:menu_dict     = g:TclComplete#descriptions
+        
+        "  5) Attribute completion if the object class cannot easily be derived
+        "        The attr_flag is 'yes' only when the object class is known.
         elseif g:TclComplete#attr_flag == 'yes'
             let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
             let l:menu_dict     = get(g:TclComplete#attributes,g:TclComplete#attr_class,{})
             let g:TclComplete#attr_flag  = 'no'
 
-        "  4) Commands and descriptions
-        elseif s:active_cmd == ''
-            let l:complete_list = g:TclComplete#cmds
-            let l:menu_dict     = g:TclComplete#descriptions
+        elseif s:active_cmd =~# '\v(set_attribute|get_attribute|filter_collection)'
+            call TclComplete#AskForAttribute()
+            let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
+            let l:menu_dict     = get(g:TclComplete#attributes,g:TclComplete#attr_class,{})
+            let g:TclComplete#attr_flag = 'no'
 
-        "  5) Options of a previous command.
-        else
-            " If the user started typing a hyphen, then use the command options and details
-            if l:base[0] == '-' 
-                let l:complete_list = get(g:TclComplete#options,s:active_cmd,[])
-                let l:menu_dict     = get(g:TclComplete#details,s:active_cmd,[])
+        " 6) Attribute completion if the object class can be derived from the command name
+        elseif g:last_completed_word=="-filter" && s:active_cmd =~# '^get_'
+            let g:TclComplete#attr_class = TclComplete#GetObjectClass(s:active_cmd)
+            let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
+            let l:menu_dict     = get(g:TclComplete#attributes,g:TclComplete#attr_class,{})
+            let g:TclComplete#attr_flag = 'no'
 
-            " Complete package require with packages
-            elseif getline('.') =~# '^package require'
-                let l:complete_list = g:TclComplete#options['package require']
+        " 7) package require completion
+        elseif getline('.') =~# '^package require'
+            let l:complete_list = g:TclComplete#options['package require']
 
-            " Complete unset, lappend and dict set with variable names
-            elseif s:active_cmd =~# '\v^(unset|lappend|dict set)$'
-                let l:complete_list = TclComplete#ScanBufferForVariableNames()
+        " 8) G_var completion but for the getvar/setvar/etc commands
+        elseif s:active_cmd =~# '\v^(setvar|getvar|lappend_var|info_var|append_var)$'
+            let l:complete_list = g:TclComplete#g_vars
 
-            elseif s:active_cmd =~# '\v(set_attribute|get_attribute|filter_collection)'
-                call TclComplete#AskForAttribute()
-                let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
-                let l:menu_dict     = get(g:TclComplete#attributes,g:TclComplete#attr_class,{})
-                let g:TclComplete#attr_flag = 'no'
-                
-            elseif s:active_cmd =~# '\viccpp_com::(set|get)_param'
-                let l:complete_list = sort(keys(g:TclComplete#iccpp_dict))
-                let l:menu_dict = g:TclComplete#iccpp_dict
+        " 9) Complete unset, lappend and dict set with variable names
+        elseif s:active_cmd =~# '\v^(unset|lappend|dict set)$'
+            let l:complete_list = TclComplete#ScanBufferForVariableNames()
 
-            elseif s:active_cmd =~# '\v(get|set|report|reset)_app_options(_value)?'
-                let l:complete_list = sort(keys(g:TclComplete#app_options_dict))
-                let l:menu_dict = g:TclComplete#app_options_dict
+        " 10) iccpp parameters
+        elseif s:active_cmd =~# '\viccpp_com::(set|get)_param'
+            let l:complete_list = sort(keys(g:TclComplete#iccpp_dict))
+            let l:menu_dict = g:TclComplete#iccpp_dict
 
-            " Techfile stuff
-            elseif s:active_cmd =~ 'tech::get_techfile_info'
-                if g:last_completed_word=='-type'
-                    let l:complete_list = g:TclComplete#techfile_types
-                elseif g:last_completed_word=='-layer'
-                    let l:tech_file_type = matchstr(getline('.'), '-type\s\+\zs\w\+')
-                    let l:menu_dict = g:TclComplete#techfile_layer_dict
-                    let l:complete_list = sort(get(g:TclComplete#techfile_layer_dict,l:tech_file_type,[]))
-                else
-                    let l:tech_file_type  = matchstr(getline('.'), '-type\s\+\zs\w\+')
-                    let l:tech_file_layer = matchstr(getline('.'), '-layer\s\+\zs\w\+')
-                    let l:tech_file_key = l:tech_file_type.":".l:tech_file_layer
-                    let l:tech_file_dict = g:TclComplete#techfile_attr_dict
-                    let l:complete_list =  sort(get(g:TclComplete#techfile_attr_dict,l:tech_file_key,['-type','-layer']))
-                endif
-                let l:menu_dict     = {}
+        " 11) application options
+        elseif s:active_cmd =~# '\v(get|set|report|reset)_app_options(_value)?'
+            let l:complete_list = sort(keys(g:TclComplete#app_options_dict))
+            let l:menu_dict = g:TclComplete#app_options_dict
 
+        " 12) Design names for the -design option.
+        elseif g:last_completed_word == "-design"
+            let l:complete_list = g:TclComplete#designs
 
+        " 13) environment 
+        elseif s:active_cmd=~# '\v(get|set)env'
+            let l:complete_list = sort(keys(g:TclComplete#environment))
 
-            " Complete everything else with just the command list
+        " 14) Techfile stuff (relies on $SD_BUILD2/utils/shared/techfile.tcl)
+        elseif s:active_cmd =~ 'tech::get_techfile_info'
+            if g:last_completed_word=='-type'
+                let l:complete_list = g:TclComplete#techfile_types
+            elseif g:last_completed_word=='-layer'
+                let l:tech_file_type = matchstr(getline('.'), '-type\s\+\zs\w\+')
+                let l:menu_dict = g:TclComplete#techfile_layer_dict
+                let l:complete_list = sort(get(g:TclComplete#techfile_layer_dict,l:tech_file_type,[]))
             else
-                let l:complete_list = get(g:TclComplete#options,s:active_cmd,[])
-                let l:menu_dict     = get(g:TclComplete#details,s:active_cmd,[])
+                let l:tech_file_type  = matchstr(getline('.'), '-type\s\+\zs\w\+')
+                let l:tech_file_layer = matchstr(getline('.'), '-layer\s\+\zs\w\+')
+                let l:tech_file_key = l:tech_file_type.":".l:tech_file_layer
+                let l:tech_file_dict = g:TclComplete#techfile_attr_dict
+                let l:complete_list =  sort(get(g:TclComplete#techfile_attr_dict,l:tech_file_key,['-type','-layer']))
             endif
-        endif
 
-        let g:b = l:complete_list
+        " Default) Options of the active command.
+        else
+            let l:complete_list = get(g:TclComplete#options,s:active_cmd,[])
+            let l:menu_dict     = get(g:TclComplete#details,s:active_cmd,[])
+        endif
 
         " Finally, we filter the choices and add the description.
         let res = []
