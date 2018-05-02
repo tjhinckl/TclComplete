@@ -21,6 +21,7 @@ if !exists("g:TclComplete#dir")
     endif
 endif
 
+" This activates the syntax/tcl.vim file 
 execute "set runtimepath+=".g:TclComplete#dir
 
 " How far does ctrl-d and ctrl-u move the popup menu?
