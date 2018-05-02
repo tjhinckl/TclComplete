@@ -2,7 +2,7 @@
 
 Author:  Chris Heithoff ( christopher.b.heithoff@intel.com )
 Initial Date:  10/31/2017
-Latest Rev:    05/01/2018
+Latest Rev:    05/02/2018
    
 ==============================================================================
 1. Intro                                          *TclComplete*
@@ -27,13 +27,14 @@ Latest Rev:    05/01/2018
    and source the tcl/WriteTclCompleteFiles.tcl file.
 
    This will create a directory $WARD/TclComplete and populate it with
-   sourceable .vim files defining a data structure for commands, 
-   options, commands descriptions, options details, etc.
+   .json files representation the data structures (lists, dicts, dicts of list, etc)
+   for all the completion options.
+   JSON format is not Vim specific, so similar plugins for other text
+   editors can use these.
    
-   The Tcl script will also create .json files.   The .json files are
-   easier to dump out than Vim files and can be used by Emacs too.
-   Eventually, this plugin will only rely on .json, but it's not fully
-   converted yet.
+   There will also be two Vim specific files.  One defines some
+   insert mode aliases.  The other does syntax highlighting.
+
     (NOTE:  This expects user to be an Intel back-end engineer who works
      in a back-end environment, where the $WARD is your work area. If 
      you need this changed, then modify the tcl script or fake it out
@@ -129,6 +130,10 @@ you would use in Tcl scripts for Synopsys tools.
       - package require <your_list_of_packages_here>
       - iccpp parameters with iccpp_com::get_param and iccpp_com::set_param
       - tech::get_techfile_info autocompletion 
+      - getenv completion 
+      - get_xxx -design completion
+      - smarter attribute completion to derive the object class from
+      get_cells, get_nets, etc.
 
 ==============================================================================
 8) Call to action!
