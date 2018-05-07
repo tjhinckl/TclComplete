@@ -288,8 +288,8 @@ function! TclComplete#Complete(findstart, base)
             let l:complete_list = sort(keys(g:TclComplete#app_options_dict))
             let l:menu_dict = g:TclComplete#app_options_dict
 
-        " 12) Design names for the -design option.
-        elseif g:last_completed_word == "-design"
+        " 12)  Design names for the -design option or commands that use the design
+        elseif g:last_completed_word == "-design" || s:active_cmd=~# '\v^(current_design|set_working_design)'
             let l:complete_list = g:TclComplete#designs
 
         " 13) environment 

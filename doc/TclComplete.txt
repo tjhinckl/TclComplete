@@ -131,7 +131,7 @@ you would use in Tcl scripts for Synopsys tools.
       - iccpp parameters with iccpp_com::get_param and iccpp_com::set_param
       - tech::get_techfile_info autocompletion 
       - getenv completion 
-      - get_xxx -design completion
+      - get_xxx -design completion (also works for current_design and set_working_design)
       - smarter attribute completion to derive the object class from
       get_cells, get_nets, etc.
 
