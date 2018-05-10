@@ -297,8 +297,8 @@ set iccpp_param_dict [array get   ::iccpp_com::params_map]
 ####################################################################
 # G_variables
 ####################################################################
-setvar Gvar_list {}
-setvar Gvar_array_list {}
+set Gvar_list {}
+set Gvar_array_list {}
 foreach name [lsort -dictionary [array names ::GLOBAL_VAR::global_var]] {
     set name [lindex [split $name ","] 0]
     if [string match "*(*" $name] {

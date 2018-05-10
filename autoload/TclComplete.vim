@@ -134,7 +134,8 @@ function! TclComplete#FindStart()
     let l:index = col('.') - 1
     " Important:  We need to search for :: for namespaces, $ for var names
     "             and * for the wildcard mode, and -dashes for options
-    let l:valid_chars = '[\-a-zA-Z0-9:_*$(]'
+    "             and . for app_options.
+    let l:valid_chars = '[\-a-zA-Z0-9:_*$(.]'
 
     " Move backward as long as the previous character(index-1)  is part of valid_chars
     while  l:index>0 && l:line[l:index - 1]=~l:valid_chars
