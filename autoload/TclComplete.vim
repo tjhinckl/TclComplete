@@ -42,14 +42,11 @@ function! TclComplete#GetData()
     " dict if iccpp parameters plus their default values
     let g:TclComplete#iccpp_dict = TclComplete#ReadJsonFile('iccpp_dict.json')
 
-    "  g:TclComplete#g_vars (list of g_vars but no arrays) and 
-    "  g:TclComplete#g_var_arrays (list of g_vars with array names)
+    " G variables that were loaded into your session.
     let g:TclComplete#g_vars = TclComplete#ReadJsonFile('g_vars.json')
     let g:TclComplete#g_var_arrays = TclComplete#ReadJsonFile('g_var_arrays.json')
 
-    " This depends on the taglist containing G_variables.  rdt_tags does that.
-    " let g:TclComplete#g_vars = map(taglist('^G_'),"v:val['name']")
-    let g:TclComplete#app_options_dict  = json_decode(join(readfile(g:TclComplete#dir.'/app_options.json')))
+    let g:TclComplete#app_options_dict  = TclComplete#ReadJsonFile('app_options.json')
     
     " Tech file information from the ::techfile_info array (rdt thing)
     let g:TclComplete#techfile_types      = TclComplete#ReadJsonFile('techfile_types.json')

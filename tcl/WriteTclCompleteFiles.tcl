@@ -279,8 +279,12 @@ proc get_app_option_from_man_page {app_option} {
     }
 }
 
-redirect -variable app_option_list {lsort -u [get_app_options]}
 set app_option_dict [dict create]
+if {[info commands get_app_options] != ""} {
+    redirect -variable app_option_list {lsort -u [get_app_options]}
+} else {
+    set app_option_list {}
+}
 foreach app_option $app_option_list {
     dict set app_option_dict $app_option [get_app_option_from_man_page $app_option]
 }
@@ -361,18 +365,20 @@ foreach entry [concat $attribute_list $attribute_class_list] {
 #   techfile_layers - Dict (keys = types, values = list of layers)
 #   techfile_attributes - Dict (keys = "type:layer" - values = list of attributes)
 ######################################################################
-# This command creates the ::techfile_info array
-catch {::tech::read_techfile_info}
 set techfile_types {}
 set techfile_layer_dict [dict create]
 set techfile_attr_dict  [dict create]
-foreach name [lsort [array names ::techfile_info]] {
-    lassign [split $name ":"] Type Layer
-    if {$Type ni $techfile_types} {
-        lappend techfile_types $Type
+if {[info commands ::tech::read_techfile_info] != ""} {
+    # This command creates the ::techfile_info array
+    ::tech::read_techfile_info
+    foreach name [lsort [array names ::techfile_info]] {
+        lassign [split $name ":"] Type Layer
+        if {$Type ni $techfile_types} {
+            lappend techfile_types $Type
+        }
+        dict lappend techfile_layer_dict $Type $Layer
+        dict set techfile_attr_dict $name [dict keys $::techfile_info($name)]
     }
-    dict lappend techfile_layer_dict $Type $Layer
-    dict set techfile_attr_dict $name [dict keys $::techfile_info($name)]
 }
 
 ######################################################################
@@ -440,98 +446,34 @@ puts $log "        WARD: $::env(WARD)"
 puts $log "    based on: $::env(TOOL_CFG)"
 close $log 
 
-# 2) Write data structures out in Vim format.
-#    WARNING!  This is a backslash hellscape!
-#       - Key names, value names and list elements must be
-#         in quotes because they will be treated as strings in Vim.
-#       - The command descriptions and option details will possibly
-#         have either single quotes (apostrophes) or doubt quotes, 
-#         these must be escaped.  (is regsub the best choice?)
-#       - The puts string must be in double quotes instead of {} 
-#         because variables need to be expanded.
-#       - Square brackets must be escaped so Tcl ignore command substitution.
-#       - Double quotes inside the string must be escaped so they 
-#         don't close the surrounding double quotes.
-#       - Vim comments are a start-of-string double quote
-#       - Vim line continuation is a \ at beginning on next line
-#            (not like Tcl or shell, which is end of previous line)
-         
+# 2) Write data structures out in JSON format.
 #-------------------------------------
-#  All the commands in a Vim ordered list
-#    g:TclComplete#cmds
+#  All the commands in a JSON list.
 #-------------------------------------
-    # set f [open $outdir/commands.vim w]
-    # puts $f "let g:TclComplete#cmds = \["
-    # foreach cmd [concat $builtin_list $command_list $proc_list] {
-    #     puts $f "   \\ \"$cmd\"," 
-    # }
-    # puts $f "   \\]"
-    # close $f
-    # echo "...commands.vim file complete."
-
     echo [list_to_json [concat $builtin_list $command_list $proc_list]] > $outdir/commands.json
     echo "...commands.json file complete."
+
 #-----------------------------------------
-# Command options in a Vim dictionary.
+# Command options in a JSON dict of lists.
 #   key = command name
 #   value = ordered list of options
-#   g:TclComplete#options['cmd'] = ['opt1', 'opt2',]
 #-----------------------------------------
-    # set f [open $outdir/options.vim w]
-    # # initialize details and opts dicts
-    # puts $f "let options = {}"
-    # foreach cmd [dict keys $opt_dict] {
-    #     set option_string "\["
-    #     foreach opt [lsort [dict get $opt_dict $cmd]] {
-    #         append option_string "\"$opt\","
-    #     }
-    #     puts $f "let options\[\"$cmd\"\] = $option_string\]"
-    # }
-    # puts $f "\"\" Reassign to a global variable \"\""
-    # puts $f "let g:TclComplete#options = options"
-    # close $f
-    # echo "...options.vim file complete."
-
     echo [dict_of_lists_to_json $opt_dict] > $outdir/options.json
     echo "...options.json file complete."
 
 #-----------------------------------------
-# Command option details in a Vim dictionary of dictionaries
+# Command option details in a JSON dictionary of dictionaries
 #   key = command name
 #   value = dictionary with key=option and value=details
-#   g:TclComplete#details['cmd']['opt1'] = "details of the option"
 #-----------------------------------------
-    # set f [open $outdir/details.vim w]
-    # puts $f "let details = {}"
-    # dict for {cmd opt_detail_dict} $details_dict {
-    #     puts $f "   let details\[\"$cmd\"\]={}"
-    #     dict for {opt detail} $opt_detail_dict {
-    #         puts $f "        let details\[\"$cmd\"\]\[\"$opt\"\] = \"$detail\""
-    #     }
-    # }
-    # puts $f "\"\" Reassign to a global variable \"\""
-    # puts $f "let g:TclComplete#details = details"
-    # close $f
-    # echo "...details.vim file complete."
-
     echo [dict_of_dicts_to_json $details_dict] > $outdir/details.json
     echo "...details.json file complete."
+
 #-----------------------------------------
-# Command descriptions in a Vim dictionary
+# Command descriptions in a JSON dictionary
 #   key = command name
 #   value = command description
-#   g:TclComplete#descriptions['cmd'] = "description of the command"
 #-----------------------------------------
-    # set f   [open $outdir/descriptions.vim w]
-    # puts $f "let description = {}"
-    # dict for {cmd description} $desc_dict {
-    #     puts $f "let description\[\"$cmd\"\] = \"$description\""
-    # }
-    # puts $f "\"\" Reassign to a global variable \"\""
-    # puts $f "let g:TclComplete#descriptions = description"
-    # close $f
-    # echo "...descriptions.vim file complete."
-
     echo [dict_to_json $desc_dict] > $outdir/descriptions.json
     echo "...descriptions.json file complete."
 
@@ -547,52 +489,15 @@ close $log
     close $f
     echo "...aliases.vim file complete."
 
-
 #----------------------------------------------------
-# Write out attributes as a big fat Vim dictionary
+# Write out attributes as a big fat JSON dict of dicts.
 #----------------------------------------------------
-    # set f [open $outdir/attributes.vim w]
-    # puts $f "let attributes = {}"
-    # dict for {class class_dict} $attribute_dict {
-    #     puts  $f "let attributes\[\"$class\"\]={}"
-
-    #     # class is 'cell', 'pin', etc
-    #     # class_dict :  key=attr_name    key=attr_choices
-
-    #     dict for {attr_name attr_choices} $class_dict {
-    #         puts $f "let attributes\[\"$class\"\]\[\"$attr_name\"\] = \"$attr_choices\""
-    #     }
-
-    # }
-    # puts $f "\"\" Reassign to a global variable \"\""
-    # puts $f "let g:TclComplete#attributes = attributes"
-    # close $f
-    # echo "...attributes.vim file complete."
-
     echo [dict_of_dicts_to_json $attribute_dict] > $outdir/attributes.json
     echo "...attributes.json file complete."
 
 #-------------------------------------
-#  G variables (these are only the ones that exist in the session)
+#  G variables which already exists in the session.
 #-------------------------------------
-    # set f [open $outdir/g_vars.vim w]
-    # puts $f "let g:TclComplete#g_vars = \["
-    # foreach g_var $Gvar_list {
-    #     puts $f "   \\ \"$g_var\"," 
-    # }
-    # puts $f "   \\]"
-    # close $f
-    # echo "...g_vars.vim file complete."
-
-    # set f [open $outdir/g_var_arrays.vim w]
-    # puts $f "let g:TclComplete#g_var_arrays = \["
-    # foreach g_var_array $Gvar_array_list {
-    #     puts $f "   \\ \"$g_var_array\"," 
-    # }
-    # puts $f "   \\]"
-    # close $f
-    # echo "...g_var_arrays.vim file complete."
-
     echo [list_to_json $Gvar_list] > $outdir/g_vars.json
     echo "...g_vars.json file complete."
 
@@ -600,33 +505,8 @@ close $log
     echo "...g_var_arrays.json file complete."
     
 #-------------------------------------
-#  iccpp parameters in a vim ordered list
-#    g:tclcomplete#iccpp
+#  iccpp parameters in a JSON ordered list
 #-------------------------------------
-    # list format of just the parameter names.
-    # set f [open $outdir/iccpp.vim w]
-    # puts $f "let g:TclComplete#iccpp = \["
-    # foreach param $iccpp_param_list {
-    #     puts $f "   \\ \"$param\"," 
-    # }
-    # puts $f "   \\]"
-    # close $f
-    # echo "...iccpp.vim file complete."
-
-
-    # set f [open $outdir/iccpp_dict.vim w]
-    # # initialize details and opts dicts
-    # puts $f "let iccpp_dict = {}"
-    # foreach param $iccpp_param_list {
-    #     puts $f "let iccpp_dict\[\"$param\"\] = \"$::iccpp_com::params_map($param)\""
-    # }
-    # # dictionary format to include the default values.
-    # puts $f "\"\" reassign to a global variable \"\""
-    # puts $f "let g:TclComplete#iccpp_dict = iccpp_dict"
-    # close $f
-    # echo "...iccpp_dict.vim file complete."
-
-    # Now the json stuff....
     echo [list_to_json $iccpp_param_list] > $outdir/iccpp.json
     echo "...iccpp.json file complete."
     echo [dict_to_json $iccpp_param_dict] > $outdir/iccpp_dict.json
@@ -651,13 +531,15 @@ close $log
 #-------------------------------------
 #  existing designs in your block
 #-------------------------------------
-    echo [list_to_json [get_object_name [get_designs]]] > $outdir/designs.json
+    echo [list_to_json [get_attribute [get_designs -quiet] name]] > $outdir/designs.json
     echo "...designs.json file complete."
     
 #-------------------------------------
 #  environment variables
 #-------------------------------------
-    echo [dict_to_json [array get ::env]]  > $outdir/environment.json
+    
+    echo [dict_to_json [regsub -all {"} [array get ::env] {\"}]]  > $outdir/environment.json
+    # " 
     echo "...environment.json file complete."
     
 #----------------------------------------------------
