@@ -59,6 +59,8 @@ function! TclComplete#GetData()
     " Design names in your session
     let g:TclComplete#designs = TclComplete#ReadJsonFile('designs.json')
 
+    " App variables
+    let g:TclComplete#app_var_list = TclComplete#ReadJsonFile('app_vars.json')
 endfunction                                                            l
 
 function! TclComplete#GetObjectClass(get_command)
@@ -294,7 +296,11 @@ function! TclComplete#Complete(findstart, base)
         elseif s:active_cmd=~# '\v(get|set)env'
             let l:complete_list = sort(keys(g:TclComplete#environment))
 
-        " 14) Techfile stuff (relies on $SD_BUILD2/utils/shared/techfile.tcl)
+        " 14) environment 
+        elseif s:active_cmd=~# 'app_var'
+            let l:complete_list = sort(g:TclComplete#app_var_list)
+
+        " 15) Techfile stuff (relies on $SD_BUILD2/utils/shared/techfile.tcl)
         elseif s:active_cmd =~ 'tech::get_techfile_info'
             if g:last_completed_word=='-type'
                 let l:complete_list = g:TclComplete#techfile_types

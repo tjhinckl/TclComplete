@@ -297,6 +297,10 @@ foreach app_option $app_option_list {
 set iccpp_param_list [array names ::iccpp_com::params_map]
 set iccpp_param_dict [array get   ::iccpp_com::params_map]
 
+#####################
+# app_vars
+#####################
+set app_var_list [get_app_var -list *]
 
 ####################################################################
 # G_variables
@@ -533,6 +537,12 @@ close $log
 #-------------------------------------
     echo [list_to_json [get_attribute [get_designs -quiet] name]] > $outdir/designs.json
     echo "...designs.json file complete."
+    
+#-------------------------------------
+#  app_vars
+#-------------------------------------
+    echo [list_to_json $app_var_list] > $outdir/app_vars.json
+    echo "...app_vars.json file complete."
     
 #-------------------------------------
 #  environment variables
