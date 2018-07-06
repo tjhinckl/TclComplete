@@ -6,7 +6,7 @@
 # Description:  Source this from the icc2_shell (or dc or pt?) to 
 #               create a file that can be used for tcl omnicompletion
 #               in Vim.
-# Date of latest revision: 02-May-2018
+# Date of latest revision: 05-July-2018
 
 #---------------------------------------#
 #           JSON procs                  #
@@ -108,12 +108,13 @@ proc get_description_from_help {cmd} {
         if {[regexp {^\s*(\S+)\s+(#.*$)} $line -> cmd_name description]} {
             if {$cmd_name == $cmd} {
                 set result [regsub -all {"} $description {\"}]
-                #" Comment to fix Vim syntax coloring
+                # " 
             }
         }
     }
     return $result 
 }
+
 
 #####################################################
 # Run help -v on a command and then parse the options
@@ -176,82 +177,9 @@ proc get_options_from_man {cmd} {
     return [lsort -u $result]
 }
 
-####################################################################
-# Ask the synopsys tool for commands, procs, packages, and functions
-####################################################################
-# Form a list of all commands (and remove the . command at the beginning.
-#
-#  Try to get an order like this:
-#     Tcl built ins   ($builtin_list)
-#     Synopsys commands     ($command_list)
-#     procs in the current namespace   ($proc_list)
-#     procs in the child namespaces    (proc_list)
-
-echo "------------------------------------------------"
-echo "---TclComplete:  querying SynopsysTcl for data..."
-redirect -variable all_command_list {lsort -u [info command]}
-
-# Divide all_command_list into builtin and regular commands
-# The first uses the 'man' command, the other uses the 'help -v' 
-# command to list the options.
-set builtin_list {} 
-set command_list {}
-set proc_list    {}
-
-# Initial some dicts
-set desc_dict [dict create]
-set namespace_children_dict [dict create]
-
-## Split up all the commands into three lists (just for priority in the final list order)
-foreach cmd $all_command_list {
-    set description [get_description_from_help $cmd]
-    dict set desc_dict $cmd $description
-    if {[regexp "Builtin" $description]} {
-        lappend builtin_list $cmd
-    } elseif {[info procs $cmd]==""} {
-        lappend command_list $cmd
-    } else {
-        lappend proc_list $cmd
-    }
-}
-echo " ...\$builtin_list built"
-echo " ...\$command_list built"
-
-# We're not done with procs!  There are more procs inside namespaces.
-set namespace_list [lsort -u [namespace children]]
-echo " ...\$namespace_list built"
-foreach namespace $namespace_list {
-    redirect -variable namespace_procs {lsort -u [eval "info proc {${namespace}::*}"]}
-    foreach proc_name $namespace_procs {
-        set proc_name [string trim $proc_name "::"]
-        lappend proc_list $proc_name
-        set description [get_description_from_help $proc_name]
-        dict set desc_dict $proc_name $description
-    }
-}
-echo "...\$proc_list built"
-echo "...\$desc_dict built"
-
-
-######################################################################
-# Form some other data structures for use later
-######################################################################
-# Form a list of expr functions
-set func_list [ lsort -u [info function] ]
-echo "...\$func_list built"
-
-# Form a list of packages
-set package_list [ lsort -u [package names] ]
-echo "...\$package_list built"
-
-# Form a list of aliases
-redirect -variable alias_string {alias}
-set alias_list [split $alias_string "\n"]
-echo "...\$alias_list built"
-
-#####################
-# Application options
-#####################
+#####################################################
+# Run "man <app_option>".  Parse and return the values
+#####################################################
 proc get_app_option_from_man_page {app_option} {
     redirect -variable man_text {man $app_option}
     set TYPE_flag 0
@@ -279,17 +207,172 @@ proc get_app_option_from_man_page {app_option} {
     }
 }
 
+###########################
+# Main script starts here.
+###########################
+# Form a list of all commands, including those inside namespaces.
+echo "------------------------------------------------"
+echo "---TclComplete:  forming the list of all commands"
+set all_command_list [info command]
+foreach global_namespace [namespace children] {
+    set  all_command_list [concat $all_command_list [info command ${global_namespace}::*]]
+    foreach hier_namespace [namespace children $global_namespace] {
+        set all_command_list [concat $all_command_list [info command ${hier_namespace}::*]]
+    }
+}
+set all_command_list [lsort -u [lmap cmd $all_command_list {string trim $cmd ::}]]
+    
+
+# Divide all_command_list into builtin and regular commands
+#   - builtins require the 'man' command to learn about the options.
+#   - others use the 'help -v' command to list the options.
+set builtin_list {} 
+set command_list {}
+set proc_list    {}
+
+# Initialize the description dictionary.  Key = command name.  Value = description of the command.
+set desc_dict [dict create]
+
+## Fill up the description dictionary.
+#   Key = command name
+#   Value = desciption of the command.
+# Also split up all_command_list into three lists:
+#      builtin_list, command_list, proc_list
+foreach cmd $all_command_list {
+    set description [get_description_from_help $cmd]
+    dict set desc_dict $cmd $description
+    if {[regexp "Builtin" $description]} {
+        lappend builtin_list $cmd
+    } elseif {[info procs $cmd]==""} {
+        lappend command_list $cmd
+    } else {
+        lappend proc_list $cmd
+    }
+}
+echo " ...\$builtin_list built"
+echo " ...\$command_list built"
+echo " ...\$proc_list built"
+echo " ...\$desc_dict built"
+
+######################################################################
+# Now that we have all the commands, use the help/man commands to 
+# get the options for each command and the details of each option.
+######################################################################
+echo "TclComplete....building commands options"
+set opt_dict     [dict create]
+set details_dict [dict create]
+echo "...\$opt_dict initialized"
+echo "...\$details_dict initialized"
+
+# First initialize all the values 
+foreach cmd $all_command_list {
+    dict set opt_dict     $cmd {}
+    dict set details_dict $cmd [dict create]
+}
+
+# Fill up options for namespace ensemble subcommands (rare...things like string and dict)
+foreach cmd $all_command_list {
+    if {[namespace ensemble exists $cmd]} {
+        set map_keys    [dict keys [namespace ensemble configure $cmd -map]]
+        set subcommands [namespace ensemble configure $cmd -subcommands]
+        dict set opt_dict $cmd [lsort -u [concat $map_keys $subcommands]]
+    }
+}
+
+# Continue with commands and procs (not builtins)
+foreach cmd [concat $command_list $proc_list] {
+    dict for {opt_name details} [get_options_from_help $cmd] {
+        dict lappend opt_dict $cmd $opt_name
+        dict set details_dict $cmd $opt_name $details
+    }
+} 
+echo "...completed options for commands and proc"
+
+    
+# builtins use "man" to get options.  (some special cases may be hard coded later)
+foreach bi $builtin_list {
+    foreach opt_name [get_options_from_man $bi] {
+        dict lappend opt_dict $bi $opt_name
+    }
+}
+echo "...completed options for builtins"
+ 
+##########################################################################
+# Special cases.  Some of these look like namespace ensemble, but are not.
+##########################################################################
+# Any math function can be used in expr
+set func_list [ lsort -u [info function] ]
+dict set opt_dict "expr" $func_list
+echo "...\$func_list built"
+
+# 'info' looks like a namespace ensemble but is not!
+dict set opt_dict "info"  [concat [dict get $opt_dict "info"] [lsort "args body class cmdcount commands complete coroutine default errorstack exists frame functions globals hostname level library loaded locals nameofexecutable object patchlevel procs script sharelibextension tclversion vars"]]
+
+# Treat 'package require' differently than just 'package'
+set package_list [ lsort -u [package names] ]
+dict set opt_dict "package require" $package_list
+echo "...\$package_list built"
+
+# STUFF FOR OBJECT ORIENTED TCL WITH THE OO PACKAGE
+if {[namespace exists "oo"]} {
+    dict set opt_dict "oo::class" [list create new]
+    foreach oo_cmd {oo::define oo::objdefine} {
+        set subcommands [lsort [info commands ${oo_cmd}::*]]
+        set subcommands [lmap cmd $subcommands {namespace tail $cmd}]
+        dict set opt_dict $oo_cmd $subcommands
+    }
+    dict set opt_dict "info class"  [list call constructor definition destructor filters forward instances methodtype mixins subclasses superclasses variables]
+    dict set opt_dict "info object" [list call class definition filters forward isa methods methodtype mixins namespace variables vars]
+}
+
+# "namespace ensemble" subcommands and options
+dict set opt_dict "namespace ensemble" [list create configure exists -command -map -namespace -parameters -prefixes -subcommands -unknown]
+    
+# "namespace ensemble" subcommands and options
+dict set opt_dict "string is" [list alnum alpha ascii boolean control digit double entier false graph integer list lower print punct space true upper wideinteger wordchar xdigit]
+dict set details_dict "string is" alnum       "Any Unicode alphabet or digit character."
+dict set details_dict "string is" alpha       "Any Unicode alphabet character."
+dict set details_dict "string is" ascii       "Any  character  with a value less than \u0080."
+dict set details_dict "string is" boolean     "Any of the forms allowed to Tcl_GetBoolean."
+dict set details_dict "string is" control     "Any Unicode control character."
+dict set details_dict "string is" digit       "Any  Unicode  digit  character. "
+dict set details_dict "string is" double      "Any  of  the  valid  forms for a double in Tcl."
+dict set details_dict "string is" entier      "Any of the valid string formats for an integer value of arbitrary size in Tcl."
+dict set details_dict "string is" false       "Any of the forms allowed to Tcl_GetBoolean where the value is false."
+dict set details_dict "string is" graph       "Any Unicode printing character, except space."
+dict set details_dict "string is" integer     "Any of the valid string formats for a 32-bit integer value  in Tcl."
+dict set details_dict "string is" list        "Any proper list structure."
+dict set details_dict "string is" lower       "Any Unicode lower case alphabet character."
+dict set details_dict "string is" print       "Any Unicode printing character, including space."
+dict set details_dict "string is" punct       "Any Unicode punctuation character."
+dict set details_dict "string is" space       "Any  Unicode  whitespace  character."
+dict set details_dict "string is" true        "Any of the forms allowed to Tcl_GetBoolean where the value is true."
+dict set details_dict "string is" upper       "Any  upper  case  alphabet  character in the Unicode character set."
+dict set details_dict "string is" wideinteger "Any of the valid forms for a wide integer in  Tcl."
+dict set details_dict "string is" wordchar    "Any  Unicode  word  character.  "
+dict set details_dict "string is" xdigit      "Any hexadecimal digit character (0-9A-Fa-f)."
+
+echo "...completed options for special cases in the opt_dict"
+
+########################
+# Form a list of aliases
+########################
+redirect -variable alias_string {alias}
+set alias_list [split $alias_string "\n"]
+echo "...\$alias_list built"
+
+###########################################################
+# Form a list of application options (and a dictionary too)
+###########################################################
 set app_option_dict [dict create]
 if {[info commands get_app_options] != ""} {
-    redirect -variable app_option_list {lsort -u [get_app_options]}
+    set app_option_list [lsort -u [get_app_options]]
 } else {
     set app_option_list {}
 }
 foreach app_option $app_option_list {
     dict set app_option_dict $app_option [get_app_option_from_man_page $app_option]
 }
-
-    
 
 ####################################################################
 # ICCPP parameters (this will be empty if ::iccpp_com doesn't exist)
@@ -302,9 +385,9 @@ set iccpp_param_dict [array get   ::iccpp_com::params_map]
 #####################
 set app_var_list [get_app_var -list *]
 
-####################################################################
-# G_variables
-####################################################################
+###############################################################################
+# G_variables (this won't do nothing if array ::GLOBAL_VAR::global don't exist)
+###############################################################################
 set Gvar_list {}
 set Gvar_array_list {}
 foreach name [lsort -dictionary [array names ::GLOBAL_VAR::global_var]] {
@@ -319,7 +402,7 @@ set Gvar_list       [lsort -unique -dictionary $Gvar_list]
 set Gvar_array_list [lsort -unique -dictionary $Gvar_array_list]
 
 ######################################################################
-# Form a multi-level dictionary of attributes
+# Form a nested dictionary of attributes of object classes.
 #  attribute_dict['class']['attr_name'] = choices
 ######################################################################
 set attribute_dict [dict create]
@@ -384,56 +467,8 @@ if {[info commands ::tech::read_techfile_info] != ""} {
         dict set techfile_attr_dict $name [dict keys $::techfile_info($name)]
     }
 }
-
-######################################################################
-# Now that we have all the commands and some other stuff, 
-# let's figure out the command descriptions, options, and option details
-######################################################################
-echo "TclComplete....building commands options"
-set opt_dict     [dict create]
-set details_dict [dict create]
-echo "...\$opt_dict initialized"
-echo "...\$details_dict initialized"
-
-# non-builtins use "help" to get options 
-foreach cmd [concat $command_list $proc_list] {
-    dict set opt_dict     $cmd {}
-    dict set details_dict $cmd [dict create]
-    dict for {opt_name details} [get_options_from_help $cmd] {
-        # APPEND this opt to this command's entry in opt_dict
-        dict lappend opt_dict $cmd $opt_name
-
-        # CREATE a dictionary to thi commands entry in details_dict
-        dict set details_dict $cmd $opt_name $details
-    }
-} 
-echo "...completed options for commands and proc"
-
-    
-# builtins use "man" or "namespace ensembles" to get options.  
-#  (some special cases are hard coded)
-foreach bi $builtin_list {
-    if {[namespace ensemble exists $bi]} {
-        set opts [dict keys [namespace ensemble configure $bi -map]]
-    } else {
-        set opts [get_options_from_man $bi]
-    }
-    dict set opt_dict $bi $opts
-}
-echo "...completed options for builtins"
-
-# Special cases for options
-dict set opt_dict "expr" $func_list
-dict set opt_dict "info"    [lsort "args body class cmdcount commands complete coroutine default errorstack exists frame functions globals hostname level library loaded locals nameofexecutable object patchlevel procs script sharelibextension tclversion vars"]
-dict set opt_dict "package" [lsort "ifneeded names present provide require unknown vcompare versions vsatisfies prefer"]
-dict set opt_dict "package require" $package_list
-echo "...completed options for special cases"
-
 ################################################################################
-### Now  write out sourceable Vimscript code!!! 
-###  - An earlier version of this script wrote out text files to be parse in Vim
-###    Why not just directly write it out as Vimscript so that the Vim plugin 
-###    runs faster ??!!
+### Now  write out the data structures in JSON format!
 ################################################################################
 # 1)  Setup the output directory and dump the log
 set outdir $::env(WARD)/TclComplete
@@ -561,7 +596,7 @@ close $log
     set f [open "$outdir/syntax/tcl.vim" w]
     puts $f "\"syntax coloring for g_variables"
     puts $f "\"-------------------------------"
-    puts $f "syntax match g_var /\\CG_\\w\\+/"
+    puts $f "syntax match g_var /\\<\\CG_\\w\\+/"
     puts $f "highlight link g_var title"
 
     puts $f "\"syntax coloring for keywords"
@@ -588,5 +623,22 @@ close $log
 
     echo "...syntax/tcl.vim file complete."
     close $f
+
+
+# Clean up time.  Give Tcl some memory back.
+unset alias_list
+unset all_command_list
+unset app_option_list
+unset app_var_list
+unset builtin_list
+unset command_list
+unset proc_list
+unset details_dict
+unset desc_dict
+unset opt_dict
+unset app_option_dict
+unset iccpp_param_dict
+unset techfile_attr_dict
+unset techfile_layer_dict
 
 echo "...done\n"
