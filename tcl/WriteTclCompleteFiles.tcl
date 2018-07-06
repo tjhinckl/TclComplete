@@ -6,7 +6,7 @@
 # Description:  Source this from the icc2_shell (or dc or pt?) to 
 #               create a file that can be used for tcl omnicompletion
 #               in Vim.
-# Date of latest revision: 05-July-2018
+# Date of latest revision: 06-July-2018
 
 #---------------------------------------#
 #           JSON procs                  #
@@ -320,6 +320,7 @@ if {[namespace exists "oo"]} {
         set subcommands [lsort [info commands ${oo_cmd}::*]]
         set subcommands [lmap cmd $subcommands {namespace tail $cmd}]
         dict set opt_dict $oo_cmd $subcommands
+        set command_list [lsort -u [concat $command_list $subcommands]]
     }
     dict set opt_dict "info class"  [list call constructor definition destructor filters forward instances methodtype mixins subclasses superclasses variables]
     dict set opt_dict "info object" [list call class definition filters forward isa methods methodtype mixins namespace variables vars]
@@ -328,29 +329,29 @@ if {[namespace exists "oo"]} {
 # "namespace ensemble" subcommands and options
 dict set opt_dict "namespace ensemble" [list create configure exists -command -map -namespace -parameters -prefixes -subcommands -unknown]
     
-# "namespace ensemble" subcommands and options
-dict set opt_dict "string is" [list alnum alpha ascii boolean control digit double entier false graph integer list lower print punct space true upper wideinteger wordchar xdigit]
-dict set details_dict "string is" alnum       "Any Unicode alphabet or digit character."
-dict set details_dict "string is" alpha       "Any Unicode alphabet character."
-dict set details_dict "string is" ascii       "Any  character  with a value less than \u0080."
-dict set details_dict "string is" boolean     "Any of the forms allowed to Tcl_GetBoolean."
-dict set details_dict "string is" control     "Any Unicode control character."
-dict set details_dict "string is" digit       "Any  Unicode  digit  character. "
-dict set details_dict "string is" double      "Any  of  the  valid  forms for a double in Tcl."
-dict set details_dict "string is" entier      "Any of the valid string formats for an integer value of arbitrary size in Tcl."
-dict set details_dict "string is" false       "Any of the forms allowed to Tcl_GetBoolean where the value is false."
-dict set details_dict "string is" graph       "Any Unicode printing character, except space."
-dict set details_dict "string is" integer     "Any of the valid string formats for a 32-bit integer value  in Tcl."
-dict set details_dict "string is" list        "Any proper list structure."
-dict set details_dict "string is" lower       "Any Unicode lower case alphabet character."
-dict set details_dict "string is" print       "Any Unicode printing character, including space."
-dict set details_dict "string is" punct       "Any Unicode punctuation character."
-dict set details_dict "string is" space       "Any  Unicode  whitespace  character."
-dict set details_dict "string is" true        "Any of the forms allowed to Tcl_GetBoolean where the value is true."
-dict set details_dict "string is" upper       "Any  upper  case  alphabet  character in the Unicode character set."
-dict set details_dict "string is" wideinteger "Any of the valid forms for a wide integer in  Tcl."
-dict set details_dict "string is" wordchar    "Any  Unicode  word  character.  "
-dict set details_dict "string is" xdigit      "Any hexadecimal digit character (0-9A-Fa-f)."
+# Offer valid type names for the argument following "string is"
+dict set opt_dict   "string is" [list alnum alpha ascii boolean control digit double entier false graph integer list lower print punct space true upper wideinteger wordchar xdigit]
+dict set desc_dict  "string is" alnum       "Any Unicode alphabet or digit character."
+dict set desc_dict  "string is" alpha       "Any Unicode alphabet character."
+dict set desc_dict  "string is" ascii       "Any  character  with a value less than \u0080."
+dict set desc_dict  "string is" boolean     "Any of the forms allowed to Tcl_GetBoolean."
+dict set desc_dict  "string is" control     "Any Unicode control character."
+dict set desc_dict  "string is" digit       "Any  Unicode  digit  character. "
+dict set desc_dict  "string is" double      "Any  of  the  valid  forms for a double in Tcl."
+dict set desc_dict  "string is" entier      "Any of the valid string formats for an integer value of arbitrary size in Tcl."
+dict set desc_dict  "string is" false       "Any of the forms allowed to Tcl_GetBoolean where the value is false."
+dict set desc_dict  "string is" graph       "Any Unicode printing character, except space."
+dict set desc_dict  "string is" integer     "Any of the valid string formats for a 32-bit integer value  in Tcl."
+dict set desc_dict  "string is" list        "Any proper list structure."
+dict set desc_dict  "string is" lower       "Any Unicode lower case alphabet character."
+dict set desc_dict  "string is" print       "Any Unicode printing character, including space."
+dict set desc_dict  "string is" punct       "Any Unicode punctuation character."
+dict set desc_dict  "string is" space       "Any  Unicode  whitespace  character."
+dict set desc_dict  "string is" true        "Any of the forms allowed to Tcl_GetBoolean where the value is true."
+dict set desc_dict  "string is" upper       "Any  upper  case  alphabet  character in the Unicode character set."
+dict set desc_dict  "string is" wideinteger "Any of the valid forms for a wide integer in  Tcl."
+dict set desc_dict  "string is" wordchar    "Any  Unicode  word  character.  "
+dict set desc_dict  "string is" xdigit      "Any hexadecimal digit character (0-9A-Fa-f)."
 
 echo "...completed options for special cases in the opt_dict"
 
