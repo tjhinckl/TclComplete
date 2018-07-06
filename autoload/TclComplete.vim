@@ -117,7 +117,7 @@ function! TclComplete#ScanBufferForVariableNames()
         let matches[match] = ''
         " TODO:  Add stuff for lassign, dict for {key value}, etc.
     endfor
-    " TODO: Add stuff for procs aguments
+    " TODO: Add stuff for procs arguments
     " TODO: Restrict foreach and proc args to within the block only.
     return sort(filter(keys(matches),"v:val!=''"),'i')
 endfunction
@@ -224,12 +224,12 @@ function! TclComplete#Complete(findstart, base)
         let l:menu_dict     = {}
     
         " Many types of completion.
-        "  1) -option completion.
+        " 1)  -options that start with a dash
         if l:base[0] == '-' 
             let l:complete_list = get(g:TclComplete#options,s:active_cmd,[])
             let l:menu_dict     = get(g:TclComplete#details,s:active_cmd,[])
 
-        "  2) G_var completion (either array or non-array names)
+        " 2)  G_var completion (either array or non-array names)
         elseif l:base =~# '^G' 
             if l:base =~# '('
                 let l:complete_list = g:TclComplete#g_var_arrays
@@ -259,48 +259,64 @@ function! TclComplete#Complete(findstart, base)
             let l:menu_dict     = get(g:TclComplete#attributes,g:TclComplete#attr_class,{})
             let g:TclComplete#attr_flag = 'no'
 
-        " 6) Attribute completion if the object class can be derived from the command name
+        " 6) Attribute completion if the object class can be derived from the command name (I LOVE THIS ONE)
         elseif g:last_completed_word=="-filter" && s:active_cmd =~# '^get_'
             let g:TclComplete#attr_class = TclComplete#GetObjectClass(s:active_cmd)
             let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
             let l:menu_dict     = get(g:TclComplete#attributes,g:TclComplete#attr_class,{})
             let g:TclComplete#attr_flag = 'no'
 
-        " 7) package require completion
-        elseif getline('.') =~# '^package require'
-            let l:complete_list = g:TclComplete#options['package require']
-
-        " 8) G_var completion but for the getvar/setvar/etc commands
+        " 7) G_var completion but for the getvar/setvar/etc commands
         elseif s:active_cmd =~# '\v^(setvar|getvar|lappend_var|info_var|append_var)$'
             let l:complete_list = g:TclComplete#g_vars
 
-        " 9) Complete unset, lappend and dict set with variable names
+        " 8) Complete unset, lappend and dict set with variable names
         elseif s:active_cmd =~# '\v^(unset|lappend|dict set)$'
             let l:complete_list = TclComplete#ScanBufferForVariableNames()
 
-        " 10) iccpp parameters
-        elseif s:active_cmd =~# '\viccpp_com::(set|get)_param'
-            let l:complete_list = sort(keys(g:TclComplete#iccpp_dict))
-            let l:menu_dict = g:TclComplete#iccpp_dict
+        " 9) environment 
+        elseif s:active_cmd=~# '\v(get|set)env'
+            let l:complete_list = sort(keys(g:TclComplete#environment))
+
+        " 10)  Design names for the -design option or commands that use the design
+        elseif g:last_completed_word == "-design" || s:active_cmd=~# '\v^(current_design|set_working_design)'
+            let l:complete_list = g:TclComplete#designs
 
         " 11) application options
         elseif s:active_cmd =~# '\v(get|set|report|reset)_app_options(_value)?'
             let l:complete_list = sort(keys(g:TclComplete#app_options_dict))
             let l:menu_dict = g:TclComplete#app_options_dict
 
-        " 12)  Design names for the -design option or commands that use the design
-        elseif g:last_completed_word == "-design" || s:active_cmd=~# '\v^(current_design|set_working_design)'
-            let l:complete_list = g:TclComplete#designs
 
-        " 13) environment 
-        elseif s:active_cmd=~# '\v(get|set)env'
-            let l:complete_list = sort(keys(g:TclComplete#environment))
-
-        " 14) environment 
+        " 12) application variables from your synopsys tool
         elseif s:active_cmd=~# 'app_var'
             let l:complete_list = sort(g:TclComplete#app_var_list)
 
-        " 15) Techfile stuff (relies on $SD_BUILD2/utils/shared/techfile.tcl)
+        " 13) iccpp parameters
+        elseif s:active_cmd =~# '\viccpp_com::(set|get)_param'
+            let l:complete_list = sort(keys(g:TclComplete#iccpp_dict))
+            let l:menu_dict = g:TclComplete#iccpp_dict
+
+        " 14) Completions for two word combinations.
+        elseif s:active_cmd=='package' && g:last_completed_word=='require'
+            let l:complete_list = g:TclComplete#options['package require']
+        elseif s:active_cmd=='info' && g:last_completed_word=='class'
+            let l:complete_list = g:TclComplete#options['info class']
+        elseif s:active_cmd=='info' && g:last_completed_word=='object'
+            let l:complete_list = g:TclComplete#options['info object']
+        elseif s:active_cmd=='namespace' && g:last_completed_word=='ensemble'
+            let l:complete_list = g:TclComplete#options['namespace ensemble']
+        elseif s:active_cmd=='string' && g:last_completed_word=='is'
+            let l:complete_list = g:TclComplete#options['string is']
+            let l:menu_dict     = g:TclComplete#details['string is']
+
+
+        " 15) App vars
+        elseif s:active_cmd=~# 'app_var'
+            let l:complete_list = sort(g:TclComplete#app_var_list)
+
+
+        " 16) Techfile stuff (relies on $SD_BUILD2/utils/shared/techfile.tcl)
         elseif s:active_cmd =~ 'tech::get_techfile_info'
             if g:last_completed_word=='-type'
                 let l:complete_list = g:TclComplete#techfile_types
