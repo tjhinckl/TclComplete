@@ -2,7 +2,7 @@
 
 Author:  Chris Heithoff ( christopher.b.heithoff@intel.com )
 Initial Date:  10/31/2017
-Latest Rev:    05/02/2018
+Latest Rev:    07/09/2018
    
 ==============================================================================
 1. Intro                                          *TclComplete*
@@ -27,7 +27,7 @@ Latest Rev:    05/02/2018
    and source the tcl/WriteTclCompleteFiles.tcl file.
 
    This will create a directory $WARD/TclComplete and populate it with
-   .json files representation the data structures (lists, dicts, dicts of list, etc)
+   .json files representing the data structures (lists, dicts, dicts of list, etc)
    for all the completion options.
    JSON format is not Vim specific, so similar plugins for other text
    editors can use these.
@@ -114,15 +114,24 @@ you would use in Tcl scripts for Synopsys tools.
 
 ==============================================================================
 6) Aliases become insert mode abbreviations!
-     Any Tcl aliases you defined when the $WARD/TclComplete collateral was
+     Some interactive Tcl shell aliases you defined when the $WARD/TclComplete collateral was
      generated will be converted into iabbrev commands in $WARD/TclComplete/aliases.vim.
 
-     In other words, type 'gc' followed by <space> and the 'gc' gets 
-     replaced by 'get_cells'.  Very cool!
+     In other words, type 'fic' followed by <space> will automatically replace
+     'fic' with foreach_in_collection. 
+
+     This plugin's Tcl script intentionally to limits the abbrevations to:
+         fic   = foreach_in_collection
+         ga    = get_attribute
+         cs    = change_selection
+         gs    = get_selection
+
+     To avoid triggering an abbreviation, type ctrl-v and <space> 
+
 ==============================================================================
 7) Special categories of completion:
      
-      - variable names starting with $
+      - variable names starting with $ 
       - G_variables
       - attributes in the get_attribute/set_attribute commands
       - expr functions
@@ -134,6 +143,9 @@ you would use in Tcl scripts for Synopsys tools.
       - get_xxx -design completion (also works for current_design and set_working_design)
       - smarter attribute completion to derive the object class from
       get_cells, get_nets, etc.
+      - inside a namespace eval ... {} block
+      - inside a oo:: {} block.
+      - things that act like namespace ensemble but aren't 
 
 ==============================================================================
 8) Call to action!
