@@ -49,6 +49,13 @@ function! TclComplete#GetData()
     "     list:  builtins first, then commands, then procs inside child namespaces
     let g:TclComplete#cmds = TclComplete#ReadJsonFile('commands.json')
 
+    "     list: derive the namespaces
+    let g:TclComplete#namespaces = copy(g:TclComplete#cmds)
+    call filter(g:TclComplete#namespaces,"v:val=~'::'")
+    let map_cmd = "substitute(v:val,'::[^:]*$','','')"
+    call map(g:TclComplete#namespaces,map_cmd)
+    call uniq(sort(g:TclComplete#namespaces,'i'))
+
     "     dict: key = ['command']  value = alphabetical list of options
     let g:TclComplete#options = TclComplete#ReadJsonFile('options.json')
 
@@ -276,13 +283,17 @@ function! TclComplete#Complete(findstart, base)
             let namespace = l:context[2]
 
             if s:global
-                " If you already typed a :: then use fully qualified paths
+                " If you already typed a leading :: then use fully qualified paths
                 let l:complete_list = g:TclComplete#cmds
                 let l:menu_dict     = g:TclComplete#descriptions
             else
                 " If you have not typed a ::, then limit the scope to namespace
-                let l:complete_list = filter(copy(g:TclComplete#cmds),"v:val=~'^".namespace."'")
-                call map(l:complete_list,"substitute(v:val,'^".namespace."::','','')")
+                let l:complete_list = copy(g:TclComplete#cmds)
+                let filter_cmd = "v:val=~'^".namespace."'"
+                let map_cmd    = "substitute(v:val,'^".namespace."::','','')"
+                call filter(l:complete_list,filter_cmd)
+                call map(l:complete_list,map_cmd)
+                call sort(l:complete_list,'i')
             endif
 
             
@@ -376,6 +387,9 @@ function! TclComplete#Complete(findstart, base)
             let l:complete_list = g:TclComplete#options['string is']
             let l:menu_dict     = g:TclComplete#details['string is']
 
+        elseif s:active_cmd=='namespace' && g:last_completed_word != 'namespace' 
+            let g:ctype = 146
+            let l:complete_list = g:TclComplete#namespaces
 
         " 15) App vars
         elseif s:active_cmd=~# 'app_var'

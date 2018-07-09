@@ -143,6 +143,7 @@ you would use in Tcl scripts for Synopsys tools.
       - get_xxx -design completion (also works for current_design and set_working_design)
       - smarter attribute completion to derive the object class from
       get_cells, get_nets, etc.
+      - namespaces for "namespace" ensemble commands.
       - inside a namespace eval ... {} block
       - inside a oo:: {} block.
       - things that act like namespace ensemble but aren't 
