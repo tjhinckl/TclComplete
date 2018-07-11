@@ -673,9 +673,9 @@ close $log
 
     foreach cmd $all_command_list {
         if {[info procs $cmd]!=""} {
-            puts $f "syn keyword tclproccommand $proc_name"
+            puts $f "syn keyword tclproccommand $cmd"
         } else {
-            puts $f "syn keyword tclcommand $command"
+            puts $f "syn keyword tclcommand $cmd"
         }
     }
 
