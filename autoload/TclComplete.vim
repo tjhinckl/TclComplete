@@ -1,7 +1,7 @@
 "tclcomplete.vim - Omni Completion for Synopsys Tcl
 " Creator: Chris Heithoff < christopher.b.heithoff@intel.com >
-" Version: 0.5
-" Last Updated: 06 November 2017
+" Version: 2.0
+" Last Updated: 11-Jul-2018
 "
 
 function! TclComplete#ReadJsonFile(json_file)
