@@ -168,5 +168,7 @@ you would use in Tcl scripts for Synopsys tools.
 
     - More smarts with oo:: objects.   
 
+    - Detect a variable name in the catch command.
+         catch  {script} varName optName
 
 

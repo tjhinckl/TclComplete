@@ -53,8 +53,11 @@ function! TclComplete#GetData()
         let g:TclComplete#attribute_funcs[f]=''
     endfor
 
-    "     list:  builtins first, then commands, then procs inside child namespaces
+    "     list of commands.  Namespaced commands at end.
     let g:TclComplete#cmds = TclComplete#ReadJsonFile('commands.json')
+
+    "     list:  packages
+    let g:TclComplete#packages = TclComplete#ReadJsonFile('packages.json')
 
     "     list: derive the namespaces
     let g:TclComplete#namespaces = copy(g:TclComplete#cmds)
@@ -107,7 +110,7 @@ function! TclComplete#GetData()
 
     "  Functions that use variable name completion
     let g:TclComplete#varname_funcs = {}
-    for f in ['set', 'unset', 'lappend', 'dict set', 'dict unset', 'dict append', 'dict lappend', 'dict incr', 'dict with', 'dict update']
+    for f in ['set', 'unset', 'append', 'lappend', 'dict set', 'dict unset', 'dict append', 'dict lappend', 'dict incr', 'dict with', 'dict update']
         let g:TclComplete#varname_funcs[f]=''
     endfor
 
@@ -359,7 +362,8 @@ function! TclComplete#Complete(findstart, base)
             let l:complete_list = g:TclComplete#g_vars
 
         " 1c) If you've typed a "$", then use a list of variables in the buffer.
-        elseif l:base[0] == '$'
+        "      (note, I change $ to \$ l:base earlier to match literal $'s elsewhere)
+        elseif l:base[0:1] == '\$'
             let g:ctype = '$var'
             let l:complete_list = map(TclComplete#ScanBufferForVariableNames(),"'$'.v:val")
             
@@ -518,7 +522,7 @@ function! TclComplete#Complete(findstart, base)
             let l:complete_list = sort(keys(g:TclComplete#iccpp_dict))
             let l:menu_dict = g:TclComplete#iccpp_dict
 
-        " 6a) Completions for two word combinations (like 'package require')
+        " 6a) Completions for two word combinations (like 'string is')
         elseif has_key(g:TclComplete#options,s:active_cmd." ".g:last_completed_word)
             let g:ctype = 'two word options'
             let l:complete_list = g:TclComplete#options[s:active_cmd." ".g:last_completed_word]
@@ -528,10 +532,15 @@ function! TclComplete#Complete(findstart, base)
             let g:ctype = 'namespace'
             let l:complete_list = g:TclComplete#namespaces
 
-        " 6b) Complete two word array commands with your array names
-        elseif s:active_cmd=='array' && g:last_completed_word != 'array' 
+        " 6c) Complete two word array commands with your array names
+        elseif (s:active_cmd=='array' && g:last_completed_word != 'array') || s:active_cmd=='parray'
             let g:ctype = 'array'
             let l:complete_list = g:TclComplete#ScanBufferForArrayNames()
+
+        " 6d) Complete two word package commands with your packages
+        elseif s:active_cmd=='package' && g:last_completed_word != 'package' 
+            let g:ctype = 'package'
+            let l:complete_list = g:TclComplete#packages
 
         " 7a) Techfile stuff (relies on $SD_BUILD2/utils/shared/techfile.tcl)
         elseif s:active_cmd =~ 'tech::get_techfile_info'
