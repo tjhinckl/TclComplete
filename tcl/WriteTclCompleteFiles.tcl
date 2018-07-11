@@ -6,7 +6,7 @@
 # Description:  Source this from the icc2_shell (or dc or pt?) to 
 #               create a file that can be used for tcl omnicompletion
 #               in Vim.
-# Date of latest revision: 06-July-2018
+# Date of latest revision: 10-July-2018
 
 #---------------------------------------#
 #           JSON procs                  #
@@ -15,7 +15,7 @@
 proc list_to_json {list} {
     set indent "    "
     set result "\[\n"
-    foreach item [lsort $list] {
+    foreach item $list {
         append result "${indent}\"${item}\",\n"
     }
     set result [remove_final_comma $result]
@@ -43,7 +43,7 @@ proc dict_of_lists_to_json {dict_of_lists} {
     foreach key [lsort [dict keys $dict_of_lists]] {
         append result "${indent}\"${key}\":\n"
         append result "${indent}${indent}\[\n"
-        foreach value [dict get $dict_of_lists $key] {
+        foreach value [lsort [dict get $dict_of_lists $key]] {
             append result "${indent}${indent}\"${value}\",\n"
         }
         set result [remove_final_comma $result]
@@ -211,19 +211,52 @@ proc get_app_option_from_man_page {app_option} {
 # Main script starts here.
 ###########################
 # Form a list of all commands, including those inside namespaces.
+#  Most of the code here is sort in a particular order
 echo "------------------------------------------------"
 echo "---TclComplete:  forming the list of all commands"
-set all_command_list [info command]
-foreach global_namespace [namespace children] {
-    set  all_command_list [concat $all_command_list [info command ${global_namespace}::*]]
-    foreach hier_namespace [namespace children $global_namespace] {
-        set all_command_list [concat $all_command_list [info command ${hier_namespace}::*]]
-    }
-}
-set all_command_list [lsort -u [lmap cmd $all_command_list {string trim $cmd ::}]]
-    
+proc get_all_sorted_commands {} {
+    set commands  [lsort -nocase [info command]]
 
-# Divide all_command_list into builtin and regular commands
+    # Pull out any commands starting with _underscore (put them at the end)
+    set _commands  [lsearch -all -inline $commands _*]
+    set commands   [lsearch -all -inline -not $commands _*]
+
+    # Some commands tried to be namespaced with single colons. They show
+    # up with [info command] because it's a fake namespace.
+    set :commands  [lsearch -all -inline $commands *:*]
+    set commands   [lsearch -all -inline -not $commands *:*]
+    
+    # Remove the . command.  Who needs autocomplete for a dot?
+    set commands   [lsearch -all -inline -not $commands .]
+
+    # Put the namespaced commands into their own lists so that they 
+    # can be put at the end of the all_command_list later.
+    set ns_cmds1 {}
+    set ns_cmds2 {}
+
+    # Search through namespaces for more commands with [info command <namespace>*]
+    set global_namespaces [lsort -nocase [namespace children]]
+    foreach gn $global_namespaces {
+        # Get the cmds inside each global namespace, but without the leading :: colons.
+        set cmds1 [lsort -nocase [info command ${gn}::*]]
+        set cmds1 [lmap x $cmds1 {string trim $x "::"}]
+        set ns_cmds1 [concat $ns_cmds1 $cmds1]
+
+        # Go down one more level in the namespaces
+        set hier_namespaces [lsort -nocase [namespace children $gn]]
+        foreach hn $hier_namespaces {
+            set cmds2 [lsort -nocase [info command ${hn}::*]]
+            set cmds2 [lmap x $cmds2 {string trim $x "::"}]
+            set ns_cmds2 [concat $ns_cmds2 $cmds2]
+        }
+    }
+    set all_command_list [concat $commands $ns_cmds1 $ns_cmds2 ${_commands} ${:commands}]
+    return $all_command_list
+}
+    
+set all_command_list [get_all_sorted_commands]
+
+# Divide all_command_list into builtins, non-proc commands, and procs.
 #   - builtins require the 'man' command to learn about the options.
 #   - others use the 'help -v' command to list the options.
 set builtin_list {} 
@@ -275,7 +308,10 @@ foreach cmd $all_command_list {
     if {[namespace ensemble exists $cmd]} {
         set map_keys    [dict keys [namespace ensemble configure $cmd -map]]
         set subcommands [namespace ensemble configure $cmd -subcommands]
-        dict set opt_dict $cmd [lsort -u [concat $map_keys $subcommands]]
+        set ensemble_options [lsort -u [concat $map_keys $subcommands]]
+        if {[llength $ensemble_options]} {
+            dict set opt_dict $cmd [lsort -u [concat $map_keys $subcommands]]
+        }
     }
 }
 
@@ -289,7 +325,7 @@ foreach cmd [concat $command_list $proc_list] {
 echo "...completed options for commands and proc"
 
     
-# builtins use "man" to get options.  (some special cases may be hard coded later)
+# builtins use "man" to get options. 
 foreach bi $builtin_list {
     foreach opt_name [get_options_from_man $bi] {
         dict lappend opt_dict $bi $opt_name
@@ -305,11 +341,27 @@ set func_list [ lsort -u [info function] ]
 dict set opt_dict "expr" $func_list
 echo "...\$func_list built"
 
-# 'info' looks like a namespace ensemble but is not!
+# 'info' looks like a namespace ensemble but is not
 dict set opt_dict "info"  [concat [dict get $opt_dict "info"] [lsort "args body class cmdcount commands complete coroutine default errorstack exists frame functions globals hostname level library loaded locals nameofexecutable object patchlevel procs script sharelibextension tclversion vars"]]
 
+# encoding stuff
+dict set opt_dict "encoding" [list convertfrom convertto dirs names system]
+set encoding_names [lsort [encoding names]]
+dict set opt_dict "encoding convertfrom" $encoding_names
+dict set opt_dict "encoding convertto"   $encoding_names
+dict set opt_dict "encoding system"      $encoding_names
+
+# zlib stuff
+dict set opt_dict "zlib" [list adler32 compress crc32 decompress deflate gunzip gzip inflate push stream]
+dict set opt_dict "zlib gunzip" [list -headerVar]
+dict set opt_dict "zlib gzip"   [list -level -header]
+dict set opt_dict "zlib -headerVar" [list comment crc filename os size time type]
+dict set opt_dict "zlib -header"    [list comment crc filename os size time type]
+dict set opt_dict "zlib stream" [list compress decompress deflate gunzip gzip inflate]
+dict set opt_dict "zlib push"   [list compress decompress deflate gunzip gzip inflate]
+
 # Treat 'package require' differently than just 'package'
-set package_list [ lsort -u [package names] ]
+set package_list [lsort -u [package names]]
 dict set opt_dict "package require" $package_list
 echo "...\$package_list built"
 
@@ -324,6 +376,8 @@ if {[namespace exists "oo"]} {
     }
     dict set opt_dict "info class"  [list call constructor definition destructor filters forward instances methodtype mixins subclasses superclasses variables]
     dict set opt_dict "info object" [list call class definition filters forward isa methods methodtype mixins namespace variables vars]
+    lappend all_command_list [list self my]
+    dict set opt_dict "self" [list call caller class filter method namespace next object target]
 }
 
 # "namespace ensemble" subcommands and options
@@ -331,28 +385,43 @@ dict set opt_dict "namespace ensemble" [list create configure exists -command -m
     
 # Offer valid type names for the argument following "string is"
 dict set opt_dict   "string is" [list alnum alpha ascii boolean control digit double entier false graph integer list lower print punct space true upper wideinteger wordchar xdigit]
-dict set desc_dict  "string is" alnum       "Any Unicode alphabet or digit character."
-dict set desc_dict  "string is" alpha       "Any Unicode alphabet character."
-dict set desc_dict  "string is" ascii       "Any  character  with a value less than \u0080."
-dict set desc_dict  "string is" boolean     "Any of the forms allowed to Tcl_GetBoolean."
-dict set desc_dict  "string is" control     "Any Unicode control character."
-dict set desc_dict  "string is" digit       "Any  Unicode  digit  character. "
-dict set desc_dict  "string is" double      "Any  of  the  valid  forms for a double in Tcl."
-dict set desc_dict  "string is" entier      "Any of the valid string formats for an integer value of arbitrary size in Tcl."
-dict set desc_dict  "string is" false       "Any of the forms allowed to Tcl_GetBoolean where the value is false."
-dict set desc_dict  "string is" graph       "Any Unicode printing character, except space."
-dict set desc_dict  "string is" integer     "Any of the valid string formats for a 32-bit integer value  in Tcl."
-dict set desc_dict  "string is" list        "Any proper list structure."
-dict set desc_dict  "string is" lower       "Any Unicode lower case alphabet character."
-dict set desc_dict  "string is" print       "Any Unicode printing character, including space."
-dict set desc_dict  "string is" punct       "Any Unicode punctuation character."
-dict set desc_dict  "string is" space       "Any  Unicode  whitespace  character."
-dict set desc_dict  "string is" true        "Any of the forms allowed to Tcl_GetBoolean where the value is true."
-dict set desc_dict  "string is" upper       "Any  upper  case  alphabet  character in the Unicode character set."
-dict set desc_dict  "string is" wideinteger "Any of the valid forms for a wide integer in  Tcl."
-dict set desc_dict  "string is" wordchar    "Any  Unicode  word  character.  "
-dict set desc_dict  "string is" xdigit      "Any hexadecimal digit character (0-9A-Fa-f)."
+dict set details_dict  "string is" alnum       "Any Unicode alphabet or digit character."
+dict set details_dict  "string is" alpha       "Any Unicode alphabet character."
+dict set details_dict  "string is" ascii       "Any  character  with a value less than \u0080."
+dict set details_dict  "string is" boolean     "Any of the forms allowed to Tcl_GetBoolean."
+dict set details_dict  "string is" control     "Any Unicode control character."
+dict set details_dict  "string is" digit       "Any  Unicode  digit  character. "
+dict set details_dict  "string is" double      "Any  of  the  valid  forms for a double in Tcl."
+dict set details_dict  "string is" entier      "Any of the valid string formats for an integer value of arbitrary size in Tcl."
+dict set details_dict  "string is" false       "Any of the forms allowed to Tcl_GetBoolean where the value is false."
+dict set details_dict  "string is" graph       "Any Unicode printing character, except space."
+dict set details_dict  "string is" integer     "Any of the valid string formats for a 32-bit integer value  in Tcl."
+dict set details_dict  "string is" list        "Any proper list structure."
+dict set details_dict  "string is" lower       "Any Unicode lower case alphabet character."
+dict set details_dict  "string is" print       "Any Unicode printing character, including space."
+dict set details_dict  "string is" punct       "Any Unicode punctuation character."
+dict set details_dict  "string is" space       "Any  Unicode  whitespace  character."
+dict set details_dict  "string is" true        "Any of the forms allowed to Tcl_GetBoolean where the value is true."
+dict set details_dict  "string is" upper       "Any  upper  case  alphabet  character in the Unicode character set."
+dict set details_dict  "string is" wideinteger "Any of the valid forms for a wide integer in  Tcl."
+dict set details_dict  "string is" wordchar    "Any  Unicode  word  character.  "
+dict set details_dict  "string is" xdigit      "Any hexadecimal digit character (0-9A-Fa-f)."
 
+# Format special characters
+dict set opt_dict  "format" "%d %s %c %u %x %X %o %b %f %e %E %g %G"
+dict set details_dict "format" "%d" "Signed decimal"
+dict set details_dict "format" "%s" "String"
+dict set details_dict "format" "%c" "Unicode character"
+dict set details_dict "format" "%n" "Unsigned decimal"
+dict set details_dict "format" "%x" "Lower case hex"
+dict set details_dict "format" "%X" "Upper case hex"
+dict set details_dict "format" "%o" "Octal"
+dict set details_dict "format" "%b" "Binary"
+dict set details_dict "format" "%f" "Floating point (default precision=6)"
+dict set details_dict "format" "%e" "Scientific notication x.yyye+zz"
+dict set details_dict "format" "%E" "Scientific notication x.yyyE+zz"
+dict set details_dict "format" "%g" "%f or %e, based on precision"
+dict set details_dict "format" "%G" "%f or %E, based on precision"
 echo "...completed options for special cases in the opt_dict"
 
 ########################
@@ -378,16 +447,23 @@ foreach app_option $app_option_list {
 ####################################################################
 # ICCPP parameters (this will be empty if ::iccpp_com doesn't exist)
 ####################################################################
-set iccpp_param_list [array names ::iccpp_com::params_map]
+set iccpp_param_list [lsort [array names ::iccpp_com::params_map]]
 set iccpp_param_dict [array get   ::iccpp_com::params_map]
 
 #####################
 # app_vars
 #####################
-set app_var_list [get_app_var -list *]
+set app_var_list [lsort [get_app_var -list *]]
+
+#########################
+# regexp character classes
+#########################
+set regexp_char_classes [list :alpha: :upper: :lower: :digit: :xdigit: :alnum: :blank: :space: :punct: :graph: :cntrl: ]
 
 ###############################################################################
-# G_variables (this won't do nothing if array ::GLOBAL_VAR::global don't exist)
+# G_variables.  rdt G_var names are stored in the secret ::GLOBAL_VAR::global_var
+# array.  The array name will also include comma separated keywords like history
+# and subst and constant.
 ###############################################################################
 set Gvar_list {}
 set Gvar_array_list {}
@@ -396,11 +472,15 @@ foreach name [lsort -dictionary [array names ::GLOBAL_VAR::global_var]] {
     if [string match "*(*" $name] {
         lappend Gvar_array_list $name
     }
+    # Include a name in the list that ends with an open paren.  This will 
+    # represent the array, but the rest of the array names will go to the end later.
     set name [regsub {\(.*\)} $name "("]
     lappend Gvar_list $name
 }
 set Gvar_list       [lsort -unique -dictionary $Gvar_list]
 set Gvar_array_list [lsort -unique -dictionary $Gvar_array_list]
+# Put the complete array names at the end of the list.  This is handy for the popup menu.
+set Gvar_list [concat $Gvar_list $Gvar_array_list]
 
 ######################################################################
 # Form a nested dictionary of attributes of object classes.
@@ -492,7 +572,7 @@ close $log
 #-------------------------------------
 #  All the commands in a JSON list.
 #-------------------------------------
-    echo [list_to_json [concat $builtin_list $command_list $proc_list]] > $outdir/commands.json
+    echo [list_to_json $all_command_list] > $outdir/commands.json
     echo "...commands.json file complete."
 
 #-----------------------------------------
@@ -573,7 +653,7 @@ close $log
 #-------------------------------------
 #  existing designs in your block
 #-------------------------------------
-    echo [list_to_json [get_attribute [get_designs -quiet] name]] > $outdir/designs.json
+    echo [list_to_json [lsort [get_attribute [get_designs -quiet] name]]] > $outdir/designs.json
     echo "...designs.json file complete."
     
 #-------------------------------------
@@ -582,6 +662,11 @@ close $log
     echo [list_to_json $app_var_list] > $outdir/app_vars.json
     echo "...app_vars.json file complete."
     
+#-------------------------------------
+#  regexp character classes
+#-------------------------------------
+    echo [list_to_json $regexp_char_classes] > $outdir/regexp_char_classes.json
+    echo "...regexp_char_classes.json file complete."
 #-------------------------------------
 #  environment variables
 #-------------------------------------
@@ -627,19 +712,19 @@ close $log
 
 
 # Clean up time.  Give Tcl some memory back.
-unset alias_list
-unset all_command_list
-unset app_option_list
-unset app_var_list
-unset builtin_list
-unset command_list
-unset proc_list
-unset details_dict
-unset desc_dict
-unset opt_dict
-unset app_option_dict
-unset iccpp_param_dict
-unset techfile_attr_dict
-unset techfile_layer_dict
+# unset alias_list
+# unset all_command_list
+# unset app_option_list
+# unset app_var_list
+# unset builtin_list
+# unset command_list
+# unset proc_list
+# unset details_dict
+# unset desc_dict
+# unset opt_dict
+# unset app_option_dict
+# unset iccpp_param_dict
+# unset techfile_attr_dict
+# unset techfile_layer_dict
 
 echo "...done\n"

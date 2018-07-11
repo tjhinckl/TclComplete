@@ -142,22 +142,31 @@ you would use in Tcl scripts for Synopsys tools.
       - getenv completion 
       - get_xxx -design completion (also works for current_design and set_working_design)
       - smarter attribute completion to derive the object class from
-      get_cells, get_nets, etc.
+            get_cells, get_nets, etc.
       - namespaces for "namespace" ensemble commands.
       - inside a namespace eval ... {} block
       - inside a oo:: {} block.
       - things that act like namespace ensemble but aren't 
+      - dotted object attributes (like net.cell.full_name)
+      - array variable names
+      - filter special codes
+      - encoding names
+      - regexp character classes (like [:alnum:])
+      - "string is" arguments
 
 ==============================================================================
 8) Call to action!
      If you like this, let me know!   christopher.b.heithoff@intel.com 
     
     Future plans for improvements:
-    - add namespaces to auto-complete upon ::
-    - identify any compound commands that are not namespace ensembles.
-      for example, "file" is a namespace ensemble, but "info" and "package"
-          are not.  I hardcoded to "info" and "package" subcommands into
-          the tcl script.
+    - Limit variable lists in case you're inside a proc block or foreach block.
+
+    - More lesser used commands:
+            clock scan --> [now,tomorrow, next week, etc]
+            clock formats --> %M, %m, etc.       
+            ...
+
+    - More smarts with oo:: objects.   
 
 
 

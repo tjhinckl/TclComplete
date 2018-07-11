@@ -46,6 +46,13 @@ function! TclComplete#GetData()
     let g:TclComplete#attributes = TclComplete#ReadJsonFile('attributes.json')
     let g:TclComplete#object_classes = sort(keys(g:TclComplete#attributes))
 
+    "  We will check if commands are included as keys here for attribute completion.
+    "    (Note, has_key() lookup is probably faster than searching through a list
+    let g:TclComplete#attribute_funcs = {}
+    for f in ['get_attribute', 'filter_collection', 'set_attribute', 'get_defined_attributes']
+        let g:TclComplete#attribute_funcs[f]=''
+    endfor
+
     "     list:  builtins first, then commands, then procs inside child namespaces
     let g:TclComplete#cmds = TclComplete#ReadJsonFile('commands.json')
 
@@ -81,13 +88,47 @@ function! TclComplete#GetData()
     let g:TclComplete#techfile_attr_dict  = TclComplete#ReadJsonFile('techfile_attr_dict.json')
 
     " Tech file information from the ::techfile_info array (rdt thing)
-    let g:TclComplete#environment  = TclComplete#ReadJsonFile('environment.json')
+    let g:TclComplete#environment  = sort(keys(TclComplete#ReadJsonFile('environment.json')))
 
     " Design names in your session
     let g:TclComplete#designs = TclComplete#ReadJsonFile('designs.json')
 
     " App variables
     let g:TclComplete#app_var_list = TclComplete#ReadJsonFile('app_vars.json')
+
+    " Regexp char classes
+    let g:TclComplete#regexp_char_class_list = TclComplete#ReadJsonFile('regexp_char_classes.json')
+
+    "  Functions that use g_var completion
+    let g:TclComplete#gvar_funcs = {}
+    for f in ['setvar', 'getvar', 'lappend_var', 'info_var', 'append_var']
+        let g:TclComplete#gvar_funcs[f]=''
+    endfor
+
+    "  Functions that use variable name completion
+    let g:TclComplete#varname_funcs = {}
+    for f in ['set', 'unset', 'lappend', 'dict set', 'dict unset', 'dict append', 'dict lappend', 'dict incr', 'dict with', 'dict update']
+        let g:TclComplete#varname_funcs[f]=''
+    endfor
+
+    "  Functions that use environment completion
+    let g:TclComplete#env_funcs = {}
+    for f in ['getenv', 'setenv']
+        let g:TclComplete#env_funcs[f]=''
+    endfor
+
+    "  Functions that use design completion
+    let g:TclComplete#design_funcs = {}
+    for f in ['current_design', 'set_working_design', 'set_working_design_stack']
+        let g:TclComplete#design_funcs[f]=''
+    endfor
+
+    "  Functions that use application options
+    let g:TclComplete#app_option_funcs = {}
+    for f in ['get_app_options', 'set_app_options', 'report_app_options', 'reset_app_options', 'get_app_option_value']
+        let g:TclComplete#app_option_funcs[f]=''
+    endfor
+
 endfunction                                                            l
 
 function! TclComplete#GetObjectClass(get_command)
@@ -111,21 +152,19 @@ function! TclComplete#AttrChoices(A,L,P)
 endfunction
 
 function! TclComplete#AttributeComplete()
+    let g:TclComplete#attr_flag = 'yes'
     call TclComplete#AskForAttribute()
     return "\<c-x>\<c-o>"
 endfunction
 
 function! TclComplete#AskForAttribute()
-    " his function doesn't return anything, but instead sets a g: variables
-    " behind the scenes
-    let g:TclComplete#attr_flag = 'yes'
-    let l:message = "Please enter an attribute class (tab for auto-complete, enter to use prev value): "
+    " This does no return a value,  It launches an input prompt, and sets global variables.
+    let l:message = "Please enter an object class (tab for auto-complete, enter to use prev value): "
     let l:attr_class = input(l:message,'',"custom,TclComplete#AttrChoices")
     if l:attr_class != ''
         let g:TclComplete#attr_class = l:attr_class
     endif
 endfunction
-
 
 function! TclComplete#ScanBufferForVariableNames()
     " Assign the matches to dict keys for uniqueness instead of dealing with a non-unique list.
@@ -136,16 +175,62 @@ function! TclComplete#ScanBufferForVariableNames()
     let regex_str.= '|foreach(_in_collection)?\s+'
     let regex_str.= ')\zs\h\w*'
     for linenum in range(1,line('$'))
+        " Skip the line you're on.
         if linenum==line('.') 
             continue
         endif
+
         let line = getline(linenum)
+
+        " Check for matches to the regex_str (set, foreach, foreach_in_collection)
         let match = matchstr(line,regex_str)
-        let matches[match] = ''
-        " TODO:  Add stuff for lassign, dict for {key value}, etc.
+        if match!=''
+            let matches[match] = ''
+        endif
+
+        " Check for proc arguments
+        let match=matchstr(line,'\vproc .*\{\zs.*\ze}')
+        if match!=''
+            for var in split(match)
+                let matches[var] = ''
+            endfor
+            continue
+        endif
+
+        " Check for final args of lassign or scan (go backwards from end. look for valid var names)
+        if line=~'\v(lassign|scan)'
+            for var in reverse(split(line))
+                if var=~'[$}"\]%]'
+                    break
+                endif
+                let matches[var] = ''
+            endfor
+            continue
+        endif
+        " TODO:  Add stuff for 'dict for {key value}', etc.
     endfor
-    " TODO: Add stuff for procs arguments
     " TODO: Restrict foreach and proc args to within the block only.
+    return sort(filter(keys(matches),"v:val!=''"),'i')
+endfunction
+
+function! TclComplete#ScanBufferForArrayNames()
+    " Assign the matches to dict keys for uniqueness instead of dealing with a non-unique list.
+    let matches = {}
+    let regex_str = '\varray\s+set\s+\zs\h\w*'
+    for linenum in range(1,line('$'))
+        " Skip the line you're on.
+        if linenum==line('.') 
+            continue
+        endif
+
+        let line = getline(linenum)
+
+        " Check for matches to the regex_str (set, foreach, foreach_in_collection)
+        let match = matchstr(line,regex_str)
+        if match!=''
+            let matches[match] = ''
+        endif
+    endfor
     return sort(filter(keys(matches),"v:val!=''"),'i')
 endfunction
 
@@ -207,6 +292,7 @@ function! TclComplete#FindStart()
     endif
 
     " All done moving the index. Save s:active_cmd as a script variable
+    " Let's also figure out the last completed word
     if l:index==s:start_of_completion
         let s:active_cmd = ''
         let g:last_completed_word = ''
@@ -215,7 +301,8 @@ function! TclComplete#FindStart()
         let g:last_completed_word = split(l:line[0:s:start_of_completion-1])[-1]
     endif
 
-    " Let's also figure out the last completed word
+    " For debug 
+    let g:active_cmd = s:active_cmd
 
     " Finally, return the start which is required for a completion function
     return s:start_of_completion
@@ -248,7 +335,8 @@ function! TclComplete#Complete(findstart, base)
         " Save globally for debug purpose
         let g:base = l:base
 
-        " Save the command before previous curly brace
+        " Find the previous line (as a list) that contains the outer-most left curly brace.
+        "   Let's call this the context.
         let l:context = g:TclComplete#GetContextList()
         let g:context = l:context
 
@@ -256,150 +344,198 @@ function! TclComplete#Complete(findstart, base)
         let l:complete_list = {}
         let l:menu_dict     = {}
     
-        " Many types of completion.
-        " 1)  -options that start with a dash
+        """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+        " Many types of completion. Here goes a big if/elseif/else block
+        """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+        " 1a)  If you've typed a dash, then get the -options of the active cmd.
         if l:base[0] == '-' 
-            let g:ctype = 1
+            let g:ctype = 'dash'
             let l:complete_list = get(g:TclComplete#options,s:active_cmd,[])
             let l:menu_dict     = get(g:TclComplete#details,s:active_cmd,[])
 
-        " 2)  G_var completion (either array or non-array names)
-        elseif l:base =~# '^G' 
-            let g:ctype = 2
-            if l:base =~# '('
-                let l:complete_list = g:TclComplete#g_var_arrays
-            else
-                let l:complete_list = g:TclComplete#g_vars
-            endif
+        " 1b)  If you've typed "G_", then use list of g vars.
+        elseif l:base[0:1] == 'G_' 
+            let g:ctype = 'G_var'
+            let l:complete_list = g:TclComplete#g_vars
 
-        "  3) $variable completion (scan the current buffer for these!)
-        elseif l:base=~ '^\\\$'
-            let g:ctype = 3
+        " 1c) If you've typed a "$", then use a list of variables in the buffer.
+        elseif l:base[0] == '$'
+            let g:ctype = '$var'
             let l:complete_list = map(TclComplete#ScanBufferForVariableNames(),"'$'.v:val")
             
-        "  3) namespace context
-        elseif get(l:context,0,'')=='namespace' && get(l:context,1,'')=='eval' && len(l:context)>2
-            let g:ctype = 31
-            let namespace = l:context[2]
 
-            if s:global
-                " If you already typed a leading :: then use fully qualified paths
+        " 1d) regexp character classes start with a single colon.  ([:alnum:], [:upper:], etc)
+        elseif l:base[0] == ':' && l:base[1] != ':'
+            let gctype = 'regexp char class' 
+            let l:complete_list = g:TclComplete#regexp_char_class_list
+
+
+        " 2) Command completion if no command exists yet.
+        elseif s:active_cmd == ''
+            " 2a) If you're inside a namespace eval block, then use cmds as scoped to the namespace
+            if get(l:context,0,'')=='namespace' && get(l:context,1,'')=='eval' && len(l:context)>2
+                let namespace = l:context[2]
+
+                if s:global
+                    let g:ctype = 'namespace context global'
+                    " If you already typed a leading :: then use fully qualified paths
+                    let l:complete_list = g:TclComplete#cmds
+                    let l:menu_dict     = g:TclComplete#descriptions
+                else
+                    " If you have not typed a ::, then limit the scope to namespace or non-namespaced commands
+                    let g:ctype = 'namespace context scoped'
+                    let l:complete_list = copy(g:TclComplete#cmds)
+                    let filter_cmd = "v:val=~'^".namespace."' || v:val!~'::'"
+                    let map_cmd    = "substitute(v:val,'^".namespace."::','','')"
+                    call filter(l:complete_list,filter_cmd)
+                    call map(l:complete_list,map_cmd)
+                    " call sort(l:complete_list,'i')
+                endif
+            " 2b) If you're in a oo::define (or similar) block, then only allow stuff like method, constructor, etc...
+            elseif get(l:context,0)=~'^oo::'
+                let g:ctype = 'oo context'
+                let l:complete_list = get(g:TclComplete#options, l:context[0])
+
+            " 2c) Regular old command completion.  
+            else
+                let g:ctype = 'command'
                 let l:complete_list = g:TclComplete#cmds
                 let l:menu_dict     = g:TclComplete#descriptions
-            else
-                " If you have not typed a ::, then limit the scope to namespace
-                let l:complete_list = copy(g:TclComplete#cmds)
-                let filter_cmd = "v:val=~'^".namespace."'"
-                let map_cmd    = "substitute(v:val,'^".namespace."::','','')"
-                call filter(l:complete_list,filter_cmd)
-                call map(l:complete_list,map_cmd)
-                call sort(l:complete_list,'i')
             endif
-
-            
-        "  3) oo context
-        elseif get(l:context,0)=~'^oo::'
-            let g:ctype = 32
-            let l:complete_list = get(g:TclComplete#options, l:context[0])
-
-        "  4) Command completion if no command exists yet.
-        elseif s:active_cmd == ''
-            let g:ctype = 4
-            let l:complete_list = g:TclComplete#cmds
-            let l:menu_dict     = g:TclComplete#descriptions
         
-        "  5) Attribute completion if the object class cannot easily be derived
-        "        The attr_flag is 'yes' only when the object class is known.
+        " 3) Complete object classes after '-class', typically during a get_attribute type command
+        elseif g:last_completed_word=='-class'
+            let g:ctype = 'object classes'
+            let l:complete_list = g:TclComplete#object_classes
+
+        " 4a) Attribute completion if triggered by the TclComplete#AttributeComplete() function
+        "      (Rare.  this is triggered by the <tab>-a shortcut.)
         elseif g:TclComplete#attr_flag == 'yes'
-            let g:ctype = 5
+            let g:ctype = 'attributes (attr_function)'
             let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
             let l:menu_dict     = get(g:TclComplete#attributes,g:TclComplete#attr_class,{})
             let g:TclComplete#attr_flag  = 'no'
 
-        elseif s:active_cmd =~# '\v(set_attribute|get_attribute|filter_collection)'
-            let g:ctype = 6
-            call TclComplete#AskForAttribute()
-            let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
-            let l:menu_dict     = get(g:TclComplete#attributes,g:TclComplete#attr_class,{})
-            let g:TclComplete#attr_flag = 'no'
+        " 4b) Attribute completion following attribute commands (like get_attribute)
+        elseif has_key(g:TclComplete#attribute_funcs,s:active_cmd)
+            " Check for dotted attribute format.  (like cell.full_name, pin.cell.origin)
+            if l:base =~ '\.'
+                let g:ctype = 'attributes (dotted)'
+                " Split by dots.
+                let l:split_base = split(l:base,'\.')
 
-        " 6) Attribute completion if the object class can be derived from the command name (I LOVE THIS ONE)
+                if l:base =~ '\.$'
+                    let g:TclComplete#attr_class = get(l:split_base,-1)
+                    let l:prefix = l:base 
+                else
+                    let g:TclComplete#attr_class = get(l:split_base,-2)
+                    let l:prefix= join(l:split_base[0:-2],'.')."."
+                endif
+
+                " Construct the complete_list so that the dotted prefixes are in front.
+                let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
+                call map(l:complete_list, "l:prefix.v:val")
+
+            " Try to derive the object class based on a -class argument
+            elseif getline('.')=~'-class'
+                let g:ctype = 'attributes (derived from -class)'
+                let l:split_line = split(getline('.'))
+                let l:class_index = index(l:split_line,'-class')+1
+                let g:TclComplete#attr_class=get(l:split_line,l:class_index,'')
+                let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
+                let l:menu_dict     = get(g:TclComplete#attributes,g:TclComplete#attr_class,{})
+
+            " ...otherwise, ask the user for the object class.
+            else
+                call TclComplete#AskForAttribute()
+                let g:ctype = 'attributes (AskForAttribute)'
+                let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
+                let l:menu_dict     = get(g:TclComplete#attributes,g:TclComplete#attr_class,{})
+            endif
+
+        " 4c) Attribute completion after the -filter option of get_cells, get_nets, etc.
         elseif g:last_completed_word=="-filter" && s:active_cmd =~# '^get_'
-            let g:ctype = 6
-            let g:TclComplete#attr_class = TclComplete#GetObjectClass(s:active_cmd)
-            let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
-            let l:menu_dict     = get(g:TclComplete#attributes,g:TclComplete#attr_class,{})
-            let g:TclComplete#attr_flag = 'no'
+            " Check for dotted attribute format.  (like cell.full_name, pin.cell.origin)
+            "  (THIS CODE IS REPEATED FROM 4b. CAN THIS BE RE-FACTORED BETTER?)
+            if l:base =~ '\.'
+                let g:ctype = 'attributes (dotted -filter)'
+                " Split by dots.
+                let l:split_base = split(l:base,'\.')
 
-        " 7) G_var completion but for the getvar/setvar/etc commands
-        elseif s:active_cmd =~# '\v^(setvar|getvar|lappend_var|info_var|append_var)$'
-            let g:ctype = 7
+                if l:base =~ '\.$'
+                    let g:TclComplete#attr_class = get(l:split_base,-1)
+                    let l:prefix = l:base 
+                else
+                    let g:TclComplete#attr_class = get(l:split_base,-2)
+                    let l:prefix= join(l:split_base[0:-2],'.')."."
+                endif
+
+                " Construct the complete_list so that the dotted prefixes are in front.
+                let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
+                call map(l:complete_list, "l:prefix.v:val")
+            else
+                let g:ctype = 'attributes (derived from get_* -filter)'
+                let g:TclComplete#attr_class = TclComplete#GetObjectClass(s:active_cmd)
+                let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
+                let l:menu_dict     = get(g:TclComplete#attributes,g:TclComplete#attr_class,{})
+            endif
+
+
+        " 5a) G_var completion but for the getvar/setvar/etc commands
+        elseif has_key(g:TclComplete#gvar_funcs, s:active_cmd)
+            let g:ctype = 'g_var function'
             let l:complete_list = g:TclComplete#g_vars
 
-        " 8) Complete unset, lappend and dict set with variable names
-        elseif s:active_cmd =~# '\v^(unset|lappend|dict set)$'
-            let g:ctype = 8
+        " 5b) Complete the command with variable names (without $ sign)
+        elseif has_key(g:TclComplete#varname_funcs, s:active_cmd) || has_key(g:TclComplete#varname_funcs, s:active_cmd.' '.g:last_completed_word)
+            let g:ctype = 'varname function'
             let l:complete_list = TclComplete#ScanBufferForVariableNames()
 
-        " 9) environment 
-        elseif s:active_cmd=~# '\v(get|set)env'
-            let g:ctype = 9
-            let l:complete_list = sort(keys(g:TclComplete#environment))
+        " 5c) Complete with environment variables
+        elseif has_key(g:TclComplete#env_funcs, s:active_cmd)
+            let g:ctype = 'env'
+            let l:complete_list = g:TclComplete#environment
 
-        " 10)  Design names for the -design option or commands that use the design
-        elseif g:last_completed_word == "-design" || s:active_cmd=~# '\v^(current_design|set_working_design)'
-            let g:ctype = 10
+        " 5d) Complete with the list of designs in your project.
+        elseif g:last_completed_word == "-design" || has_key(g:TclComplete#design_funcs, s:active_cmd)
+            let g:ctype = 'design'
             let l:complete_list = g:TclComplete#designs
 
-        " 11) application options
-        elseif s:active_cmd =~# '\v(get|set|report|reset)_app_options(_value)?'
-            let g:ctype = 11
+        " 5e) Complete with Synopsys application options
+        elseif has_key(g:TclComplete#app_option_funcs, s:active_cmd)
+            let g:ctype = 'app_options'
             let l:complete_list = sort(keys(g:TclComplete#app_options_dict))
             let l:menu_dict = g:TclComplete#app_options_dict
 
-
-        " 12) application variables from your synopsys tool
+        " 5f) Complete with Synopsys applicaiton variables
         elseif s:active_cmd=~# 'app_var'
-            let g:ctype = 12
+            let g:ctype = 'app_var'
             let l:complete_list = sort(g:TclComplete#app_var_list)
 
-        " 13) iccpp parameters
+        " 5g) Complete with iccpp (iTar) parameters
         elseif s:active_cmd =~# '\viccpp_com::(set|get)_param'
-            let g:ctype = 13
+            let g:ctype = 'iccpp parameter'
             let l:complete_list = sort(keys(g:TclComplete#iccpp_dict))
             let l:menu_dict = g:TclComplete#iccpp_dict
 
-        " 14) Completions for two word combinations.
-        elseif s:active_cmd=='package' && g:last_completed_word=='require'
-            let g:ctype = 141
-            let l:complete_list = g:TclComplete#options['package require']
-        elseif s:active_cmd=='info' && g:last_completed_word=='class'
-            let g:ctype = 142
-            let l:complete_list = g:TclComplete#options['info class']
-        elseif s:active_cmd=='info' && g:last_completed_word=='object'
-            let g:ctype = 143
-            let l:complete_list = g:TclComplete#options['info object']
-        elseif s:active_cmd=='namespace' && g:last_completed_word=='ensemble'
-            let g:ctype = 144
-            let l:complete_list = g:TclComplete#options['namespace ensemble']
-        elseif s:active_cmd=='string' && g:last_completed_word=='is'
-            let g:ctype = 145
-            let l:complete_list = g:TclComplete#options['string is']
-            let l:menu_dict     = g:TclComplete#details['string is']
+        " 6a) Completions for two word combinations (like 'package require')
+        elseif has_key(g:TclComplete#options,s:active_cmd." ".g:last_completed_word)
+            let g:ctype = 'two word options'
+            let l:complete_list = g:TclComplete#options[s:active_cmd." ".g:last_completed_word]
 
+        " 6b) Complete two word namespace commands with your namespaces.
         elseif s:active_cmd=='namespace' && g:last_completed_word != 'namespace' 
-            let g:ctype = 146
+            let g:ctype = 'namespace'
             let l:complete_list = g:TclComplete#namespaces
 
-        " 15) App vars
-        elseif s:active_cmd=~# 'app_var'
-            let g:ctype = 15
-            let l:complete_list = sort(g:TclComplete#app_var_list)
+        " 6b) Complete two word array commands with your array names
+        elseif s:active_cmd=='array' && g:last_completed_word != 'array' 
+            let g:ctype = 'array'
+            let l:complete_list = g:TclComplete#ScanBufferForArrayNames()
 
-
-        " 16) Techfile stuff (relies on $SD_BUILD2/utils/shared/techfile.tcl)
+        " 7a) Techfile stuff (relies on $SD_BUILD2/utils/shared/techfile.tcl)
         elseif s:active_cmd =~ 'tech::get_techfile_info'
-            let g:ctype = 16
+            let g:ctype = 'techfile'
             if g:last_completed_word=='-type'
                 let l:complete_list = g:TclComplete#techfile_types
             elseif g:last_completed_word=='-layer'
@@ -413,13 +549,15 @@ function! TclComplete#Complete(findstart, base)
                 let l:tech_file_dict = g:TclComplete#techfile_attr_dict
                 let l:complete_list =  sort(get(g:TclComplete#techfile_attr_dict,l:tech_file_key,['-type','-layer']))
             endif
-
+        
         " Default) Options of the active command.
         else
-            let g:ctype = 777
+            let g:ctype = 'default'
             let l:complete_list = get(g:TclComplete#options,s:active_cmd,[])
             let l:menu_dict     = get(g:TclComplete#details,s:active_cmd,[])
         endif
+
+
 
         " Finally, we filter the choices and add the description.
         let res = []
