@@ -322,6 +322,8 @@ dict set opt_dict "info"  [concat [dict get $opt_dict "info"] [lsort "args body 
 # after options
 dict set opt_dict "after" [list cancel idle info]
 
+# interp options
+dict set opt_dict "interp" [list alias aliases bgerror cancel create debug delete eval exists hide hidden invokehidden issafe limit marktrusted recursionlimit share slaves target transfer]
 
 # encoding options
 dict set opt_dict "encoding" [list convertfrom convertto dirs names system]
