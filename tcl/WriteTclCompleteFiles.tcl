@@ -139,7 +139,7 @@ proc get_options_from_help {cmd} {
             if {[regexp {^\s+(\S+)\s+(#.*$)} $line -> cmd_name description]} {
                 if {$cmd_name == $cmd} {
                     set looking_for_command 0
-                    set looking_for_options  1
+                    set looking_for_options 1
                     continue
                 }
             }
@@ -256,82 +256,57 @@ proc get_all_sorted_commands {} {
     
 set all_command_list [get_all_sorted_commands]
 
-# Divide all_command_list into builtins, non-proc commands, and procs.
-#   - builtins require the 'man' command to learn about the options.
-#   - others use the 'help -v' command to list the options.
-set builtin_list {} 
-set command_list {}
-set proc_list    {}
-
-# Initialize the description dictionary.  Key = command name.  Value = description of the command.
-set desc_dict [dict create]
-
 ## Fill up the description dictionary.
 #   Key = command name
 #   Value = desciption of the command.
-# Also split up all_command_list into three lists:
-#      builtin_list, command_list, proc_list
+set desc_dict [dict create]
 foreach cmd $all_command_list {
     set description [get_description_from_help $cmd]
     dict set desc_dict $cmd $description
-    if {[regexp "Builtin" $description]} {
-        lappend builtin_list $cmd
-    } elseif {[info procs $cmd]==""} {
-        lappend command_list $cmd
-    } else {
-        lappend proc_list $cmd
-    }
 }
-echo " ...\$builtin_list built"
-echo " ...\$command_list built"
-echo " ...\$proc_list built"
 echo " ...\$desc_dict built"
 
 ######################################################################
 # Now that we have all the commands, use the help/man commands to 
 # get the options for each command and the details of each option.
 ######################################################################
-echo "TclComplete....building commands options"
+echo "---TclComplete....building command options"
 set opt_dict     [dict create]
 set details_dict [dict create]
-echo "...\$opt_dict initialized"
-echo "...\$details_dict initialized"
 
-# First initialize all the values 
 foreach cmd $all_command_list {
+    # Initialize the dictionaries.   
+    #   opt_dict:  key=cmd, value=list of options
+    #   details_dict:  key1=cmd, key2=option, value=detail of the option.
     dict set opt_dict     $cmd {}
     dict set details_dict $cmd [dict create]
-}
 
-# Fill up options for namespace ensemble subcommands (rare...things like string and dict)
-foreach cmd $all_command_list {
+    # Fill up options for namespace ensemble subcommands first.
+    #   (not common.  stuff like 'dict' and 'string')
     if {[namespace ensemble exists $cmd]} {
         set map_keys    [dict keys [namespace ensemble configure $cmd -map]]
         set subcommands [namespace ensemble configure $cmd -subcommands]
         set ensemble_options [lsort -u [concat $map_keys $subcommands]]
         if {[llength $ensemble_options]} {
-            dict set opt_dict $cmd [lsort -u [concat $map_keys $subcommands]]
+            dict set opt_dict $cmd $ensemble_options
+        }
+    }
+
+    # Use either the 'help -v' or 'man' commands to get command options.
+    if {[llength [set help_dict [get_options_from_help $cmd]]]>0} {
+        dict for {opt_name details} $help_dict {
+            dict lappend opt_dict $cmd $opt_name
+            dict set details_dict $cmd $opt_name $details
+        }
+    } else {
+        foreach opt_name [get_options_from_man $cmd] {
+            dict lappend opt_dict $cmd $opt_name
         }
     }
 }
-
-# Continue with commands and procs (not builtins)
-foreach cmd [concat $command_list $proc_list] {
-    dict for {opt_name details} [get_options_from_help $cmd] {
-        dict lappend opt_dict $cmd $opt_name
-        dict set details_dict $cmd $opt_name $details
-    }
-} 
-echo "...completed options for commands and proc"
+echo "...found options for all commands."
 
     
-# builtins use "man" to get options. 
-foreach bi $builtin_list {
-    foreach opt_name [get_options_from_man $bi] {
-        dict lappend opt_dict $bi $opt_name
-    }
-}
-echo "...completed options for builtins"
  
 ##########################################################################
 # Special cases.  Some of these look like namespace ensemble, but are not.
@@ -341,17 +316,21 @@ set func_list [ lsort -u [info function] ]
 dict set opt_dict "expr" $func_list
 echo "...\$func_list built"
 
-# 'info' looks like a namespace ensemble but is not
+# info options
 dict set opt_dict "info"  [concat [dict get $opt_dict "info"] [lsort "args body class cmdcount commands complete coroutine default errorstack exists frame functions globals hostname level library loaded locals nameofexecutable object patchlevel procs script sharelibextension tclversion vars"]]
 
-# encoding stuff
+# after options
+dict set opt_dict "after" [list cancel idle info]
+
+
+# encoding options
 dict set opt_dict "encoding" [list convertfrom convertto dirs names system]
 set encoding_names [lsort [encoding names]]
 dict set opt_dict "encoding convertfrom" $encoding_names
 dict set opt_dict "encoding convertto"   $encoding_names
 dict set opt_dict "encoding system"      $encoding_names
 
-# zlib stuff
+# zlib options
 dict set opt_dict "zlib" [list adler32 compress crc32 decompress deflate gunzip gzip inflate push stream]
 dict set opt_dict "zlib gunzip" [list -headerVar]
 dict set opt_dict "zlib gzip"   [list -level -header]
@@ -360,10 +339,9 @@ dict set opt_dict "zlib -header"    [list comment crc filename os size time type
 dict set opt_dict "zlib stream" [list compress decompress deflate gunzip gzip inflate]
 dict set opt_dict "zlib push"   [list compress decompress deflate gunzip gzip inflate]
 
-# Treat 'package require' differently than just 'package'
-set package_list [lsort -u [package names]]
-dict set opt_dict "package require" $package_list
-echo "...\$package_list built"
+# package options
+dict set opt_dict "package" [list forget ifneeded names prefer present provide require unknown vcompare versions vsatisfies -exact]
+
 
 # STUFF FOR OBJECT ORIENTED TCL WITH THE OO PACKAGE
 if {[namespace exists "oo"]} {
@@ -372,7 +350,6 @@ if {[namespace exists "oo"]} {
         set subcommands [lsort [info commands ${oo_cmd}::*]]
         set subcommands [lmap cmd $subcommands {namespace tail $cmd}]
         dict set opt_dict $oo_cmd $subcommands
-        set command_list [lsort -u [concat $command_list $subcommands]]
     }
     dict set opt_dict "info class"  [list call constructor definition destructor filters forward instances methodtype mixins subclasses superclasses variables]
     dict set opt_dict "info object" [list call class definition filters forward isa methods methodtype mixins namespace variables vars]
@@ -424,12 +401,6 @@ dict set details_dict "format" "%g" "%f or %e, based on precision"
 dict set details_dict "format" "%G" "%f or %E, based on precision"
 echo "...completed options for special cases in the opt_dict"
 
-########################
-# Form a list of aliases
-########################
-redirect -variable alias_string {alias}
-set alias_list [split $alias_string "\n"]
-echo "...\$alias_list built"
 
 ###########################################################
 # Form a list of application options (and a dictionary too)
@@ -443,6 +414,11 @@ if {[info commands get_app_options] != ""} {
 foreach app_option $app_option_list {
     dict set app_option_dict $app_option [get_app_option_from_man_page $app_option]
 }
+
+#################################################################
+# Make a package list for 'package require', 'package forget, etc
+#################################################################
+set package_list [lsort -u [package names]]
 
 ####################################################################
 # ICCPP parameters (this will be empty if ::iccpp_com doesn't exist)
@@ -575,6 +551,11 @@ close $log
     echo [list_to_json $all_command_list] > $outdir/commands.json
     echo "...commands.json file complete."
 
+#-------------------------------------
+#  All the packages in a JSON list.
+#-------------------------------------
+    echo [list_to_json $package_list] > $outdir/packages.json
+    echo "...packages.json file complete."
 #-----------------------------------------
 # Command options in a JSON dict of lists.
 #   key = command name
@@ -685,23 +666,25 @@ close $log
     puts $f "syntax match g_var /\\<\\CG_\\w\\+/"
     puts $f "highlight link g_var title"
 
-    puts $f "\"syntax coloring for keywords"
+    puts $f "\"syntax coloring for procs and commands"
+    puts $f "\"--------------------------------------"
+
+    foreach cmd $all_command_list {
+        if {[info procs $cmd]!=""} {
+            puts $f "syn keyword tclproccommand $proc_name"
+        } else {
+            puts $f "syn keyword tclcommand $command"
+        }
+    }
+
+    puts $f "\"syntax coloring for attributes"
     puts $f "\"-------------------------------"
-    foreach command $command_list  {
-        if {$command in "foreach foreach_in_collection while"} {continue}
-        puts $f "syn keyword tclcommand $command"
-    }
-    foreach proc_name $proc_list {
-        puts $f "syn keyword tclproccommand $proc_name"
-    }
     set attr_syntax_list {}
     dict for {class class_dict} $attribute_dict {
         foreach attr_name [dict keys $class_dict] {
             lappend attr_syntax_list $attr_name
         }
     }
-    puts $f "\"syntax coloring for attributes"
-    puts $f "\"-------------------------------"
     set attr_syntax_list [lsort -unique $attr_syntax_list]
     foreach attr_name $attr_syntax_list {
         puts $f "syn keyword tclexpand $attr_name"
@@ -712,19 +695,15 @@ close $log
 
 
 # Clean up time.  Give Tcl some memory back.
-# unset alias_list
-# unset all_command_list
-# unset app_option_list
-# unset app_var_list
-# unset builtin_list
-# unset command_list
-# unset proc_list
-# unset details_dict
-# unset desc_dict
-# unset opt_dict
-# unset app_option_dict
-# unset iccpp_param_dict
-# unset techfile_attr_dict
-# unset techfile_layer_dict
+unset all_command_list
+unset app_option_list
+unset app_var_list
+unset details_dict
+unset desc_dict
+unset opt_dict
+unset app_option_dict
+unset iccpp_param_dict
+unset techfile_attr_dict
+unset techfile_layer_dict
 
 echo "...done\n"
