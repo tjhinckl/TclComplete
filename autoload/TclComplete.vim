@@ -110,7 +110,7 @@ function! TclComplete#GetData()
 
     "  Functions that use variable name completion
     let g:TclComplete#varname_funcs = {}
-    for f in ['set', 'unset', 'append', 'lappend', 'dict set', 'dict unset', 'dict append', 'dict lappend', 'dict incr', 'dict with', 'dict update']
+    for f in ['set', 'unset', 'append', 'lappend', 'incr', 'dict set', 'dict unset', 'dict append', 'dict lappend', 'dict incr', 'dict with', 'dict update']
         let g:TclComplete#varname_funcs[f]=''
     endfor
 
