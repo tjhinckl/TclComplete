@@ -49,7 +49,10 @@ inoremap <buffer> <tab>a <c-r>=TclComplete#AttributeComplete()<cr>
 """""""""""""""""""""""""""""""""""""""""""
 " Source iabbrev commands
 """""""""""""""""""""""""""""""""""""""""""
-execute "source ".g:TclComplete#dir."/aliases.vim"
+let s:aliases_file = g:TclComplete#dir."/aliases.vim"
+if file_readable(s:aliases_file)
+    execute "source ".s:aliases_file
+endif
 
 
 """""""""""""""""""""""""""""""""""""""""""
