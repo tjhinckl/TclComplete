@@ -370,7 +370,7 @@ function! TclComplete#Complete(findstart, base)
 
         " 1d) regexp character classes start with a single colon.  ([:alnum:], [:upper:], etc)
         elseif l:base[0] == ':' && l:base[1] != ':'
-            let gctype = 'regexp char class' 
+            let g:ctype = 'regexp char class' 
             let l:complete_list = g:TclComplete#regexp_char_class_list
 
 
