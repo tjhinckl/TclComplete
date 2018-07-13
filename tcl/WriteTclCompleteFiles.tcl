@@ -386,12 +386,12 @@ dict set details_dict  "string is" wideinteger "Any of the valid forms for a wid
 dict set details_dict  "string is" wordchar    "Any  Unicode  word  character.  "
 dict set details_dict  "string is" xdigit      "Any hexadecimal digit character (0-9A-Fa-f)."
 
-# Format special characters
+# Format special characters (define for format and scan commands)
 dict set opt_dict  "format" "%d %s %c %u %x %X %o %b %f %e %E %g %G"
 dict set details_dict "format" "%d" "Signed decimal"
 dict set details_dict "format" "%s" "String"
 dict set details_dict "format" "%c" "Unicode character"
-dict set details_dict "format" "%n" "Unsigned decimal"
+dict set details_dict "format" "%u" "Unsigned decimal"
 dict set details_dict "format" "%x" "Lower case hex"
 dict set details_dict "format" "%X" "Upper case hex"
 dict set details_dict "format" "%o" "Octal"
@@ -401,6 +401,8 @@ dict set details_dict "format" "%e" "Scientific notication x.yyye+zz"
 dict set details_dict "format" "%E" "Scientific notication x.yyyE+zz"
 dict set details_dict "format" "%g" "%f or %e, based on precision"
 dict set details_dict "format" "%G" "%f or %E, based on precision"
+dict set opt_dict "scan" [dict get $opt_dict "format"]
+dict set details_dict "scan" [dict get $details_dict "format"]
 echo "...completed options for special cases in the opt_dict"
 
 
