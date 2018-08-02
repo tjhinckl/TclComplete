@@ -428,6 +428,8 @@ function! TclComplete#Complete(findstart, base)
                 " Split by dots.
                 let l:split_base = split(l:base,'\.')
 
+                " Because splitting "cell." and "cell.n" by the "." will
+                " either create one or two element lists...
                 if l:base =~ '\.$'
                     let g:TclComplete#attr_class = get(l:split_base,-1)
                     let l:prefix = l:base 
@@ -435,6 +437,9 @@ function! TclComplete#Complete(findstart, base)
                     let g:TclComplete#attr_class = get(l:split_base,-2)
                     let l:prefix= join(l:split_base[0:-2],'.')."."
                 endif
+                
+                " Change parent_block and parent_class to block and class.
+                let g:TclComplete#attr_class = substitute(g:TclComplete#attr_class,'parent_','','')
 
                 " Construct the complete_list so that the dotted prefixes are in front.
                 let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
@@ -473,6 +478,9 @@ function! TclComplete#Complete(findstart, base)
                     let g:TclComplete#attr_class = get(l:split_base,-2)
                     let l:prefix= join(l:split_base[0:-2],'.')."."
                 endif
+
+                " Change parent_block and parent_class to block and class.
+                let g:TclComplete#attr_class = substitute(g:TclComplete#attr_class,'parent_','','')
 
                 " Construct the complete_list so that the dotted prefixes are in front.
                 let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
