@@ -469,16 +469,22 @@ set Gvar_list [concat $Gvar_list $Gvar_array_list]
 set attribute_dict [dict create]
 
 # Dump list_attributes 
-redirect -variable attribute_list {list_attributes -nosplit}
-set attribute_list [split $attribute_list "\n"]
-set start [expr {[lsearch -glob $attribute_list "-----*"]+1}]
-set attribute_list [lrange $attribute_list $start end]
+set attribute_list {}
+catch {
+    redirect -variable attribute_list {list_attributes -nosplit}
+    set attribute_list [split $attribute_list "\n"]
+    set start [expr {[lsearch -glob $attribute_list "-----*"]+1}]
+    set attribute_list [lrange $attribute_list $start end]
+}
 
 # ...again but for -application
-redirect -variable attribute_class_list {list_attributes -nosplit -application}
-set attribute_class_list [split $attribute_class_list "\n"]
-set start [expr {[lsearch -glob $attribute_class_list "-----*"]+1}]
-set attribute_class_list [lrange $attribute_class_list $start end]
+set attribute_class_list {}
+catch {
+    redirect -variable attribute_class_list {list_attributes -nosplit -application}
+    set attribute_class_list [split $attribute_class_list "\n"]
+    set start [expr {[lsearch -glob $attribute_class_list "-----*"]+1}]
+    set attribute_class_list [lrange $attribute_class_list $start end]
+}
 
 # Now iterate over these lists to fill up the attribute dictionary
 foreach entry [concat $attribute_list $attribute_class_list] {
@@ -532,6 +538,9 @@ if {[info commands ::tech::read_techfile_info] != ""} {
 ### Now  write out the data structures in JSON format!
 ################################################################################
 # 1)  Setup the output directory and dump the log
+if {![info exists ::env(WARD)]} {
+    set ::env(WARD) $::env(PWD)
+}
 set outdir $::env(WARD)/TclComplete
 mkdir_fresh $outdir
 echo "Making new \$WARD/TclComplete directory..."
@@ -638,7 +647,13 @@ close $log
 #-------------------------------------
 #  existing designs in your block
 #-------------------------------------
-    echo [list_to_json [lsort [get_attribute [get_designs -quiet] name]]] > $outdir/designs.json
+    if {[info command get_designs]!={}} {
+        set designs [lsort [get_attribute [get_designs -quiet] name]]
+    } else {
+        set designs {}
+    }
+
+    echo [list_to_json $designs] > $outdir/designs.json
     echo "...designs.json file complete."
     
 #-------------------------------------
