@@ -49,7 +49,7 @@ function! TclComplete#GetData()
     "  We will check if commands are included as keys here for attribute completion.
     "    (Note, has_key() lookup is probably faster than searching through a list
     let g:TclComplete#attribute_funcs = {}
-    for f in ['get_attribute', 'filter_collection', 'set_attribute', 'get_defined_attributes']
+    for f in ['get_attribute', 'filter_collection', 'set_attribute', 'get_defined_attributes', 'sort_collection']
         let g:TclComplete#attribute_funcs[f]=''
     endfor
 
