@@ -468,6 +468,15 @@ set Gvar_list [concat $Gvar_list $Gvar_array_list]
 ######################################################################
 set attribute_dict [dict create]
 
+### TODO ### 
+#  (this code can more easily get the object classes and attributes
+#   for each class, but it doesn't get the attribute choices yet)
+# set object_classes [get_defined_attributes -return_classes]
+# foreach object_class $object_classes {
+#     set attributes [get_defined_attributes -class $object_class]
+#     dict set attribute_dict $object_class $attributes
+# }
+
 # Dump list_attributes 
 set attribute_list {}
 catch {
