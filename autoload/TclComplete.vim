@@ -83,6 +83,10 @@ function! TclComplete#GetData()
     let g:TclComplete#g_vars = TclComplete#ReadJsonFile('g_vars.json')
     let g:TclComplete#g_var_arrays = TclComplete#ReadJsonFile('g_var_arrays.json')
 
+    " Get the track patterns from the G_ROUTE_TRACK_PATTERNS array
+    let g:TclComplete#track_patterns = filter(copy(g:TclComplete#g_var_arrays),"v:val=~'G_ROUTE_TRACK_PATTERNS'")
+    call map(g:TclComplete#track_patterns,"split(v:val,'[()]')[1]")
+
     let g:TclComplete#app_options_dict  = TclComplete#ReadJsonFile('app_options.json')
     
     " Tech file information from the ::techfile_info array (rdt thing)
@@ -566,7 +570,11 @@ function! TclComplete#Complete(findstart, base)
                 let l:tech_file_dict = g:TclComplete#techfile_attr_dict
                 let l:complete_list =  sort(get(g:TclComplete#techfile_attr_dict,l:tech_file_key,['-type','-layer']))
             endif
-        
+        " 8) Track patterns
+        elseif s:active_cmd =~ 'cr_create_track_region' && g:last_completed_word=='-pattern'
+            let g:ctype = 'track_patterns'
+            let l:complete_list = g:TclComplete#track_patterns
+
         " Default) Options of the active command.
         else
             let g:ctype = 'default'

@@ -447,18 +447,16 @@ set regexp_char_classes [list :alpha: :upper: :lower: :digit: :xdigit: :alnum: :
 ###############################################################################
 set Gvar_list {}
 set Gvar_array_list {}
-foreach name [lsort -dictionary [array names ::GLOBAL_VAR::global_var]] {
-    set name [lindex [split $name ","] 0]
-    if [string match "*(*" $name] {
-        lappend Gvar_array_list $name
+foreach g_var [lsort [info var G_*]] {
+    if [array exists $g_var] {
+        lappend Gvar_list "${g_var}("
+        foreach name [lsort [array names $g_var]] {
+            lappend Gvar_array_list "${g_var}($name)"
+        }
+    } else {
+        lappend Gvar_list $g_var
     }
-    # Include a name in the list that ends with an open paren.  This will 
-    # represent the array, but the rest of the array names will go to the end later.
-    set name [regsub {\(.*\)} $name "("]
-    lappend Gvar_list $name
 }
-set Gvar_list       [lsort -unique -dictionary $Gvar_list]
-set Gvar_array_list [lsort -unique -dictionary $Gvar_array_list]
 # Put the complete array names at the end of the list.  This is handy for the popup menu.
 set Gvar_list [concat $Gvar_list $Gvar_array_list]
 
@@ -468,32 +466,17 @@ set Gvar_list [concat $Gvar_list $Gvar_array_list]
 ######################################################################
 set attribute_dict [dict create]
 
-### TODO ### 
-#  (this code can more easily get the object classes and attributes
-#   for each class, but it doesn't get the attribute choices yet)
-# set object_classes [get_defined_attributes -return_classes]
-# foreach object_class $object_classes {
-#     set attributes [get_defined_attributes -class $object_class]
-#     dict set attribute_dict $object_class $attributes
-# }
-
 # Dump list_attributes 
-set attribute_list {}
-catch {
-    redirect -variable attribute_list {list_attributes -nosplit}
-    set attribute_list [split $attribute_list "\n"]
-    set start [expr {[lsearch -glob $attribute_list "-----*"]+1}]
-    set attribute_list [lrange $attribute_list $start end]
-}
+redirect -variable attribute_list {list_attributes -nosplit}
+set attribute_list [split $attribute_list "\n"]
+set start [expr {[lsearch -glob $attribute_list "-----*"]+1}]
+set attribute_list [lrange $attribute_list $start end]
 
 # ...again but for -application
-set attribute_class_list {}
-catch {
-    redirect -variable attribute_class_list {list_attributes -nosplit -application}
-    set attribute_class_list [split $attribute_class_list "\n"]
-    set start [expr {[lsearch -glob $attribute_class_list "-----*"]+1}]
-    set attribute_class_list [lrange $attribute_class_list $start end]
-}
+redirect -variable attribute_class_list {list_attributes -nosplit -application}
+set attribute_class_list [split $attribute_class_list "\n"]
+set start [expr {[lsearch -glob $attribute_class_list "-----*"]+1}]
+set attribute_class_list [lrange $attribute_class_list $start end]
 
 # Now iterate over these lists to fill up the attribute dictionary
 foreach entry [concat $attribute_list $attribute_class_list] {
@@ -547,9 +530,6 @@ if {[info commands ::tech::read_techfile_info] != ""} {
 ### Now  write out the data structures in JSON format!
 ################################################################################
 # 1)  Setup the output directory and dump the log
-if {![info exists ::env(WARD)]} {
-    set ::env(WARD) $::env(PWD)
-}
 set outdir $::env(WARD)/TclComplete
 mkdir_fresh $outdir
 echo "Making new \$WARD/TclComplete directory..."
@@ -656,13 +636,7 @@ close $log
 #-------------------------------------
 #  existing designs in your block
 #-------------------------------------
-    if {[info command get_designs]!={}} {
-        set designs [lsort [get_attribute [get_designs -quiet] name]]
-    } else {
-        set designs {}
-    }
-
-    echo [list_to_json $designs] > $outdir/designs.json
+    echo [list_to_json [lsort [get_attribute [get_designs -quiet] name]]] > $outdir/designs.json
     echo "...designs.json file complete."
     
 #-------------------------------------
