@@ -570,11 +570,25 @@ function! TclComplete#Complete(findstart, base)
                 let l:tech_file_dict = g:TclComplete#techfile_attr_dict
                 let l:complete_list =  sort(get(g:TclComplete#techfile_attr_dict,l:tech_file_key,['-type','-layer']))
             endif
+
         " 8) Track patterns
         elseif s:active_cmd =~ 'cr_create_track_region' && g:last_completed_word=='-pattern'
             let g:ctype = 'track_patterns'
             let l:complete_list = g:TclComplete#track_patterns
 
+        " 9) GUI stuff
+        elseif s:active_cmd=~'^gui' && g:last_completed_word!~'^gui'
+            if g:last_completed_word == '-color'
+                let l:complete_list = split('white red orange yellow green blue purple light_red light_orange light_yellow light_green light_blue light_purple')
+            elseif g:last_completed_word == '-pattern'                                                             
+                let l:complete_list = split('BDDiagPattern CrossPattern Dense1Pattern Dense2Pattern Dense3Pattern Dense4Pattern Dense5Pattern Dense6Pattern Dense7Pattern DiagCrossPattern FDiagPattern kHorPattern NoBrush SolidPattern VerPattern')
+            elseif g:last_completed_word == '-symbol_type'
+                let l:complete_list = split('arrow line polygon polyline rectangle ruler symbol text')
+            elseif g:last_completed_word=='-line_style'
+                let l:complete_list = split('CustomDashLine DashDotDotLine DashDotLine DashLine DotLine NoPen SolidLine')
+            elseif g:last_completed_word=='-symbol_size'
+                let l:complete_list = range(3,100)
+            endif
         " Default) Options of the active command.
         else
             let g:ctype = 'default'
