@@ -130,6 +130,12 @@ function! TclComplete#GetData()
         let g:TclComplete#design_funcs[f]=''
     endfor
 
+    "  Functions that use track pattern completion
+    let g:TclComplete#trackpattern_funcs = {}
+    for f in ['sd_create_tracks','cr_create_track_region', 'cr_create_tracks_region']
+        let g:TclComplete#trackpattern_funcs[f]=''
+    endfor
+
     "  Functions that use application options
     let g:TclComplete#app_option_funcs = {}
     for f in ['get_app_options', 'set_app_options', 'report_app_options', 'reset_app_options', 'get_app_option_value']
@@ -572,7 +578,7 @@ function! TclComplete#Complete(findstart, base)
             endif
 
         " 8) Track patterns
-        elseif s:active_cmd =~ 'cr_create_track_region' && g:last_completed_word=='-pattern'
+        elseif has_key(g:TclComplete#trackpattern_funcs, s:active_cmd) && g:last_completed_word=='-pattern'
             let g:ctype = 'track_patterns'
             let l:complete_list = g:TclComplete#track_patterns
 
