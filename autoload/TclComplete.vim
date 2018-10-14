@@ -546,9 +546,15 @@ function! TclComplete#Complete(findstart, base)
             let l:complete_list = g:TclComplete#options[s:active_cmd." ".g:last_completed_word]
 
         " 6b) Complete two word namespace commands with your namespaces.
-        elseif s:active_cmd=='namespace' && g:last_completed_word != 'namespace' 
-            let g:ctype = 'namespace'
-            let l:complete_list = g:TclComplete#namespaces
+        elseif s:active_cmd=='namespace'
+            let l:namespace_options = get(g:TclComplete#options,'namespace',[])
+            if index(l:namespace_options,g:last_completed_word)<0
+                let g:ctype = 'namespace_options'
+                let l:complete_list = g:namespace_options
+            else
+                let g:ctype = 'namespaces'
+                let l:complete_list = g:TclComplete#namespaces
+            endif
 
         " 6c) Complete two word array commands with your array names
         elseif (s:active_cmd=='array' && g:last_completed_word != 'array') || s:active_cmd=='parray'
@@ -588,8 +594,10 @@ function! TclComplete#Complete(findstart, base)
                 let l:complete_list = split('white red orange yellow green blue purple light_red light_orange light_yellow light_green light_blue light_purple')
             elseif g:last_completed_word == '-pattern'                                                             
                 let l:complete_list = split('BDDiagPattern CrossPattern Dense1Pattern Dense2Pattern Dense3Pattern Dense4Pattern Dense5Pattern Dense6Pattern Dense7Pattern DiagCrossPattern FDiagPattern kHorPattern NoBrush SolidPattern VerPattern')
-            elseif g:last_completed_word == '-symbol_type'
+            elseif g:last_completed_word == '-type'
                 let l:complete_list = split('arrow line polygon polyline rectangle ruler symbol text')
+            elseif g:last_completed_word == '-symbol_type'
+                let l:complete_list = split('diamond square triangle x')
             elseif g:last_completed_word=='-line_style'
                 let l:complete_list = split('CustomDashLine DashDotDotLine DashDotLine DashLine DotLine NoPen SolidLine')
             elseif g:last_completed_word=='-symbol_size'
