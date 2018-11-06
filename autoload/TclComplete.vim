@@ -617,11 +617,7 @@ function! TclComplete#Complete(findstart, base)
         for m in l:complete_list
             if m=~# '^'.l:base
                 let menu = get(l:menu_dict,m,'')
-                if menu =~ 'Synonym' 
-                    continue
-                else
-                    call add(res, {'word':m, 'menu':menu})
-                endif
+                call add(res, {'word':m, 'menu':menu})
             endif
         endfor
         return res

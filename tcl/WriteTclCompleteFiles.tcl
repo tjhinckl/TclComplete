@@ -1,12 +1,35 @@
 #############################################
-#### create_tcl_omnicomplete_files.tcl ######
+#### WriteTclCompleteFiles.tcl ######
 #############################################
 
 # Author: Chris Heithoff
 # Description:  Source this from the icc2_shell (or dc or pt?) to 
 #               create a file that can be used for tcl omnicompletion
 #               in Vim.
-# Date of latest revision: 10-July-2018
+# Date of latest revision: 05-Nov-2018
+
+################################################
+## Coroutine stuff #############################
+################################################
+# Use this proc as the command in a coroutine definition.
+proc next_element_in_list {list} {
+    yield
+    foreach element $list {
+        yield $element
+    }
+}
+
+# Use this proc to advance an existing coroutine until the value matches a pattern
+proc advance_coroutine_to {coroutine_name match_pattern } {
+    while {[info command $coroutine_name] != ""} {
+        set next_item [$coroutine_name]
+        if {[string match $match_pattern $next_item]} {
+            return $next_item
+            break
+        }
+    }
+    return ""
+}
 
 #---------------------------------------#
 #           JSON procs                  #
@@ -115,7 +138,28 @@ proc get_description_from_help {cmd} {
     return $result 
 }
 
+#########################################################
+# Run man on a command.  Return the command's description
+#########################################################
+proc get_description_from_man {cmd} {
+    redirect -variable man_text {man $cmd}
+    set man_lines [split $man_text "\n"]
+    if {[regexp "No manual entry for" [lindex $man_lines 0]]} {
+        return ""
+    }
 
+    # The description of the command should be in the line after the NAME line
+    # Example:
+    # NAME
+    #        puts - Write to a channel
+    coroutine next_man_line next_element_in_list $man_lines
+    advance_coroutine_to next_man_line "NAME*"
+    set line [next_man_line]
+    set description [lindex [split $line "-"] 1]
+    return "#$description"
+}
+
+     
 #####################################################
 # Run help -v on a command and then parse the options
 #####################################################
@@ -137,24 +181,29 @@ proc get_options_from_help {cmd} {
         #   This only works when the descripion is there too, preceded by #
         if {$looking_for_command} {
             if {[regexp {^\s+(\S+)\s+(#.*$)} $line -> cmd_name description]} {
-                if {$cmd_name == $cmd} {
+                # Check for synonym
+                if {[regexp -nocase {synonym for '([^']*)'} $line -> synonym]} {
+                    set cmd $synonym
+                } elseif {$cmd_name == $cmd} {
                     set looking_for_command 0
                     set looking_for_options 1
                     continue
                 }
+                
             }
-        }
-        # Now get the command options. This start with a dash.
-        #  They might be surrounded by brackets.
-        #  The option is first, then the details, surrounded by parentheses.
-        if {$looking_for_options} {
+        } elseif {$looking_for_options} {
+            # Now get the command options which start with a dash.
+            #  They might be surrounded by brackets.
+            #  The option is first, then the details, surrounded by parentheses.
             if {[regexp {^\s*\[?(-[a-zA-Z0-9_]+)[^(]*(.*$)} $line -> opt detail] } {
                 set detail [regsub -all {"} $detail {\"}]
                 #" (comment to correct Vim syntax coloring)
                 dict set result $opt $detail
-            }
-            # Exit loop if there is an empty line.
-            if {[regexp {^\s*$} $line]} {
+            } 
+
+            # Exit loop if there is a # sign, which indicates a second command
+            # is getting listed now. (but also not including a dash)
+            if {[regexp {\s*[[:alpha:]][[:alnum:]_]*\s+# } $line]} {
                 break
             }
         }
@@ -166,15 +215,79 @@ proc get_options_from_help {cmd} {
 # Run "man <command>".  Parse and return the options.
 #####################################################
 proc get_options_from_man {cmd} {
-    set result {}
+    set option_list {}
     redirect -variable man_text {man $cmd}
-    foreach line [split $man_text "\n"] {
-        # Look for "-option" at beginning of line.  This might grab too much?
-        if {[regexp {^\s+(-[a-z]+)} $line -> opt]} {
-            lappend result $opt
+    set man_lines [split $man_text "\n"]
+    if {[regexp "No manual entry for" [lindex $man_lines 0]]} {
+        return ""
+    }
+
+    # Options for builtin Tcl commands can be found in at least two places
+    #  1) In the SYNOPSIS section
+    # Example:
+    #     SYNOPSIS
+    #            puts ?-nonewline? ?channelId? string
+    #  2) In the DESCRIPTION section
+    #  Example for lsort:
+    #   -ascii Use  string  comparison  with Unicode code-point collation order
+    #          (the name is for backward-compatibility reasons.)  This  is  the
+    #          default.
+    #
+    #  3) ...or some man pages (like add_power_state) have a SYNTAX section instead
+    #     Example:
+    #       SYNTAX
+    #          status add_power_state
+    #                 [-supply ]
+    #                 object_name
+    coroutine next_man_line next_element_in_list $man_lines
+    set line [next_man_line]
+    
+    while {[info command next_man_line] != ""} {
+        set line [next_man_line]
+        if {$line eq "SYNOPSIS"} {
+            # Find SYNOPSIS options here and return from the proc early.
+            #  Expect a few Tcl builtin commands here.
+            set line [next_man_line]
+            set matches [regexp -all -inline {\?-[[:alpha:]]\w*} $line]
+            set matches [lmap match $matches {string trim $match "?"}]
+            set matches [lminus -- $matches {-option}]
+            if {[llength $matches]>0} {
+                foreach match $matches {
+                    lappend option_list $match
+                }
+                return [lsort $option_list]
+            }
+        } elseif {$line eq "SYNTAX"} {
+            # Parse lines in the SYNTAX section.
+            while {[info command next_man_line] != ""} {
+                set line [next_man_line]
+                set matches [regexp -all -inline {[-][[:alpha:]]\w*} $line]
+                foreach match $matches {
+                    lappend option_list $match
+                } 
+                if {[string is upper $line]} {
+                    # The next section is indicated by an ALL_CAPS line
+                    return [lsort $option_list]
+                }
+            }
+        } elseif {$line eq "DESCRIPTION"} {
+            # Parse lines in the DESCRIPTION section.
+            while {[info command next_man_line] != ""} {
+                set line [next_man_line]
+                # I wanted to use a [lindex $line 0] to get a first word, but some of
+                # the lines of man page text are not friendly to list commands.  
+                set line [string trim $line]
+                if {[regexp {^[-][[:alpha:]]\w+} $line match]} {
+                    lappend option_list $match
+                } elseif {$line eq "EXAMPLES"} {
+                    return [lsort -u $option_list]
+                }
+            }
         }
     }
-    return [lsort -u $result]
+
+    # In case we never returned inside in the while loop but exhausted the coroutine.
+    return [lsort -u $option_list]
 }
 
 #####################################################
@@ -207,13 +320,6 @@ proc get_app_option_from_man_page {app_option} {
     }
 }
 
-###########################
-# Main script starts here.
-###########################
-# Form a list of all commands, including those inside namespaces.
-#  Most of the code here is sort in a particular order
-echo "------------------------------------------------"
-echo "---TclComplete:  forming the list of all commands"
 proc get_all_sorted_commands {} {
     set commands  [lsort -nocase [info command]]
 
@@ -253,7 +359,14 @@ proc get_all_sorted_commands {} {
     set all_command_list [concat $commands $ns_cmds1 $ns_cmds2 ${_commands} ${:commands}]
     return $all_command_list
 }
-    
+
+###########################
+# Main script starts here.
+###########################
+# Form a list of all commands, including those inside namespaces.
+#  Most of the code here is sort in a particular order
+echo "------------------------------------------------"
+echo "---TclComplete:  forming the list of all commands"
 set all_command_list [get_all_sorted_commands]
 
 ## Fill up the description dictionary.
@@ -262,6 +375,9 @@ set all_command_list [get_all_sorted_commands]
 set desc_dict [dict create]
 foreach cmd $all_command_list {
     set description [get_description_from_help $cmd]
+    if {$description eq "# Builtin"} {
+        set description [get_description_from_man $cmd]
+    }
     dict set desc_dict $cmd $description
 }
 echo " ...\$desc_dict built"
