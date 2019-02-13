@@ -550,7 +550,7 @@ function! TclComplete#Complete(findstart, base)
             let l:namespace_options = get(g:TclComplete#options,'namespace',[])
             if index(l:namespace_options,g:last_completed_word)<0
                 let g:ctype = 'namespace_options'
-                let l:complete_list = g:namespace_options
+                let l:complete_list = g:TclComplete#options['namespace']
             else
                 let g:ctype = 'namespaces'
                 let l:complete_list = g:TclComplete#namespaces
