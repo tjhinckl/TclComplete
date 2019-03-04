@@ -6,7 +6,7 @@
 # Description:  Source this from the icc2_shell (or dc or pt?) to 
 #               create a file that can be used for tcl omnicompletion
 #               in Vim.
-# Date of latest revision: 05-Nov-2018
+# Date of latest revision: 23-Feb-2019
 
 ################################################
 ## Coroutine stuff #############################
@@ -21,7 +21,7 @@ proc next_element_in_list {list} {
 
 # Use this proc to advance an existing coroutine until the value matches a pattern
 proc advance_coroutine_to {coroutine_name match_pattern } {
-    while {[info command $coroutine_name] != ""} {
+    while {[command_exists  $coroutine_name] } {
         set next_item [$coroutine_name]
         if {[string match $match_pattern $next_item]} {
             return $next_item
@@ -242,7 +242,7 @@ proc get_options_from_man {cmd} {
     coroutine next_man_line next_element_in_list $man_lines
     set line [next_man_line]
     
-    while {[info command next_man_line] != ""} {
+    while {[command_exists next_man_line] } {
         set line [next_man_line]
         if {$line eq "SYNOPSIS"} {
             # Find SYNOPSIS options here and return from the proc early.
@@ -259,7 +259,7 @@ proc get_options_from_man {cmd} {
             }
         } elseif {$line eq "SYNTAX"} {
             # Parse lines in the SYNTAX section.
-            while {[info command next_man_line] != ""} {
+            while {[command_exists next_man_line]} {
                 set line [next_man_line]
                 set matches [regexp -all -inline {[-][[:alpha:]]\w*} $line]
                 foreach match $matches {
@@ -272,7 +272,7 @@ proc get_options_from_man {cmd} {
             }
         } elseif {$line eq "DESCRIPTION"} {
             # Parse lines in the DESCRIPTION section.
-            while {[info command next_man_line] != ""} {
+            while {[command_exists next_man_line]} {
                 set line [next_man_line]
                 # I wanted to use a [lindex $line 0] to get a first word, but some of
                 # the lines of man page text are not friendly to list commands.  
@@ -305,21 +305,52 @@ proc get_app_option_from_man_page {app_option} {
         } elseif {[regexp "^DEFAULT" $line]} { 
             set DEFAULT_flag 1
         } elseif {$TYPE_flag==1} {
-            set TYPE [lindex $line 0]
+            set TYPE [string trim $line]
             set TYPE_flag 0
         } elseif {$DEFAULT_flag==1} {
-            set DEFAULT [lindex $line 0]
+            set DEFAULT [string trim $line]
+            # change double quotes in text to single to make json happpier later
+            set DEFAULT [regsub -all "\"" $DEFAULT {'}]
             set DEFAULT_flag 0
             break
         }
     }
     if {$TYPE!=""} {
-        return "$TYPE:default=$DEFAULT"
+        return "$TYPE ($DEFAULT)"
     } else {
         return "unknown type"
     }
 }
 
+#############################################################
+# Some commands have subcommands that are not revealed by 
+# namespace ensembles or help pages or man pages, but are 
+# revealed in the error message when trying to use a bogus subcommand
+###################################################################
+proc get_subcommands_from_error_msg {cmd} {
+    ## Parse this message to return {this that other}
+    #Error: unknown or ambiguous subcommand "bogus_subcommand": must be this, that or other"
+	#    Use error_info for more info. (CMD-013)
+    catch {redirect -variable msg {$cmd bogus_subcommand}}
+    set msg [lindex [split $msg "\n"] 0]
+    set msg [regsub {^Error: .* must be } $msg ""]
+    set msg [regsub { or } $msg ""]
+    set msg [regsub -all {\s+} $msg ""]
+    set error_list [split $msg " ,"]
+    return [lsort $error_list]
+}
+
+proc command_exists {cmd} {
+    if {[llength [info command $cmd]]>0} {
+        return 1
+    } else {
+        return 0
+    }
+}
+
+#############################################################
+# Super version of info command that also goes into namespaces
+#############################################################
 proc get_all_sorted_commands {} {
     set commands  [lsort -nocase [info command]]
 
@@ -433,23 +464,23 @@ dict set opt_dict "expr" $func_list
 echo "...\$func_list built"
 
 # info options
-dict set opt_dict "info"  [concat [dict get $opt_dict "info"] [lsort "args body class cmdcount commands complete coroutine default errorstack exists frame functions globals hostname level library loaded locals nameofexecutable object patchlevel procs script sharelibextension tclversion vars"]]
+dict set opt_dict "info"  [concat [dict get $opt_dict "info"] [get_subcommands_from_error_msg info]]
 
 # after options
 dict set opt_dict "after" [list cancel idle info]
 
 # interp options
-dict set opt_dict "interp" [list alias aliases bgerror cancel create debug delete eval exists hide hidden invokehidden issafe limit marktrusted recursionlimit share slaves target transfer]
+dict set opt_dict "interp" [get_subcommands_from_error_msg interp]
 
 # encoding options
-dict set opt_dict "encoding" [list convertfrom convertto dirs names system]
+dict set opt_dict "encoding" [get_subcommands_from_error_msg encoding]
 set encoding_names [lsort [encoding names]]
 dict set opt_dict "encoding convertfrom" $encoding_names
 dict set opt_dict "encoding convertto"   $encoding_names
 dict set opt_dict "encoding system"      $encoding_names
 
 # zlib options
-dict set opt_dict "zlib" [list adler32 compress crc32 decompress deflate gunzip gzip inflate push stream]
+dict set opt_dict "zlib" [get_subcommands_from_error_msg zlib]
 dict set opt_dict "zlib gunzip" [list -headerVar]
 dict set opt_dict "zlib gzip"   [list -level -header]
 dict set opt_dict "zlib -headerVar" [list comment crc filename os size time type]
@@ -458,7 +489,7 @@ dict set opt_dict "zlib stream" [list compress decompress deflate gunzip gzip in
 dict set opt_dict "zlib push"   [list compress decompress deflate gunzip gzip inflate]
 
 # package options
-dict set opt_dict "package" [list forget ifneeded names prefer present provide require unknown vcompare versions vsatisfies -exact]
+dict set opt_dict "package" [concat [get_subcommands_from_error_msg package] -exact]
 
 
 # STUFF FOR OBJECT ORIENTED TCL WITH THE OO PACKAGE
@@ -477,9 +508,14 @@ if {[namespace exists "oo"]} {
 
 # "namespace ensemble" subcommands and options
 dict set opt_dict "namespace ensemble" [list create configure exists -command -map -namespace -parameters -prefixes -subcommands -unknown]
-    
+
+# Generator stuff
+if {[command_exists generator]} {
+    dict set opt_dict generator [get_subcommands_from_error_msg generator]
+}
+
 # Offer valid type names for the argument following "string is"
-dict set opt_dict   "string is" [list alnum alpha ascii boolean control digit double entier false graph integer list lower print punct space true upper wideinteger wordchar xdigit]
+dict set opt_dict   "string is" [list -strict alnum alpha ascii boolean control digit double entier false graph integer list lower print punct space true upper wideinteger wordchar xdigit]
 dict set details_dict  "string is" alnum       "Any Unicode alphabet or digit character."
 dict set details_dict  "string is" alpha       "Any Unicode alphabet character."
 dict set details_dict  "string is" ascii       "Any  character  with a value less than \u0080."
@@ -514,7 +550,6 @@ dict set details_dict "format" "%o" "Octal"
 dict set details_dict "format" "%b" "Binary"
 dict set details_dict "format" "%f" "Floating point (default precision=6)"
 dict set details_dict "format" "%e" "Scientific notication x.yyye+zz"
-dict set details_dict "format" "%E" "Scientific notication x.yyyE+zz"
 dict set details_dict "format" "%g" "%f or %e, based on precision"
 dict set details_dict "format" "%G" "%f or %E, based on precision"
 dict set opt_dict "scan" [dict get $opt_dict "format"]
@@ -526,7 +561,8 @@ echo "...completed options for special cases in the opt_dict"
 # Form a list of application options (and a dictionary too)
 ###########################################################
 set app_option_dict [dict create]
-if {[info commands get_app_options] != ""} {
+if {[command_exists  get_app_options]} {
+    echo "...getting application options"
     set app_option_list [lsort -u [get_app_options]]
 } else {
     set app_option_list {}
@@ -538,6 +574,7 @@ foreach app_option $app_option_list {
 #################################################################
 # Make a package list for 'package require', 'package forget, etc
 #################################################################
+echo "...getting package names"
 set package_list [lsort -u [package names]]
 
 ####################################################################
@@ -549,11 +586,13 @@ set iccpp_param_dict [array get   ::iccpp_com::params_map]
 #####################
 # app_vars
 #####################
+echo "...getting application variables"
 set app_var_list [lsort [get_app_var -list *]]
 
 #########################
 # regexp character classes
 #########################
+echo "...getting regexp char classes"
 set regexp_char_classes [list :alpha: :upper: :lower: :digit: :xdigit: :alnum: :blank: :space: :punct: :graph: :cntrl: ]
 
 ###############################################################################
@@ -561,6 +600,7 @@ set regexp_char_classes [list :alpha: :upper: :lower: :digit: :xdigit: :alnum: :
 # array.  The array name will also include comma separated keywords like history
 # and subst and constant.
 ###############################################################################
+echo "...getting G_vars"
 set Gvar_list {}
 set Gvar_array_list {}
 foreach g_var [lsort [info var G_*]] {
@@ -580,6 +620,7 @@ set Gvar_list [concat $Gvar_list $Gvar_array_list]
 # Form a nested dictionary of attributes of object classes.
 #  attribute_dict['class']['attr_name'] = choices
 ######################################################################
+echo "...getting class attributes"
 set attribute_dict [dict create]
 
 # Dump list_attributes 
@@ -630,7 +671,7 @@ foreach entry [concat $attribute_list $attribute_class_list] {
 set techfile_types {}
 set techfile_layer_dict [dict create]
 set techfile_attr_dict  [dict create]
-if {[info commands ::tech::read_techfile_info] != ""} {
+if {[command_exists ::tech::read_techfile_info] } {
     # This command creates the ::techfile_info array
     ::tech::read_techfile_info
     foreach name [lsort [array names ::techfile_info]] {
