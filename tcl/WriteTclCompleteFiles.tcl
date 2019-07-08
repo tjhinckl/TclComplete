@@ -589,6 +589,49 @@ set iccpp_param_dict [array get   ::iccpp_com::params_map]
 echo "...getting application variables"
 set app_var_list [lsort [get_app_var -list *]]
 
+#####################
+# gui window settings
+#####################
+echo "...getting gui window settings"
+if {[command_exists gui_get_current_window]} {
+    redirect -variable gui_settings_layout {
+        set window [gui_get_current_window -types Layout -mru]
+        gui_get_setting -window $window -list
+    }
+    # Some settings include "<layer name>" suffix.  The space leads to a
+    # malformed Tcl list.  We need to replace the space with an underscore.
+    set gui_settings_layout [regsub -all {<layer name>} $gui_settings_layout "<layer_name>"]
+} else {
+    # In case this script is run without a GUI window open, then hardcode it.
+    set gui_settings_layout {
+        allowFontScaling allowVectorFont allowVerticalTextDrawing brightness cellEdgeLabelScheme
+        cellFilterSize cellLabelScheme cellShape childViewName colorAirline colorBackground colorCellBackSideBump colorCellBlackBox colorCellCore colorCellCover colorCellFrontSideBump
+        colorCellHardMacro colorCellIO colorCellNormalHier colorCellPhysOnly colorCellSoftMacro colorCellSpare colorCellTSV colorContactLayer_<layer_name> colorContactRegionLayer_<layer_name> colorCoreArea colorDRCDefault colorDRCSelection colorDieArea colorDrag colorEditGroup colorEditHighlight colorFPRegion colorFillInst colorForeground colorGrid colorHighlight colorIOGuide colorMovebound colorNetConnectivity colorOverlapBlockage
+        colorPACore colorPAKOHard colorPAKOHardMacro colorPAKOPartial colorPAKOSoft colorPASiteArray colorPathCaptureClockPaths colorPathCells colorPathCommonClockPaths colorPathDataPaths colorPathLaunchClockPaths colorPin colorPinBlockageLayer_<layer_name> colorPinGuide colorPinLayer_<layer_name> colorPort colorPortShapeLayer_<layer_name> colorPowerplanRegion colorPreview colorRPGroup colorRPKeepout colorRailAnalysisTap colorRegion colorRegionHighlight colorRouteCorridorShape
+        colorRouteGuide colorRouteGuideViaAccessPreference colorRouteGuideWireAccessPreference colorRoutedLayer_<layer_name> colorRoutingBlockageLayer_<layer_name> colorSelected colorShapingBlockage colorTextObjectLayer_<layer_name> colorTopologyEdge colorTopologyNode colorVAGuardband colorVoltageArea colorWiringGridLayer_<layer_name> customCellFiltering customObjectFilterSize customWireFilterSize deepSelect designWindow doubleBuffering eipBrightness eipShowContext expandCellCore expandCellHardMacro expandCellILM expandCellIO
+        expandCellOthers expandCellSoftMacro expandFillInst fillMaskWithLayer filterBlockage filterCell filterCellBackSideBump filterCellBlackBox filterCellCore filterCellCover filterCellExtraText filterCellFlipChip filterCellFrontSideBump filterCellHardMacro filterCellIO filterCellNormalHier filterCellPhysOnly filterCellSoftMacro filterCellSpare filterCellTSV filterCellText filterCellTextArea filterContact filterContactLayers filterContactRegion
+        filterCoreArea filterDieArea filterEditGroup filterFPRegion filterFillInst filterGuide filterIOGuide filterIOGuideText filterMargin filterMarginHard filterMarginHardMacro filterMarginRouteBlockage filterMarginSoft filterMovebound filterMoveboundExtraText filterMoveboundText filterNetType filterOtherLayers filterOverlapBlockage filterPACore filterPAKO filterPAKOHard filterPAKOHardMacro filterPAKOPartial filterPAKOSoft
+        filterPASite filterPASiteArray filterPASiteArrayText filterPASiteText filterPin filterPinBlackBox filterPinBlockage filterPinBlockageText filterPinCellType filterPinClock filterPinCore filterPinGround filterPinGuide filterPinGuideText filterPinHardMacro filterPinNWell filterPinOthers filterPinPWell filterPinPad filterPinPower filterPinReset filterPinScan filterPinSignal filterPinSoftMacro filterPinText
+        filterPinTieHigh filterPinTieLow filterPinType filterPolyContactLayers filterPolyLayers filterPort filterPortShape filterPortShapeAccess filterPortShapeText filterPortText filterPowerplanRegion filterRPGroup filterRPGroupText filterRPKeepout filterRailAnalysisTap filterRoute filterRouteCorridorShape filterRouteCorridorShapeText filterRouteGuide filterRouteGuideText filterRouteGuideViaAccessPreference filterRouteGuideWireAccessPreference filterRouteType filterRouted filterRoutedClock
+        filterRoutedCoreWire filterRoutedDetailed filterRoutedFill filterRoutedFollowPin filterRoutedGRoute filterRoutedGround filterRoutedNWell filterRoutedNoNet filterRoutedOPC filterRoutedPGAugment filterRoutedPWell filterRoutedPinConMIO filterRoutedPinConStd filterRoutedPower filterRoutedRDL filterRoutedReset filterRoutedRing filterRoutedScan filterRoutedShield filterRoutedSignal filterRoutedStrap filterRoutedText filterRoutedTieHigh filterRoutedTieLow filterRoutedTrunk
+        filterRoutedUser filterRoutedZeroSkew filterRoutingBlockage filterRoutingBlockageText filterRoutingLayers filterShapingBlockage filterShapingBlockageText filterText filterTextObject filterTextSelected filterTopology filterTopologyEdge filterTopologyNode filterVAGuardband filterVoltageArea filterVoltageAreaExtraText filterVoltageAreaText filterWiringGrid filterWiringGridNonPrefDir filterWiringGridPrefDir gridName hatchCellBackSideBump hatchCellBlackBox hatchCellCore hatchCellCover
+        hatchCellFrontSideBump hatchCellHardMacro hatchCellIO hatchCellNormalHier hatchCellPhysOnly hatchCellSoftMacro hatchCellSpare hatchCellTSV hatchContactLayer_<layer_name> hatchContactRegionLayer_<layer_name> hatchEditGroup hatchFPRegion hatchFillInst hatchMovebound hatchOverlapBlockage hatchPACore hatchPAKOHard hatchPAKOHardMacro hatchPAKOPartial hatchPAKOSoft hatchPASiteArray hatchPinBlockageLayer_<layer_name> hatchPinGuide hatchPinLayer_<layer_name> hatchPortShapeLayer_<layer_name>
+        hatchPowerplanRegion hatchRPGroup hatchRPKeepout hatchRailAnalysisTap hatchRouteCorridorShape hatchRouteGuide hatchRouteGuideViaAccessPreference hatchRouteGuideWireAccessPreference hatchRoutedLayer_<layer_name> hatchRoutingBlockageLayer_<layer_name> hatchShapingBlockage hatchTextObjectLayer_<layer_name> hatchTopologyNode hatchVAGuardband hatchVoltageArea hatchWiringGridLayer_<layer_name> infoTipLocation lineStyleCoreArea lineStyleDieArea lineStyleEditGroup lineStyleFPRegion lineStyleFillInst lineStyleMovebound lineStyleOverlapBlockage lineStylePAKOHard
+        lineStylePAKOHardMacro lineStylePAKOPartial lineStylePAKOSoft lineStylePinGuide lineStylePowerplanRegion lineStyleRPGroup lineStyleRPKeepout lineStyleRailAnalysisTap lineStyleRouteGuide lineStyleShapingBlockage lineStyleTopologyEdge lineStyleTopologyNode lineStyleVAGuardband lineStyleVoltageArea lineWidthCoreArea lineWidthDieArea lineWidthEditGroup lineWidthFPRegion lineWidthFillInst lineWidthIOGuide lineWidthMovebound lineWidthOverlapBlockage lineWidthPAKOHard lineWidthPAKOHardMacro lineWidthPAKOPartial
+        lineWidthPAKOSoft lineWidthPinGuide lineWidthPowerplanRegion lineWidthRPGroup lineWidthRPKeepout lineWidthRailAnalysisTap lineWidthRouteGuide lineWidthShapingBlockage lineWidthTopologyEdge lineWidthTopologyNode lineWidthVAGuardband lineWidthVoltageArea minimizeRedrawArea netRenderScheme overlayDesigns partialRedrawUpdates pathNetRenderLimit pathNetRenderScheme pathRenderLimit pinColorScheme renderAntiAlias renderQuality reverseWheel selectBlockage selectCell
+        selectCellBlackBox selectCellCore selectCellCover selectCellFlipChip selectCellHardMacro selectCellIO selectCellNormalHier selectCellPhysOnly selectCellSoftMacro selectCellSpare selectCellTSV selectContact selectContactRegion selectCoreArea selectDieArea selectEditGroup selectFillInst selectGuide selectIOGuide selectLayer_<layer_name> selectMargin selectMarginHard selectMarginHardMacro selectMarginRouteBlockage selectMarginSoft
+        selectMovebound selectOverlapBlockage selectPACore selectPAKO selectPASiteArray selectPin selectPinBlackBox selectPinBlockage selectPinClock selectPinCore selectPinGround selectPinGuide selectPinHardMacro selectPinNWell selectPinOthers selectPinPWell selectPinPad selectPinPower selectPinReset selectPinScan selectPinSignal selectPinSoftMacro selectPinTieHigh selectPinTieLow selectPort
+        selectPortShape selectPowerplanRegion selectRPGroup selectRPKeepout selectRailAnalysisTap selectRoute selectRouteCorridorShape selectRouteGuide selectRouted selectRoutedClock selectRoutedCoreWire selectRoutedDetailed selectRoutedFill selectRoutedFollowPin selectRoutedGRoute selectRoutedGround selectRoutedNWell selectRoutedNoNet selectRoutedOPC selectRoutedPGAugment selectRoutedPWell selectRoutedPinConMIO selectRoutedPinConStd selectRoutedPower selectRoutedRDL
+        selectRoutedReset selectRoutedRing selectRoutedScan selectRoutedShield selectRoutedSignal selectRoutedStrap selectRoutedTieHigh selectRoutedTieLow selectRoutedTrunk selectRoutedUser selectRoutedZeroSkew selectRoutingBlockage selectShapingBlockage selectTextObject selectTopology selectTopologyEdge selectTopologyNode selectVoltageArea selectWiringGrid shapeFilterSize shapeFilterWidthSize showBlockage showCell showCellBackSideBump showCellBlackBox
+        showCellCore showCellCover showCellExtraText showCellFlipChip showCellFrontSideBump showCellHardMacro showCellIO showCellNormalHier showCellPhysOnly showCellSoftMacro showCellSpare showCellTSV showCellText showCellTextArea showColorMask showContact showContactLayer_<layer_name> showContactRegion showContactRegionLayer_<layer_name> showCoreArea showDimmed showEditGroup showFillInst showGuide showIOGuide
+        showIOGuideText showInfoTip showLayer_<layer_name> showMargin showMarginHard showMarginHardMacro showMarginRouteBlockage showMarginSoft showMovebound showMoveboundExtraText showMoveboundText showOverlapBlockage showPACore showPAKO showPAKOHard showPAKOHardMacro showPAKOPartial showPAKOSoft showPASite showPASiteArray showPASiteArrayText showPASiteText showPin showPinBlackBox showPinBlockage
+        showPinBlockageLayer_<layer_name> showPinBlockageText showPinClock showPinCore showPinGround showPinGuide showPinGuideText showPinHardMacro showPinLayer_<layer_name> showPinNWell showPinOthers showPinPWell showPinPad showPinPower showPinReset showPinScan showPinSignal showPinSoftMacro showPinText showPinTieHigh showPinTieLow showPort showPortShape showPortShapeAccess showPortShapeLayer_<layer_name>
+        showPortShapeText showPortText showPowerplanRegion showRPGroup showRPGroupText showRPKeepout showRailAnalysisTap showRoute showRouteCorridorShape showRouteCorridorShapeText showRouteGuide showRouteGuideText showRouteGuideViaAccessPreference showRouteGuideWireAccessPreference showRouted showRoutedClock showRoutedCoreWire showRoutedDetailed showRoutedFill showRoutedFollowPin showRoutedGRoute showRoutedGround showRoutedLayer_<layer_name> showRoutedNWell showRoutedNoNet
+        showRoutedOPC showRoutedPGAugment showRoutedPWell showRoutedPinConMIO showRoutedPinConStd showRoutedPower showRoutedRDL showRoutedReset showRoutedRing showRoutedScan showRoutedShield showRoutedSignal showRoutedStrap showRoutedText showRoutedTieHigh showRoutedTieLow showRoutedTrunk showRoutedUser showRoutedZeroSkew showRoutingBlockage showRoutingBlockageLayer_<layer_name> showRoutingBlockageText showScrollBars showShapingBlockage showShapingBlockageText
+        showText showTextObject showTextObjectLayer_<layer_name> showTextSelected showTopology showTopologyEdge showTopologyNode showVAGuardband showViaTypeColor showVoltageArea showVoltageAreaExtraText showVoltageAreaText showWiringGrid showWiringGridLayer_<layer_name> showWiringGridNonPrefDir showWiringGridPrefDir slctStartLevel slctStopLevel timesNormalRendered timesSandboxRendered unplacedPinLocation utilizationLabeling viewLevel viewType 
+    }
+}
+
 #########################
 # regexp character classes
 #########################
@@ -803,6 +846,12 @@ close $log
     echo "...app_vars.json file complete."
     
 #-------------------------------------
+#  gui Layout window setting
+#-------------------------------------
+    echo [list_to_json $gui_settings_layout] > $outdir/gui_settings_layout.json
+    echo "...gui_settings_layout.json file complete."
+    
+#-------------------------------------
 #  regexp character classes
 #-------------------------------------
     echo [list_to_json $regexp_char_classes] > $outdir/regexp_char_classes.json
@@ -864,5 +913,6 @@ unset app_option_dict
 unset iccpp_param_dict
 unset techfile_attr_dict
 unset techfile_layer_dict
+unset gui_settings_layout
 
 echo "...done\n"

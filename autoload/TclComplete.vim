@@ -103,6 +103,9 @@ function! TclComplete#GetData()
     " App variables
     let g:TclComplete#app_var_list = TclComplete#ReadJsonFile('app_vars.json')
 
+    " GUI settings
+    let g:TclComplete#gui_layout_window_list = TclComplete#ReadJsonFile('gui_settings_layout.json')
+
     " Regexp char classes
     let g:TclComplete#regexp_char_class_list = TclComplete#ReadJsonFile('regexp_char_classes.json')
 
@@ -602,6 +605,8 @@ function! TclComplete#Complete(findstart, base)
                 let l:complete_list = split('CustomDashLine DashDotDotLine DashDotLine DashLine DotLine NoPen SolidLine')
             elseif g:last_completed_word=='-symbol_size'
                 let l:complete_list = range(3,100)
+            elseif g:last_completed_word=='-setting'
+                let l:complete_list = g:TclComplete#gui_layout_window_list
             endif
         " Default) Options of the active command.
         else
