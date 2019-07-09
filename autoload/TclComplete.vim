@@ -1,11 +1,14 @@
 "tclcomplete.vim - Omni Completion for Synopsys Tcl
 " Creator: Chris Heithoff < christopher.b.heithoff@intel.com >
 " Version: 2.0
-" Last Updated: 11-Jul-2018
+" Last Updated: 09-Jul-2019
 "
 
 function! TclComplete#ReadJsonFile(json_file)
     let json_full_path = g:TclComplete#dir.'/'.a:json_file
+    if !filereadable(json_full_path)
+        return []
+    endif
     let file_lines = readfile(json_full_path)
     let file_as_one_string = join(file_lines)
     let object = json_decode(file_as_one_string)
