@@ -73,7 +73,7 @@ For example:
 ==============================================================================
 ## Entering TclComplete auto-completion
 
-The tab key, or ^X ^O  will trigger TclComplete compleion.                                         
+The `tab` key, or `^X ^O`  will trigger TclComplete compleion.                                         
       
 This will bring up Vim's pop-up autocompletion menu.  
 
@@ -86,18 +86,17 @@ commands, or a list of command -options, or attributes, or more.
   Entering auto-complete mode will open a pop-up menu.  This is the same type
 of pop-up menu used in Vim's built-in auto-complete modes. (:help insert_expand)
 
-  ^N and ^P will switch to the next/previous choices.
+  `^N` and `^P` will switch to the next/previous choices.
 
-  ^E will end the pop-up menu and return to insert mode
+  `^E` will end the pop-up menu and return to insert mode
   
-  ^Y will accept the current choice and stay in insert mode.  ('yes')
+  `^Y` will accept the current choice and stay in insert mode.  ('yes')
 
-  TAB  When the pop-up menu is open, TAB will act like control-n (^N)
+  `TAB`  When the pop-up menu is open, TAB will act like control-n (^N)
 
-   ^D   Scroll the pop-up menu down by 10 choices.
+   `^D`   Scroll the pop-up menu down by 10 choices.
 
-   ^U   Scroll the pop-up menu up by 10 choices.
-
+   `^U`   Scroll the pop-up menu up by 10 choices.
 
    (the scroll distance can be set by a g:TclComplete#popupscroll variable)
 
@@ -106,7 +105,7 @@ of pop-up menu used in Vim's built-in auto-complete modes. (:help insert_expand)
 
   By default, the auto-completion works with wildcard patterns too.
   
-  For example, if you type \*cells\* and then hit TAB, then any proc containing 
+  For example, if you type \*cells\* and then hit `TAB`, then any proc containing 
   the string 'cells' will appear in the popup menu.
 
 ==============================================================================
@@ -114,16 +113,16 @@ of pop-up menu used in Vim's built-in auto-complete modes. (:help insert_expand)
 Some interactive Tcl shell aliases you defined when the $WARD/TclComplete collateral 
 was generated will be converted into iabbrev commands in $WARD/TclComplete/aliases.vim.
 
-In other words, type 'fic' followed by <space> will automatically replace
+In other words, type 'fic' followed by `space` will automatically replace
 'fic' with foreach_in_collection. 
 
 This plugin's Tcl script intentionally to limits the abbrevations to:
- fic   = foreach_in_collection
- ga    = get_attribute
- cs    = change_selection
- gs    = get_selection
+ `fic`   = foreach_in_collection
+ `ga`    = get_attribute
+ `cs`    = change_selection
+ `gs`    = get_selection
 
-To avoid triggering an abbreviation, type ctrl-v and <space> 
+To avoid triggering an abbreviation, type `ctrl-v space` 
 
 ==============================================================================
 ## Special categories of completion:
