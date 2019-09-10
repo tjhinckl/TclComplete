@@ -442,6 +442,8 @@ foreach cmd $all_command_list {
     # Use either the 'help -v' or 'man' commands to get command options.
     if {[llength [set help_dict [get_options_from_help $cmd]]]>0} {
         dict for {opt_name details} $help_dict {
+            # Replace literal tabs (plus additional spaces) to a single space.
+            set details [regsub {\t *} $details " "]
             dict lappend opt_dict $cmd $opt_name
             dict set details_dict $cmd $opt_name $details
         }
