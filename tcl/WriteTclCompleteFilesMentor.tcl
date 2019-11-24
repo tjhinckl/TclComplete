@@ -17,18 +17,31 @@ namespace eval tshell {
     }
 
     proc get_details {command} {
+        # Prevent unhelpabe commands from getting false help string.
+        #  ('help format' returns help string for 'help format_dictionary')
+        if {$command ni [get_help_commands]} {
+            return {}
+        }
         set help {}
         if {[catch {catch_output "help $command" -output help} error]} {
             return {}
         }
         # Make sure that braces are not butted against other grouping characters
-        set help [string map {\} "\} "} $help]
-        set help [string map {\{ " \{"} $help]
+        #  (The string mapping is defined like this to help text editors from losing
+        #  track of actual matched curlies in the functional code)
+        set m1a "{"
+        set m1b " {"
+        set m2a "}"
+        set m2b "} "
         # split out brackets so they will be parsed as their own tokens
-        set help [string map {\[ " [ "} $help]
-        set help [string map {\] " ] "} $help]
+        set m3a {[}
+        set m3b { [ }
+        set m4a {[}
+        set m4b { [ }
+        set mapping [list $m1a $m1b $m2a $m2b $m3a $m3b $m4a $m4b]
+        set help [string map $mapping $help]
         # standardize details whitespace
-        set help [regsub -all {\s+} $help { }]
+        set help [regsub -all {\s+} [string trim $help] { }]
         return [parse $help]
     }
 
