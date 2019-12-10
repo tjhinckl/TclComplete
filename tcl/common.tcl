@@ -1,9 +1,12 @@
 #!/usr/intel/pkgs/tcl-tk/8.6.8/bin/tclsh
 
+# Bring the namespace into existence.
+namespace eval TclComplete {}
+
 #############################################################
 # Super version of info commands that also goes into namespaces
 #############################################################
-proc get_all_sorted_commands {} {
+proc TclComplete::get_all_sorted_commands {} {
     set commands  [lsort -nocase [info commands]]
 
     # Pull out any commands starting with _underscore (put them at the end)
@@ -47,32 +50,32 @@ proc get_all_sorted_commands {} {
 #           JSON procs                  #
 #---------------------------------------#
 # Return a json string for a Tcl list
-proc list_to_json {list} {
+proc TclComplete::list_to_json {list} {
     set indent "    "
     set result "\[\n"
     foreach item $list {
         append result "${indent}\"${item}\",\n"
     }
-    set result [remove_final_comma $result]
+    set result [TclComplete::remove_final_comma $result]
     append result "]"
     return $result
 }
 
 # Return a json string for a Tcl dict
-proc dict_to_json {dict} {
+proc TclComplete::dict_to_json {dict} {
     set indent "    "
     set result "{\n"
     foreach key [lsort [dict keys $dict]] {
         set value [dict get $dict $key]
         append result "${indent}\"${key}\":\"${value}\",\n"
     }
-    set result [remove_final_comma $result]
+    set result [TclComplete::remove_final_comma $result]
     append result "}"
     return $result
 }
 
 # Return a json string for a Tcl dictionary of lists
-proc dict_of_lists_to_json {dict_of_lists} {
+proc TclComplete::dict_of_lists_to_json {dict_of_lists} {
     set indent "    "
     set result "{\n"
     foreach key [lsort [dict keys $dict_of_lists]] {
@@ -81,16 +84,16 @@ proc dict_of_lists_to_json {dict_of_lists} {
         foreach value [lsort [dict get $dict_of_lists $key]] {
             append result "${indent}${indent}\"${value}\",\n"
         }
-        set result [remove_final_comma $result]
+        set result [TclComplete::remove_final_comma $result]
         append result "${indent}${indent}\],\n"
     }
-    set result [remove_final_comma $result]
+    set result [TclComplete::remove_final_comma $result]
     append result "}"
     return $result
 }
 
 # Return a json string for a Tcl dictionary of dictionaries
-proc dict_of_dicts_to_json {dict_of_dicts} {
+proc TclComplete::dict_of_dicts_to_json {dict_of_dicts} {
     set indent "    "
     set result "{\n"
     foreach key [lsort [dict keys $dict_of_dicts]] {
@@ -99,12 +102,19 @@ proc dict_of_dicts_to_json {dict_of_dicts} {
         dict for {instance_name ref_name} [dict get $dict_of_dicts $key] {
             append result "${indent}${indent}\"${instance_name}\":\"${ref_name}\",\n"
         }
-        set result [remove_final_comma $result]
+        set result [TclComplete::remove_final_comma $result]
         append result "${indent}${indent}\},\n"
     }
-    set result [remove_final_comma $result]
+    set result [TclComplete::remove_final_comma $result]
     append result "}"
     return $result
+}
+
+proc TclComplete::write_json {name content} {
+    set fh [open $name.json w]
+    puts $fh $content
+    close $fh
+    puts "...[file tail $name] file complete."
 }
 
 ##########################################################################
@@ -115,7 +125,7 @@ proc dict_of_dicts_to_json {dict_of_dicts} {
 #    f,              f
 #   ]               ]
 ##########################################################################
-proc remove_final_comma {json_string} {
+proc TclComplete::remove_final_comma {json_string} {
     set json_string [string trimright $json_string "\n,"]
     return "$json_string\n"
 }
@@ -123,10 +133,34 @@ proc remove_final_comma {json_string} {
 ##############################
 # Like shell mkdir
 ##############################
-proc mkdir_fresh {dir} {
+proc TclComplete::mkdir_fresh {dir} {
     if {[file exists $dir]} {
         echo "Deleting previous $dir"
         file delete -force $dir
     }
     file mkdir $dir
+}
+
+
+################################################
+## Coroutine stuff #############################
+################################################
+# Use this proc as the command in a coroutine definition.
+proc TclComplete::next_element_in_list {list} {
+    yield
+    foreach element $list {
+        yield $element
+    }
+}
+
+# Use this proc to advance an existing coroutine until the value matches a pattern
+proc TclComplete::advance_coroutine_to {coroutine_name match_pattern } {
+    while {[command_exists  $coroutine_name] } {
+        set next_item [$coroutine_name]
+        if {[string match $match_pattern $next_item]} {
+            return $next_item
+            break
+        }
+    }
+    return ""
 }

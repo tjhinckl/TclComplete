@@ -6,234 +6,24 @@
 # Description:  Source this from the icc2_shell (or dc or pt?) to 
 #               create a file that can be used for tcl omnicompletion
 #               in Vim.
-# Date of latest revision: 27-Nov-2019
+# Date of latest revision: 10-Dec-2019
+
+# Bring the namespace into existence.
+namespace eval TclComplete {}
 
 set location [file dirname [file normalize [info script]]]
 source $location/common.tcl
 
-################################################
-## Coroutine stuff #############################
-################################################
-# Use this proc as the command in a coroutine definition.
-proc next_element_in_list {list} {
-    yield
-    foreach element $list {
-        yield $element
-    }
+if {[llength [info vars tessent*]]>0} {
+    set tcl_type "tessent"
+} elseif {[llength [info vars synopsys*]]>0} {
+    set tcl_type "synopsys"
+} else {
+    set tcl_type "tclsh"
 }
 
-# Use this proc to advance an existing coroutine until the value matches a pattern
-proc advance_coroutine_to {coroutine_name match_pattern } {
-    while {[command_exists  $coroutine_name] } {
-        set next_item [$coroutine_name]
-        if {[string match $match_pattern $next_item]} {
-            return $next_item
-            break
-        }
-    }
-    return ""
-}
-
-#########################################################
-# Run help on a command.  Return the command's description
-#########################################################
-proc get_description_from_help {cmd} {
-    set result ""
-    redirect -variable help_text {help $cmd}
-    # Look for <cmdname>     # Description of the command
-    foreach line [split $help_text "\n"] {
-        if {[regexp {^\s*(\S+)\s+(#.*$)} $line -> cmd_name description]} {
-            if {$cmd_name == $cmd} {
-                set result [regsub -all {"} $description {\"}]
-                # " 
-            }
-        }
-    }
-    return $result 
-}
-
-#########################################################
-# Run man on a command.  Return the command's description
-#########################################################
-proc get_description_from_man {cmd} {
-    redirect -variable man_text {man $cmd}
-    set man_lines [split $man_text "\n"]
-    if {[regexp "No manual entry for" [lindex $man_lines 0]]} {
-        return ""
-    }
-
-    # The description of the command should be in the line after the NAME line
-    # Example:
-    # NAME
-    #        puts - Write to a channel
-    coroutine next_man_line next_element_in_list $man_lines
-    advance_coroutine_to next_man_line "NAME*"
-    set line [next_man_line]
-    set description [lindex [split $line "-"] 1]
-    return "#$description"
-}
-
-     
-#####################################################
-# Run help -v on a command and then parse the options
-#####################################################
-proc get_options_from_help {cmd} {
-    # Returns a dictionary.  Key = option name  Value = option detail
-    set result [dict create]
-
-    # Parse the "help -v" text for this command
-    redirect -variable help_text {help -v $cmd}
-    if {[regexp "CMD-040" $help_text]} {return ""}
-
-    # First look for the command name, then look for options
-    set looking_for_command 1
-    set looking_for_options 0
-
-    foreach line  [split $help_text "\n"] {
-        # We need to look only in the correct section. 
-        # Some help results list multiple helps (like "help -v help")
-        #   This only works when the descripion is there too, preceded by #
-        if {$looking_for_command} {
-            if {[regexp {^\s+(\S+)\s+(#.*$)} $line -> cmd_name description]} {
-                # Check for synonym
-                if {[regexp -nocase {synonym for '([^']*)'} $line -> synonym]} {
-                    set cmd $synonym
-                } elseif {$cmd_name == $cmd} {
-                    set looking_for_command 0
-                    set looking_for_options 1
-                    continue
-                }
-                
-            }
-        } elseif {$looking_for_options} {
-            # Now get the command options which start with a dash.
-            #  They might be surrounded by brackets.
-            #  The option is first, then the details, surrounded by parentheses.
-            if {[regexp {^\s*\[?(-[a-zA-Z0-9_]+)[^(]*(.*$)} $line -> opt detail] } {
-                set detail [regsub -all {"} $detail {\"}]
-                #" (comment to correct Vim syntax coloring)
-                dict set result $opt $detail
-            } 
-
-            # Exit loop if there is a # sign, which indicates a second command
-            # is getting listed now. (but also not including a dash)
-            if {[regexp {\s*[[:alpha:]][[:alnum:]_]*\s+# } $line]} {
-                break
-            }
-        }
-    }
-    return $result
-}
-
-#####################################################
-# Run "man <command>".  Parse and return the options.
-#####################################################
-proc get_options_from_man {cmd} {
-    set option_list {}
-    redirect -variable man_text {man $cmd}
-    set man_lines [split $man_text "\n"]
-    if {[regexp "No manual entry for" [lindex $man_lines 0]]} {
-        return ""
-    }
-
-    # Options for builtin Tcl commands can be found in at least two places
-    #  1) In the SYNOPSIS section
-    # Example:
-    #     SYNOPSIS
-    #            puts ?-nonewline? ?channelId? string
-    #  2) In the DESCRIPTION section
-    #  Example for lsort:
-    #   -ascii Use  string  comparison  with Unicode code-point collation order
-    #          (the name is for backward-compatibility reasons.)  This  is  the
-    #          default.
-    #
-    #  3) ...or some man pages (like add_power_state) have a SYNTAX section instead
-    #     Example:
-    #       SYNTAX
-    #          status add_power_state
-    #                 [-supply ]
-    #                 object_name
-    coroutine next_man_line next_element_in_list $man_lines
-    set line [next_man_line]
-    
-    while {[command_exists next_man_line] } {
-        set line [next_man_line]
-        if {$line eq "SYNOPSIS"} {
-            # Find SYNOPSIS options here and return from the proc early.
-            #  Expect a few Tcl builtin commands here.
-            set line [next_man_line]
-            set matches [regexp -all -inline {\?-[[:alpha:]]\w*} $line]
-            set matches [lmap match $matches {string trim $match "?"}]
-            set matches [lminus -- $matches {-option}]
-            if {[llength $matches]>0} {
-                foreach match $matches {
-                    lappend option_list $match
-                }
-                return [lsort $option_list]
-            }
-        } elseif {$line eq "SYNTAX"} {
-            # Parse lines in the SYNTAX section.
-            while {[command_exists next_man_line]} {
-                set line [next_man_line]
-                set matches [regexp -all -inline {[-][[:alpha:]]\w*} $line]
-                foreach match $matches {
-                    lappend option_list $match
-                } 
-                if {[string is upper $line]} {
-                    # The next section is indicated by an ALL_CAPS line
-                    return [lsort $option_list]
-                }
-            }
-        } elseif {$line eq "DESCRIPTION"} {
-            # Parse lines in the DESCRIPTION section.
-            while {[command_exists next_man_line]} {
-                set line [next_man_line]
-                # I wanted to use a [lindex $line 0] to get a first word, but some of
-                # the lines of man page text are not friendly to list commands.  
-                set line [string trim $line]
-                if {[regexp {^[-][[:alpha:]]\w+} $line match]} {
-                    lappend option_list $match
-                } elseif {$line eq "EXAMPLES"} {
-                    return [lsort -u $option_list]
-                }
-            }
-        }
-    }
-
-    # In case we never returned inside in the while loop but exhausted the coroutine.
-    return [lsort -u $option_list]
-}
-
-#####################################################
-# Run "man <app_option>".  Parse and return the values
-#####################################################
-proc get_app_option_from_man_page {app_option} {
-    redirect -variable man_text {man $app_option}
-    set TYPE_flag 0
-    set DEFAULT_flag 0
-    set TYPE    ""
-    set DEFAULT ""
-    foreach line [split $man_text "\n"] {
-        if {[regexp "^TYPE" $line]} { 
-            set TYPE_flag 1
-        } elseif {[regexp "^DEFAULT" $line]} { 
-            set DEFAULT_flag 1
-        } elseif {$TYPE_flag==1} {
-            set TYPE [string trim $line]
-            set TYPE_flag 0
-        } elseif {$DEFAULT_flag==1} {
-            set DEFAULT [string trim $line]
-            # change double quotes in text to single to make json happpier later
-            set DEFAULT [regsub -all "\"" $DEFAULT {'}]
-            set DEFAULT_flag 0
-            break
-        }
-    }
-    if {$TYPE!=""} {
-        return "$TYPE ($DEFAULT)"
-    } else {
-        return "unknown type"
-    }
+if {$tcl_type == "synopsys"} {
+    source $location/TclCompleteSynopsys.tcl
 }
 
 #############################################################
@@ -267,28 +57,17 @@ proc command_exists {cmd} {
 ###########################
 # Form a list of all commands, including those inside namespaces.
 #  Most of the code here is sort in a particular order
-echo "------------------------------------------------"
-echo "---TclComplete:  forming the list of all commands"
-set all_command_list [get_all_sorted_commands]
+puts "------------------------------------------------"
+puts "---TclComplete:  forming the list of all commands"
+set all_command_list [TclComplete::get_all_sorted_commands]
 
-## Fill up the description dictionary.
-#   Key = command name
-#   Value = desciption of the command.
-set desc_dict [dict create]
-foreach cmd $all_command_list {
-    set description [get_description_from_help $cmd]
-    if {$description eq "# Builtin"} {
-        set description [get_description_from_man $cmd]
-    }
-    dict set desc_dict $cmd $description
-}
-echo " ...\$desc_dict built"
+set desc_dict [TclComplete::get_synopsys_descriptions $all_command_list]
 
 ######################################################################
 # Now that we have all the commands, use the help/man commands to 
 # get the options for each command and the details of each option.
 ######################################################################
-echo "---TclComplete....building command options"
+puts "---TclComplete....building command options"
 set opt_dict     [dict create]
 set details_dict [dict create]
 
@@ -311,7 +90,7 @@ foreach cmd $all_command_list {
     }
 
     # Use either the 'help -v' or 'man' commands to get command options.
-    if {[llength [set help_dict [get_options_from_help $cmd]]]>0} {
+    if {[llength [set help_dict [TclComplete::get_options_from_help $cmd]]]>0} {
         dict for {opt_name details} $help_dict {
             # Replace literal tabs (plus additional spaces) to a single space.
             set details [regsub {\t *} $details " "]
@@ -319,12 +98,12 @@ foreach cmd $all_command_list {
             dict set details_dict $cmd $opt_name $details
         }
     } else {
-        foreach opt_name [get_options_from_man $cmd] {
+        foreach opt_name [TclComplete::get_options_from_man $cmd] {
             dict lappend opt_dict $cmd $opt_name
         }
     }
 }
-echo "...found options for all commands."
+puts "...found options for all commands."
 
     
  
@@ -334,7 +113,7 @@ echo "...found options for all commands."
 # Any math function can be used in expr
 set func_list [ lsort -u [info function] ]
 dict set opt_dict "expr" $func_list
-echo "...\$func_list built"
+puts "...\$func_list built"
 
 # info options
 dict set opt_dict "info"  [concat [dict get $opt_dict "info"] [get_subcommands_from_error_msg info]]
@@ -427,7 +206,7 @@ dict set details_dict "format" "%g" "%f or %e, based on precision"
 dict set details_dict "format" "%G" "%f or %E, based on precision"
 dict set opt_dict "scan" [dict get $opt_dict "format"]
 dict set details_dict "scan" [dict get $details_dict "format"]
-echo "...completed options for special cases in the opt_dict"
+puts "...completed options for special cases in the opt_dict"
 
 
 ###########################################################
@@ -435,7 +214,7 @@ echo "...completed options for special cases in the opt_dict"
 ###########################################################
 set app_option_dict [dict create]
 if {[command_exists  get_app_options]} {
-    echo "...getting application options"
+    puts "...getting application options"
     set app_option_list [lsort -u [get_app_options]]
 } else {
     set app_option_list {}
@@ -447,7 +226,7 @@ foreach app_option $app_option_list {
 #################################################################
 # Make a package list for 'package require', 'package forget, etc
 #################################################################
-echo "...getting package names"
+puts "...getting package names"
 set package_list [lsort -u [package names]]
 
 ####################################################################
@@ -459,13 +238,13 @@ set iccpp_param_dict [array get   ::iccpp_com::params_map]
 #####################
 # app_vars
 #####################
-echo "...getting application variables"
+puts "...getting application variables"
 set app_var_list [lsort [get_app_var -list *]]
 
 #####################
 # gui window settings
 #####################
-echo "...getting gui window settings"
+puts "...getting gui window settings"
 if {[command_exists gui_get_current_window]} {
     redirect -variable gui_settings_layout {
         set window [gui_get_current_window -types Layout -mru]
@@ -508,7 +287,7 @@ if {[command_exists gui_get_current_window]} {
 #########################
 # regexp character classes
 #########################
-echo "...getting regexp char classes"
+puts "...getting regexp char classes"
 set regexp_char_classes [list :alpha: :upper: :lower: :digit: :xdigit: :alnum: :blank: :space: :punct: :graph: :cntrl: ]
 
 ###############################################################################
@@ -516,7 +295,7 @@ set regexp_char_classes [list :alpha: :upper: :lower: :digit: :xdigit: :alnum: :
 # array.  The array name will also include comma separated keywords like history
 # and subst and constant.
 ###############################################################################
-echo "...getting G_vars"
+puts "...getting G_vars"
 set Gvar_list {}
 set Gvar_array_list {}
 foreach g_var [lsort [info var G_*]] {
@@ -536,7 +315,7 @@ set Gvar_list [concat $Gvar_list $Gvar_array_list]
 # Form a nested dictionary of attributes of object classes.
 #  attribute_dict['class']['attr_name'] = choices
 ######################################################################
-echo "...getting class attributes"
+puts "...getting class attributes"
 set attribute_dict [dict create]
 
 # Dump list_attributes 
@@ -604,8 +383,8 @@ if {[command_exists ::tech::read_techfile_info] } {
 ################################################################################
 # 1)  Setup the output directory and dump the log
 set outdir $::env(WARD)/TclComplete
-mkdir_fresh $outdir
-echo "Making new \$WARD/TclComplete directory..."
+TclComplete::mkdir_fresh $outdir
+puts "Making new \$WARD/TclComplete directory..."
 
 set log [open $outdir/WriteTclCompleteFiles.log w]
 puts $log "#######################################################"
@@ -623,37 +402,37 @@ close $log
 #-------------------------------------
 #  All the commands in a JSON list.
 #-------------------------------------
-    echo [list_to_json $all_command_list] > $outdir/commands.json
-    echo "...commands.json file complete."
+    TclComplete::write_json $outdir/commands [TclComplete::list_to_json $all_command_list] 
+    puts "...commands.json file complete."
 
 #-------------------------------------
 #  All the packages in a JSON list.
 #-------------------------------------
-    echo [list_to_json $package_list] > $outdir/packages.json
-    echo "...packages.json file complete."
+    TclComplete::write_json $outdir/packages [TclComplete::list_to_json $package_list] 
+    puts "...packages.json file complete."
 #-----------------------------------------
 # Command options in a JSON dict of lists.
 #   key = command name
 #   value = ordered list of options
 #-----------------------------------------
-    echo [dict_of_lists_to_json $opt_dict] > $outdir/options.json
-    echo "...options.json file complete."
+    TclComplete::write_json $outdir/options [TclComplete::dict_of_lists_to_json $opt_dict]
+    puts "...options.json file complete."
 
 #-----------------------------------------
 # Command option details in a JSON dictionary of dictionaries
 #   key = command name
 #   value = dictionary with key=option and value=details
 #-----------------------------------------
-    echo [dict_of_dicts_to_json $details_dict] > $outdir/details.json
-    echo "...details.json file complete."
+    TclComplete::write_json $outdir/details [TclComplete::dict_of_dicts_to_json $details_dict]
+    puts "...details.json file complete."
 
 #-----------------------------------------
 # Command descriptions in a JSON dictionary
 #   key = command name
 #   value = command description
 #-----------------------------------------
-    echo [dict_to_json $desc_dict] > $outdir/descriptions.json
-    echo "...descriptions.json file complete."
+    TclComplete::write_json $outdir/descriptions [TclComplete::dict_to_json $desc_dict] 
+    puts "...descriptions.json file complete."
 
 #----------------------------------------------------
 # Write out aliases as Vim insert mode abbreviations
@@ -665,77 +444,77 @@ close $log
     puts $f "iabbrev gs  get_selection"
     
     close $f
-    echo "...aliases.vim file complete."
+    puts "...aliases.vim file complete."
 
 #----------------------------------------------------
 # Write out attributes as a big fat JSON dict of dicts.
 #----------------------------------------------------
-    echo [dict_of_dicts_to_json $attribute_dict] > $outdir/attributes.json
-    echo "...attributes.json file complete."
+    TclComplete::write_json $outdir/attributes [TclComplete::dict_of_dicts_to_json $attribute_dict] 
+    puts "...attributes.json file complete."
 
 #-------------------------------------
 #  G variables which already exists in the session.
 #-------------------------------------
-    echo [list_to_json $Gvar_list] > $outdir/g_vars.json
-    echo "...g_vars.json file complete."
+    TclComplete::write_json $outdir/g_vars [TclComplete::list_to_json $Gvar_list]
+    puts "...g_vars.json file complete."
 
-    echo [list_to_json $Gvar_array_list] > $outdir/g_var_arrays.json
-    echo "...g_var_arrays.json file complete."
+    TclComplete::write_json $outdir/g_var_arrays [TclComplete::list_to_json $Gvar_array_list] 
+    puts "...g_var_arrays.json file complete."
     
 #-------------------------------------
 #  iccpp parameters in a JSON ordered list
 #-------------------------------------
-    echo [list_to_json $iccpp_param_list] > $outdir/iccpp.json
-    echo "...iccpp.json file complete."
-    echo [dict_to_json $iccpp_param_dict] > $outdir/iccpp_dict.json
-    echo "...iccpp_dict.json file complete."
+    TclComplete::write_json $outdir/iccpp [TclComplete::list_to_json $iccpp_param_list]
+    puts "...iccpp.json file complete."
+    TclComplete::write_json $outdir/iccpp_dict [TclComplete::dict_to_json $iccpp_param_dict] 
+    puts "...iccpp_dict.json file complete."
 
 #-------------------------------------
 #  icc2 app options
 #-------------------------------------
-    echo [dict_to_json $app_option_dict] > $outdir/app_options.json
-    echo "...iccpp_dict.json file complete."
+    TclComplete::write_json $outdir/app_options [TclComplete::dict_to_json $app_option_dict] 
+    puts "...app_options.json file complete."
     
 #-------------------------------------
 #  techfile information
 #-------------------------------------
-    echo [list_to_json $techfile_types] > $outdir/techfile_types.json
-    echo "...techfile_types.json file complete."
-    echo [dict_of_lists_to_json $techfile_layer_dict] > $outdir/techfile_layer_dict.json
-    echo "...techfile_layer_dict.json file complete."
-    echo [dict_of_lists_to_json $techfile_attr_dict] > $outdir/techfile_attr_dict.json
-    echo "...techfile_attr_dict.json file complete."
+    TclComplete::write_json $outdir/techfile_types [TclComplete::list_to_json $techfile_types]
+    puts "...techfile_types.json file complete."
+    TclComplete::write_json $outdir/techfile_layer_dict [TclComplete::dict_of_lists_to_json $techfile_layer_dict]
+    puts "...techfile_layer_dict.json file complete."
+    TclComplete::write_json $outdir/techfile_attr_dict [TclComplete::dict_of_lists_to_json $techfile_attr_dict]
+    puts "...techfile_attr_dict.json file complete."
 
 #-------------------------------------
 #  existing designs in your block
 #-------------------------------------
-    echo [list_to_json [lsort [get_attribute [get_designs -quiet] name]]] > $outdir/designs.json
-    echo "...designs.json file complete."
+    TclComplete::write_json $outdir/designs [TclComplete::list_to_json [lsort [get_attribute [get_designs -quiet] name]]]
+    puts "...designs.json file complete."
     
 #-------------------------------------
 #  app_vars
 #-------------------------------------
-    echo [list_to_json $app_var_list] > $outdir/app_vars.json
-    echo "...app_vars.json file complete."
+    TclComplete::write_json $outdir/app_vars [TclComplete::list_to_json $app_var_list]
+    puts "...app_vars.json file complete."
     
 #-------------------------------------
 #  gui Layout window setting
 #-------------------------------------
-    echo [list_to_json $gui_settings_layout] > $outdir/gui_settings_layout.json
-    echo "...gui_settings_layout.json file complete."
+    TclComplete::write_json $outdir/gui_settings_layout [TclComplete::list_to_json $gui_settings_layout] 
+    puts "...gui_settings_layout.json file complete."
     
 #-------------------------------------
 #  regexp character classes
 #-------------------------------------
-    echo [list_to_json $regexp_char_classes] > $outdir/regexp_char_classes.json
-    echo "...regexp_char_classes.json file complete."
+    TclComplete::write_json $outdir/regexp_char_classes [TclComplete::list_to_json $regexp_char_classes]
+    puts "...regexp_char_classes.json file complete."
 #-------------------------------------
 #  environment variables
 #-------------------------------------
     
-    echo [dict_to_json [regsub -all {"} [array get ::env] {\"}]]  > $outdir/environment.json
+    TclComplete::write_json $outdir/environment [TclComplete::dict_to_json [regsub -all {"} [array get ::env] {\"}]] 
     # " 
-    echo "...environment.json file complete."
+    puts "...environment.json file complete."
     
 #----------------------------------------------------
 # write out syntax highlighting commands
@@ -771,7 +550,7 @@ close $log
         puts $f "syn keyword tclexpand $attr_name"
     }
 
-    echo "...syntax/tcl.vim file complete."
+    puts "...syntax/tcl.vim file complete."
     close $f
 
 
@@ -788,4 +567,4 @@ unset techfile_attr_dict
 unset techfile_layer_dict
 unset gui_settings_layout
 
-echo "...done\n"
+puts "...done\n"

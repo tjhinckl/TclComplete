@@ -85,63 +85,56 @@ namespace eval tshell {
         return $options
     }
 
-    proc write_json {name content} {
-        set fh [open $name.json w]
-        puts $fh $content
-        close $fh
-        puts "...[file tail $name] file complete."
-    }
-
     proc build_all_json {dir} {
         set dir $dir/TclComplete
-        mkdir_fresh $dir
+        TclComplete::mkdir_fresh $dir
 
         puts "parsing Tessent shell commands..."
 
         set help_commands [get_help_commands]
-        set commands [list {*}[get_all_sorted_commands] {*}$help_commands]
+        set commands [list {*}[TclComplete::get_all_sorted_commands] {*}$help_commands]
 
         set fh [open $dir/syntaxdb_tessent.tcl w]
         puts $fh "lappend ::knownCommands $help_commands"
         close $fh
 
-        write_json $dir/commands [list_to_json $commands]
+        TclComplete::write_json $dir/commands [TclComplete::list_to_json $commands]
 
         set details {}
         foreach command $commands {
             dict set details $command [get_details $command]
         }
 
-        write_json $dir/details [dict_of_dicts_to_json $details]
+        TclComplete::write_json $dir/details [TclComplete::dict_of_dicts_to_json $details]
 
         set options {}
         dict for {command option} $details {
             dict set options $command [dict keys $option]
         }
 
-        write_json $dir/options [dict_of_lists_to_json $options]
+        TclComplete::write_json $dir/options [TclComplete::dict_of_lists_to_json $options]
 
-        write_json $dir/designs {[]}
-        write_json $dir/g_vars {[]}
-        write_json $dir/g_var_arrays {[]}
-        write_json $dir/iccpp {[]}
-        write_json $dir/app_vars {[]}
-        write_json $dir/regexp_char_classes {[]}
-        write_json $dir/packages {[]}
-        write_json $dir/techfile_types {[]}
+        TclComplete::write_json $dir/designs {[]}
+        TclComplete::write_json $dir/g_vars {[]}
+        TclComplete::write_json $dir/g_var_arrays {[]}
+        TclComplete::write_json $dir/iccpp {[]}
+        TclComplete::write_json $dir/app_vars {[]}
+        TclComplete::write_json $dir/regexp_char_classes {[]}
+        TclComplete::write_json $dir/packages {[]}
+        TclComplete::write_json $dir/techfile_types {[]}
 
         set others {}
         foreach command $commands {
             lappend others $command {}
         }
-        set json [dict_to_json $others]
+        set json [TclComplete::dict_to_json $others]
 
-        write_json $dir/descriptions $json
-        write_json $dir/app_options {{}}
-        write_json $dir/environment [dict_to_json [regsub -all {\"} [array get ::env] {\"}]]
-        write_json $dir/iccpp_dict {{}}
-        write_json $dir/techfile_layer_dict {{}}
-        write_json $dir/attributes {{}}
-        write_json $dir/techfile_attr_dict {{}}
+        TclComplete::write_json $dir/descriptions $json
+        TclComplete::write_json $dir/app_options {{}}
+        TclComplete::write_json $dir/environment [TclComplete::dict_to_json [regsub -all {\"} [array get ::env] {\"}]]
+        TclComplete::write_json $dir/iccpp_dict {{}}
+        TclComplete::write_json $dir/techfile_layer_dict {{}}
+        TclComplete::write_json $dir/attributes {{}}
+        TclComplete::write_json $dir/techfile_attr_dict {{}}
     }
 }
