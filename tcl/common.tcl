@@ -1,10 +1,10 @@
 #!/usr/intel/pkgs/tcl-tk/8.6.8/bin/tclsh
 
 #############################################################
-# Super version of info command that also goes into namespaces
+# Super version of info commands that also goes into namespaces
 #############################################################
 proc get_all_sorted_commands {} {
-    set commands  [lsort -nocase [info command]]
+    set commands  [lsort -nocase [info commands]]
 
     # Pull out any commands starting with _underscore (put them at the end)
     set _commands  [lsearch -all -inline $commands _*]
