@@ -6,7 +6,7 @@
 # Description:  Source this from the icc2_shell (or dc or pt?) to 
 #               create a file that can be used for tcl omnicompletion
 #               in Vim.
-# Date of latest revision: 23-Feb-2019
+# Date of latest revision: 27-Nov-2019
 
 set location [file dirname [file normalize [info script]]]
 source $location/common.tcl
@@ -569,7 +569,7 @@ foreach entry [concat $attribute_list $attribute_class_list] {
 
     # Derive the attribute possible values (data type, or constrained list)
     if {[llength $entry]>=5} {
-        set attr_choices [lrange $entry 5 end]
+        set attr_choices [lrange $entry 4 end]
     } else {
         set attr_choices $attr_datatype
     }
