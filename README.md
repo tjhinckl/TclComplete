@@ -21,10 +21,10 @@ https://soco.intel.com/groups/vim-users/blog/2018/07/13/auto-completion-for-syno
 >     filetype plugin indent on
 4.  Start your tcl shell 
 5.  Create the TclComplete files from your tcl shell:
-    For Synopsys tools
+For Synopsys tools
 >     source ~/.vim/pack/from_gitlab/start/TclComplete/tcl/WriteTclCompleteFilesSynopsys.tcl
 >     TclComplete::WriteFilesSynopsys <directory>
-    For Mentor tools
+For Mentor tools
 >     source ~/.vim/pack/from_gitlab/start/TclComplete/tcl/WriteTclCompleteFilesMentor.tcl
 >     TclComplete::WriteFilesMentor <directory>
 
