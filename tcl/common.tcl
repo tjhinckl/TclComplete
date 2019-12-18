@@ -47,7 +47,14 @@ proc TclComplete::get_all_sorted_commands {} {
             set ns_cmds2 [concat $ns_cmds2 $cmds2]
         }
     }
+
+    # Put them in the desired sequence.
     set all_command_list [concat $commands $ns_cmds1 $ns_cmds2 ${_commands} ${:commands}]
+
+    # One last thing.  Remove any commands with single quotes in the name
+    #  (one example is tcl::clock::formatproc'%m_%d_%H_%M'c )
+    set all_command_list [lsearch -all -inline -not $all_command_list *'*]
+
     return $all_command_list
 }
 
@@ -140,7 +147,7 @@ proc TclComplete::remove_final_comma {json_string} {
 ##############################
 proc TclComplete::mkdir_fresh {dir} {
     if {[file exists $dir]} {
-        echo "Deleting previous $dir"
+        puts "Deleting previous $dir"
         file delete -force $dir
     }
     file mkdir $dir
@@ -341,13 +348,45 @@ proc TclComplete::list2keys {list} {
 #        planning to only do file #3 in the future.
 #######################################################
 proc TclComplete::write_json_from_cmd_dict {outdir cmd_dict} {
-    # 1) Command list 
-    set cmd_list [lsort [dict keys $cmd_dict]]
-    TclComplete::write_json $outdir/commands [TclComplete::list_to_json $cmd_list]
+    # 1) Command list....the important thing here is to sort it in a way that is most 
+    #       useful in an autocompletion pop-up menu.  Do it here instead of deferring 
+    #       to the text editor. (this code is similar to TclComplete::get_all_sorted_commands)
+    # Sort the cmd_list like this.
+    set commands   [list]
+    set commands_1 [list]
+    set commands_2 [list]
+    set commands_4 [list]
+    set commands_6 [list]
+    set _commands  [list]
+    set .commands  [list]
+
+    foreach cmd [lsort -nocase [dict keys $cmd_dict]] {
+        if {[string index $cmd 0] == "_"} {
+            lappend _commands $cmd
+        } elseif {[string index $cmd 0] == "."} {
+            lappend .commands $cmd
+        } elseif {[string match TclComplete::* $cmd]} {
+            # We don't need to include TclComplete procs for later, right?
+            continue
+        } else {
+            # Count the colons 
+            set num_colons [expr {[llength [split $cmd ":"]] - 1 }]
+            if {$num_colons == 0} {
+                lappend commands $cmd
+            } elseif {$num_colons in {1 2 4 6}} {
+                lappend commands_${num_colons} $cmd
+            } 
+        } 
+    }
+
+    # Remove the . command.  Who needs autocomplete for a dot?
+    set commands "$commands $commands_1 $commands_2 $commands_4 $commands_6 ${_commands} ${.commands}"
+
+    TclComplete::write_json $outdir/commands [TclComplete::list_to_json $commands]
 
     # 2) Options dict of lists  (key=command, values = list of options)
     set opt_dict [dict create]
-    foreach cmd $cmd_list {
+    foreach cmd $commands {
         set opt_list [lsort [dict keys [dict get $cmd_dict $cmd]]]
         dict set opt_dict $cmd $opt_list
     }
@@ -364,6 +403,14 @@ proc TclComplete::write_json_from_cmd_dict {outdir cmd_dict} {
 proc TclComplete::write_regex_char_class_json {outdir} {
     set regexp_char_classes [list :alpha: :upper: :lower: :digit: :xdigit: :alnum: :blank: :space: :punct: :graph: :cntrl: ]
     TclComplete::write_json $outdir/regexp_char_classes [TclComplete::list_to_json $regexp_char_classes]
+}
+
+#######################################################
+# Write a json file with the packages available
+#######################################################
+proc TclComplete::write_packages_json {outdir} {
+    set package_list [lsort -u [package names]]
+    TclComplete::write_json $outdir/packages [TclComplete::list_to_json $package_list]
 }
 
 #######################################################
@@ -430,9 +477,7 @@ proc TclComplete::write_vim_tcl_syntax {outdir cmd_list} {
         foreach attr_name $attr_list {
             puts $f "syn keyword tclexpand $attr_name"
         }
-    } else {
-        puts "NOT"
-    }
+    } 
 
     if {[llength [info commands setvar]]>0} {
         puts $f ""

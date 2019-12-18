@@ -1,16 +1,13 @@
 #############################################
-#### TclCompleteSynopsys.tcl
+#### synopsys.tcl
 #############################################
 
 # Author: Chris Heithoff
-# Description:  Procs used with WriteTclCompleteFiles.tcl that
-#               will work with Synopsys tools.
-# Date of latest revision: 10-Dec-2019
+# Description:  Procs used with WriteTclCompleteFilesSynopsys.tcl.
+# Date of latest revision: 18-Dec-2019
 
 # Bring the namespace into existence. (if not already)
 namespace eval TclComplete {}
-
-puts "synopsys.tcl"
 
 #########################################################
 # Run help on a command.  Return the command's description

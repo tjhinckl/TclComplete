@@ -1,140 +1,90 @@
 #!/usr/intel/pkgs/tcl-tk/8.6.8/bin/tclsh
+#############################################
+#### WriteTclCompleteFilesMentor.tcl ########
+#############################################
+
+# Authors:  Troy Hinckley, Chris Heithoff
+# Description:  Run the main proc in a Mentor tool to create
+#  a group of files containing commands, command options, etc, 
+#  which will be consumed by an auto-completion text editor plugin.
+# Date of latest revision: 17-Dec-2019
+
+# Bring the namespace into existence (if not already)
+namespace eval TclComplete {}
 
 set location [file dirname [file normalize [info script]]]
 source $location/common.tcl
 
-namespace eval tshell {
+proc TclComplete::WriteFilesMentor {dir_location} {
+    # Form a list of all commands, including those inside namespaces.
+    set all_command_list [TclComplete::get_all_sorted_commands]
 
-    proc get_help_commands {} {
-        catch_output {help -all} -output details
-        set commands {}
-        foreach x $details {
-            if {! [string equal (...unavailable...) $x]} {
-                lappend commands $x
-            }
-        }
-        return $commands
+    # Initialize nested dictionary for commands
+    #   key1 = command name
+    #   key2 = options (initialize as empty)
+    #   value = descriptions (initialize as empty)
+    set cmd_dict [dict create]
+    foreach cmd $all_command_list {
+        dict set cmd_dict $cmd {} {}
     }
 
-    proc get_details {command} {
-        # Prevent unhelpabe commands from getting false help string.
-        #  ('help format' returns help string for 'help format_dictionary')
-        if {$command ni [get_help_commands]} {
-            return {}
-        }
-        set help {}
-        if {[catch {catch_output "help $command" -output help} error]} {
-            return {}
-        }
-        # Make sure that braces are not butted against other grouping characters
-        #  (The string mapping is defined like this to help text editors from losing
-        #  track of actual matched curlies in the functional code)
-        set m1a "{"
-        set m1b " {"
-        set m2a "}"
-        set m2b "} "
-        # split out brackets so they will be parsed as their own tokens
-        set m3a {[}
-        set m3b { [ }
-        set m4a {[}
-        set m4b { [ }
-        set mapping [list $m1a $m1b $m2a $m2b $m3a $m3b $m4a $m4b]
-        set help [string map $mapping $help]
-        # standardize details whitespace
-        set help [regsub -all {\s+} [string trim $help] { }]
-        return [parse $help]
-    }
+    # Get command options for Mentor [help -all] commands.
+    puts "parsing Tessent shell commands..."
+    set mentor_cmd_dict  [TclComplete::get_mentor_cmd_dict]
+    set cmd_dict           [dict merge $cmd_dict $mentor_cmd_dict]
 
-    proc parse {section} {
-        set options {}
-        set size 0
-        # occasionally some commands usage are malformed because of
-        # missing closing braces. Add the closing braces so we can treat
-        # the contents as a list.
-        while {[catch {set size [llength $section]} err]} {
-            if {$err == "unmatched open brace in list"} {
-                append section " \}"
-            } else {
-                puts $err
-                return {}
-            }
-        }
+    # Merge in additional options for commands which can work for non-Synopsys tools.
+    set hardcoded_cmd_dict  [TclComplete::get_hardcoded_cmd_dict]
+    set namespace_cmd_dict  [TclComplete::get_namespace_cmd_dict $all_command_list]
+    set cmd_dict  [dict merge $cmd_dict $hardcoded_cmd_dict $namespace_cmd_dict]
 
-        for {set i 0} {$i < $size} {incr i} {
-            set token [lindex $section $i]
-            # stop parsing when we reach the contexts token because details
-            # options after that don't apply to the current command
-            if {$token == "contexts:"} {
-                return $options
-            }
-            # Look in details sublists for more options
-            if {[llength $token ] > 1} {
-                set sub_options [parse $token]
-                set options [dict merge $options $sub_options]
-                # If token is command, add it to the dictionary
-            } elseif {[string match -* $token]} {
-                # Peek ahead to see if this option has enumerated values
-                set next [lindex $section [expr {$i + 1}]]
-                if {[llength $next] > 1 || [string match <* $next]} {
-                    dict set options $token $next
-                } else {
-                    dict set options $token {}
-                }
-            }
-        }
-        return $options
-    }
+    # Add expression functions as options for the expr command.
+    set func_list [ lsort -u [info function] ]
+    dict set cmd_dict "expr" [TclComplete::list2keys $func_list]
 
-    proc build_all_json {dir} {
-        set dir $dir/TclComplete
-        TclComplete::mkdir_fresh $dir
+    ################################################################################
+    ### Write out files to the TclComplete directory
+    ################################################################################
+    # Setup the output directory and dump the log
+    set outdir $dir_location/TclComplete
+    puts "Making new directory:  $outdir"
 
-        puts "parsing Tessent shell commands..."
+    TclComplete::mkdir_fresh $outdir
+    TclComplete::write_log   $outdir
 
-        set help_commands [get_help_commands]
-        set commands [list {*}[TclComplete::get_all_sorted_commands] {*}$help_commands]
+    # Standard stuff.
+    TclComplete::write_json_from_cmd_dict    $outdir $cmd_dict
+    TclComplete::write_environment_json      $outdir
+    TclComplete::write_regex_char_class_json $outdir
+    TclComplete::write_packages_json          $outdir
 
-        set fh [open $dir/syntaxdb_tessent.tcl w]
-        puts $fh "lappend ::knownCommands $help_commands"
-        close $fh
+    # What's this file for?  Is this an Emacs thing?  (Ask Troy)
+    set fh [open $outdir/syntaxdb_tessent.tcl w]
+    set help_commands [TclComplete::mentor_get_help_commands]
+    puts $fh "lappend ::knownCommands $help_commands"
+    close $fh
 
-        TclComplete::write_json $dir/commands [TclComplete::list_to_json $commands]
+    # Write empty lists or dictionaries for these files.  
+    #   (TODO  Make this more automatic)
+    TclComplete::write_json $outdir/designs {[]}
+    TclComplete::write_json $outdir/g_vars {[]}
+    TclComplete::write_json $outdir/g_var_arrays {[]}
+    TclComplete::write_json $outdir/iccpp {[]}
+    TclComplete::write_json $outdir/app_vars {[]}
+    TclComplete::write_json $outdir/techfile_types {[]}
+    TclComplete::write_json $outdir/app_options {{}}
+    TclComplete::write_json $outdir/iccpp_dict {{}}
+    TclComplete::write_json $outdir/techfile_layer_dict {{}}
+    TclComplete::write_json $outdir/attributes {{}}
+    TclComplete::write_json $outdir/techfile_attr_dict {{}}
 
-        set details {}
-        foreach command $commands {
-            dict set details $command [get_details $command]
-        }
+    # Vim stuff
+    TclComplete::write_vim_tcl_syntax    $outdir $all_command_list
+    
+    # Write key-only command description dictionary
+    set description_dict [TclComplete::list2keys [dict keys $cmd_dict]]
+    set description_json [TclComplete::dict_to_json $description_dict]
+    TclComplete::write_json $outdir/descriptions $description_json
 
-        TclComplete::write_json $dir/details [TclComplete::dict_of_dicts_to_json $details]
-
-        set options {}
-        dict for {command option} $details {
-            dict set options $command [dict keys $option]
-        }
-
-        TclComplete::write_json $dir/options [TclComplete::dict_of_lists_to_json $options]
-
-        TclComplete::write_json $dir/designs {[]}
-        TclComplete::write_json $dir/g_vars {[]}
-        TclComplete::write_json $dir/g_var_arrays {[]}
-        TclComplete::write_json $dir/iccpp {[]}
-        TclComplete::write_json $dir/app_vars {[]}
-        TclComplete::write_json $dir/regexp_char_classes {[]}
-        TclComplete::write_json $dir/packages {[]}
-        TclComplete::write_json $dir/techfile_types {[]}
-
-        set others {}
-        foreach command $commands {
-            lappend others $command {}
-        }
-        set json [TclComplete::dict_to_json $others]
-
-        TclComplete::write_json $dir/descriptions $json
-        TclComplete::write_json $dir/app_options {{}}
-        TclComplete::write_json $dir/environment [TclComplete::dict_to_json [regsub -all {\"} [array get ::env] {\"}]]
-        TclComplete::write_json $dir/iccpp_dict {{}}
-        TclComplete::write_json $dir/techfile_layer_dict {{}}
-        TclComplete::write_json $dir/attributes {{}}
-        TclComplete::write_json $dir/techfile_attr_dict {{}}
-    }
+    puts "...done\n"
 }

@@ -3,11 +3,13 @@
 #############################################
 
 # Author: Chris Heithoff
-# Description:  Source this from the icc2_shell (or dc or pt?) to 
-#               create a file that can be used for tcl omnicompletion in Vim.
+# Description:  Run the main proc in a Synopsys tool to create
+#  a group of files containing commands, command options, etc, 
+#  which will be consumed by an auto-completion text editor plugin.
+#      
 # Date of latest revision: 17-Dec-2019
 
-# Bring the namespace into existence.
+# Bring the namespace into existence (if not already)
 namespace eval TclComplete {}
 
 set location [file dirname [file normalize [info script]]]
@@ -55,7 +57,7 @@ proc TclComplete::WriteFilesSynopsys {dir_location} {
     TclComplete::write_json_from_cmd_dict    $outdir $cmd_dict
     TclComplete::write_environment_json      $outdir
     TclComplete::write_regex_char_class_json $outdir
-    TclComplete::write_package_json          $outdir
+    TclComplete::write_packages_json         $outdir
 
     # Synopsys/Intel only
     TclComplete::write_attributes_json   $outdir
@@ -67,7 +69,10 @@ proc TclComplete::WriteFilesSynopsys {dir_location} {
     TclComplete::write_gvars_json        $outdir
     TclComplete::write_iccpp_json        $outdir
     TclComplete::write_descriptions_json $outdir $all_command_list
+
+    # Vim stuff
     TclComplete::write_aliases_vim       $outdir
+    TclComplete::write_vim_tcl_syntax    $outdir $all_command_list
 
     puts "...done\n"
 }
