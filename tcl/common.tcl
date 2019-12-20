@@ -265,6 +265,8 @@ proc TclComplete::get_hardcoded_cmd_dict {} {
     # ----------------------------------------------------------------
     dict set hardcoded_opts "namespace ensemble" "create configure exists -command -map -namespace -parameters -prefixes -subcommands -unknown"
     # ----------------------------------------------------------------
+    dict set hardcoded_opts "trace" "add info remove variable vdelete vinfo"
+    # ----------------------------------------------------------------
     if {[namespace exists "::oo"]} {
         dict set hardcoded_opts "oo::class"      "create new"
         dict set hardcoded_opts "oo::define"     "constructor deletemethod destructor export filter forward method mixin renamemethod self superclass unexport variable"
@@ -309,6 +311,7 @@ proc TclComplete::get_hardcoded_cmd_dict {} {
     dict set cmd_dict  "string is" wideinteger "Any of the valid forms for a wide integer in  Tcl."
     dict set cmd_dict  "string is" wordchar    "Any  Unicode  word  character.  "
     dict set cmd_dict  "string is" xdigit      "Any hexadecimal digit character (0-9A-Fa-f)."
+    dict set cmd_dict  "string is" easter      "egg"
     # ----------------------------------------------------------------
     dict set cmd_dict "format" "%d" "Signed decimal"
     dict set cmd_dict "format" "%s" "String"
@@ -323,6 +326,16 @@ proc TclComplete::get_hardcoded_cmd_dict {} {
     dict set cmd_dict "format" "%g" "%f or %e, based on precision"
     dict set cmd_dict "format" "%G" "%f or %E, based on precision"
     dict set cmd_dict "scan"   [dict get $cmd_dict format]
+    # ----------------------------------------------------------------
+    dict set cmd_dict "trace add"    "command"   "... name <rename|delete> commandPrefix"
+    dict set cmd_dict "trace add"    "execution" "... name <enter|leave|enterstep|leavestep> commandPrefix"
+    dict set cmd_dict "trace add"    "variable"  "... name <array|read|write|unset> commandPrefix"
+    dict set cmd_dict "trace remove" "command"   "... name opList commandPrefix"
+    dict set cmd_dict "trace remove" "execution" "... name opList commandPrefix"
+    dict set cmd_dict "trace remove" "variable"  "... name opList commandPrefix"
+    dict set cmd_dict "trace info"   "command"   "... name"
+    dict set cmd_dict "trace info"   "execution" "... name"
+    dict set cmd_dict "trace info"   "variable"  "... name"
 
     return $cmd_dict
 }
