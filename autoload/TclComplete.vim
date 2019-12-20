@@ -549,7 +549,9 @@ function! TclComplete#Complete(findstart, base)
         " 6a) Completions for two word combinations (like 'string is')
         elseif has_key(g:TclComplete#options,s:active_cmd." ".g:last_completed_word)
             let g:ctype = 'two word options'
-            let l:complete_list = g:TclComplete#options[s:active_cmd." ".g:last_completed_word]
+            let l:two_word_command = join([s:active_cmd,g:last_completed_word])
+            let l:complete_list = g:TclComplete#options[l:two_word_command]
+            let l:menu_dict     = get(g:TclComplete#details,l:two_word_command,[])
 
         " 6b) Complete two word namespace commands with your namespaces.
         elseif s:active_cmd=='namespace'
