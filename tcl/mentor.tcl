@@ -19,11 +19,9 @@ proc TclComplete::mentor_get_help_commands {} {
     set lines [split $help_std_out "\n"]
     set commands {}
     foreach line $lines {
-        # Skip unavailable commands
-        if {[string match "*(...unavailable...)*" $line]} {
-            continue
-        }
-
+        # The first word in each line is the name of the command.
+        #  - (there may be a second word, '(...unavailable...)', 
+        #      which will be ignored)
         if {[llength $line] > 0} {
             lappend commands [lindex $line 0]
         }
