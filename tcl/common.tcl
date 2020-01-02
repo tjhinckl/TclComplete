@@ -392,7 +392,7 @@ proc TclComplete::write_json_from_cmd_dict {outdir cmd_dict} {
         } 
     }
 
-    # Remove the . command.  Who needs autocomplete for a dot?
+    # Put the commands in the preferred order.
     set commands "$commands $commands_1 $commands_2 $commands_4 $commands_6 ${_commands} ${.commands}"
 
     TclComplete::write_json $outdir/commands [TclComplete::list_to_json $commands]
