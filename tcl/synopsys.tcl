@@ -532,5 +532,5 @@ proc TclComplete::write_rdt_steps {outdir} {
     }
 
     # Write out the JSON file.
-    TclComplete::write_json $outdir/rdt_steps    [TclComplete::dict_of_lists_to_json $rdt_steps]
+    TclComplete::write_json $outdir/rdt_steps    [TclComplete::dict_of_lists_to_json $rdt_steps "no_sort"]
 }

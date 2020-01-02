@@ -63,7 +63,6 @@ function! TclComplete#GetData()
         let g:TclComplete#attribute_funcs[f]=''
     endfor
 
-
     "     list:  packages
     let g:TclComplete#packages = TclComplete#ReadJsonFile('packages.json','list')
 
@@ -95,6 +94,7 @@ function! TclComplete#GetData()
     let g:TclComplete#track_patterns = filter(copy(g:TclComplete#g_var_arrays),"v:val=~'G_ROUTE_TRACK_PATTERNS'")
     call map(g:TclComplete#track_patterns,"split(v:val,'[()]')[1]")
 
+    " Synopsys app option dict
     let g:TclComplete#app_options_dict  = TclComplete#ReadJsonFile('app_options.json','dict')
     
     " Tech file information from the ::techfile_info array (rdt thing)
@@ -102,14 +102,22 @@ function! TclComplete#GetData()
     let g:TclComplete#techfile_layer_dict = TclComplete#ReadJsonFile('techfile_layer_dict.json','dict')
     let g:TclComplete#techfile_attr_dict  = TclComplete#ReadJsonFile('techfile_attr_dict.json','dict')
 
-    " Tech file information from the ::techfile_info array (rdt thing)
+    " Environment variables
     let g:TclComplete#environment  = sort(keys(TclComplete#ReadJsonFile('environment.json','dict')))
 
     " Design names in your session
     let g:TclComplete#designs = TclComplete#ReadJsonFile('designs.json','list')
 
-    " App variables
+    " App variables dict (key=app var name, value=app var value when JSON file was create)
     let g:TclComplete#app_var_list = TclComplete#ReadJsonFile('app_vars.json','dict')
+
+    " RDT steps dict (key=stage name, value = list of steps for the stage)
+    let g:TclComplete#rdt_step_dict  = TclComplete#ReadJsonFile('rdt_steps.json','dict')
+    let g:TclComplete#rdt_stage_list = sort(keys(g:TclComplete#rdt_step_dict))
+    let g:TclComplete#rdt_commands={}
+    for cmd in ['runRDT','rdt_add_pre_step','rdt_add_post_step','rdt_add_pre_stage','rdt_add_post_stage','rdt_remove_stage','rdt_get_global_voltages','rdt_get_rail_voltage','rdt_get_scenario_data']
+        let g:TclComplete#rdt_commands[cmd]=''
+    endfor
 
     " GUI settings
     let g:TclComplete#gui_layout_window_list = TclComplete#ReadJsonFile('gui_settings_layout.json','list')
@@ -349,11 +357,10 @@ function! TclComplete#Complete(findstart, base)
     "findstart = 0 when we need to return the list of completions
     else
         " Adjust the base argument. 
-        " 1)  Vim converts a dash in the base to a 0.  Why is that?
-        let l:base = a:base=='0' ? '-' : a:base
-        " 2) Allow a wildcard * to work as a regex .*
+        let l:base = a:base
+        " 1) Allow a wildcard * to work as a regex .*
         let l:base = substitute(l:base,'*','.*','g')
-        " 3) Force a $ character in l:base to be a literal $ so regex matches with =~ operator still work.
+        " 2) Force a $ character in l:base to be a literal $ so regex matches with =~ operator still work.
         let l:base = substitute(l:base,'\$','\\$','g')
 
         " Save globally for debug purpose
@@ -635,6 +642,11 @@ function! TclComplete#Complete(findstart, base)
             endif
 
 
+        " 11) RDT stuff
+        elseif has_key(g:TclComplete#rdt_commands,s:active_cmd)
+            let g:ctype = 'rdt_steps'
+            let l:complete_list = TclComplete#get_rdt_list(s:active_cmd,g:last_completed_word,l:base)
+        
         " Default) Options of the active command.
         else
             let g:ctype = 'default'
@@ -660,3 +672,87 @@ function! TclComplete#Complete(findstart, base)
     endif
 endfunction
 
+"""""""" Helper proc for RDT """"""""""""""""""""""""""""
+function! TclComplete#get_rdt_list(active_cmd,last_completed_word,base)
+    """ runRDT command """""""""""""""""""""""
+    if a:active_cmd=='runRDT'
+        if a:last_completed_word=='-load'
+            let g:ctype = 'runRDT -load'
+            return g:TclComplete#rdt_stage_list
+        elseif a:last_completed_word=='-stop'
+            " Allow a stage.step format
+            if a:base =~ '\.'
+                let g:ctype='runRDT -stop stage.step'
+                let l:rdt_stage = split(a:base,'\.')[0]
+                let l:rdt_steps = get(g:TclComplete#rdt_step_dict,l:rdt_stage,'[]')
+                return map(l:rdt_steps,"l:rdt_stage.'.'.v:val")
+            else
+            " ...or a stage name only
+                let g:ctype='runRDT -stop stage'
+                return g:TclComplete#rdt_stage_list
+            endif
+        elseif a:last_completed_word=='-load_cel'
+            let g:ctype = 'runRDT -load_cel'
+            return g:TclComplete#designs
+        endif
+    endif
+
+    """ run_add_post_step/run_add_pre_step
+    if a:active_cmd=~'^rdt_add_\(post\|pre\)_step'
+        let g:ctype='rdt_add_post/pre_step'
+        if a:active_cmd==a:last_completed_word
+            return g:TclComplete#rdt_stage_list
+        else
+            return get(g:TclComplete#rdt_step_dict,a:last_completed_word,'[]')
+        endif
+    endif
+
+    """ run_add_post_step/run_add_pre_stage
+    if a:active_cmd=~'^rdt_add_\(post\|pre\)_stage'
+        let g:ctype='rdt_add_post/pre_stage'
+        if a:active_cmd==a:last_completed_word
+            return ['[getvar G_FLOW]']
+        elseif a:last_completed_word=~'G_FLOW'
+            return g:TclComplete#rdt_stage_list
+        else
+            return get(g:TclComplete#rdt_step_dict,a:last_completed_word,'[]')
+        endif
+    endif
+
+    """ rdt_remove_stage """""""""
+    if a:active_cmd=='rdt_remove_stage'
+        let g:ctype='rdt_remove_stage'
+
+        if a:last_completed_word=='-flow'
+            return ['[getvar G_FLOW]']
+        elseif a:last_completed_word=='-stage'
+            return g:TclComplete#rdt_stage_list
+        endif
+    endif
+
+    """ rdt_get_global/rail_voltages  - complete with corner names
+    if a:active_cmd=~'^rdt_get_\(global\|rail\)_voltage'
+        let g:ctype='rdt_get__voltage corner'
+        return TclComplete#get_g_var_array_names('G_CORNER_DETAILS')
+    endif
+
+    """ rdt_get_global/rail_voltages  - complete with corner names
+    if a:active_cmd=='rdt_get_scenario_data'
+        let g:ctype='rdt_get_scenario_data'
+        return TclComplete#get_g_var_array_names('G_SCENARIO_DETAILS')
+    endif
+
+    " Return an empty list by default
+    return []
+endfunction
+
+function TclComplete#get_g_var_array_names(g_var)
+    let result=[]
+    for g_var in g:TclComplete#g_var_arrays
+        let split_list = split(g_var,'(')
+        if split_list[0]==a:g_var
+            call add(result,split_list[1][0:-2])
+        endif
+    endfor
+    return result
+endfunction

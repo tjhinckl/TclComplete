@@ -87,13 +87,18 @@ proc TclComplete::dict_to_json {dict} {
 }
 
 # Return a json string for a Tcl dictionary of lists
-proc TclComplete::dict_of_lists_to_json {dict_of_lists} {
+proc TclComplete::dict_of_lists_to_json {dict_of_lists args} {
     set indent "    "
     set result "{\n"
     foreach key [lsort [dict keys $dict_of_lists]] {
         append result "${indent}\"${key}\":\n"
         append result "${indent}${indent}\[\n"
-        foreach value [lsort [dict get $dict_of_lists $key]] {
+        if {"no_sort" in $args} {
+            set key_list [dict get $dict_of_lists $key]
+        } else {
+            set key_list [lsort [dict get $dict_of_lists $key]]
+        }
+        foreach value $key_list {
             append result "${indent}${indent}\"${value}\",\n"
         }
         set result [TclComplete::remove_final_comma $result]
