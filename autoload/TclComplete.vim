@@ -4,10 +4,14 @@
 " Last Updated: 09-Jul-2019
 "
 
-function! TclComplete#ReadJsonFile(json_file)
+function! TclComplete#ReadJsonFile(json_file, json_type)
     let json_full_path = g:TclComplete#dir.'/'.a:json_file
     if !filereadable(json_full_path)
-        return []
+        if a:json_type=='list'
+            return []
+        elseif a:json_type=='dict'
+            return {}
+        endif
     endif
     let file_lines = readfile(json_full_path)
     let file_as_one_string = join(file_lines)
@@ -42,11 +46,14 @@ endfunction
 function! TclComplete#GetData()                                     
     let l:dir = g:TclComplete#dir
 
+    "   list of commands.  Namespaced commands at end.
+    let g:TclComplete#cmds = TclComplete#ReadJsonFile('commands.json','list')
+
     "   dictionary: key = 'command', value = 'description of command'
-    let g:TclComplete#descriptions = TclComplete#ReadJsonFile('descriptions.json')
+    let g:TclComplete#descriptions = TclComplete#ReadJsonFile('descriptions.json','dict')
 
     "   multi-level dictionary [object_class][attr_name] = choices
-    let g:TclComplete#attributes = TclComplete#ReadJsonFile('attributes.json')
+    let g:TclComplete#attributes = TclComplete#ReadJsonFile('attributes.json','dict')
     let g:TclComplete#object_classes = sort(keys(g:TclComplete#attributes))
 
     "  We will check if commands are included as keys here for attribute completion.
@@ -56,11 +63,9 @@ function! TclComplete#GetData()
         let g:TclComplete#attribute_funcs[f]=''
     endfor
 
-    "     list of commands.  Namespaced commands at end.
-    let g:TclComplete#cmds = TclComplete#ReadJsonFile('commands.json')
 
     "     list:  packages
-    let g:TclComplete#packages = TclComplete#ReadJsonFile('packages.json')
+    let g:TclComplete#packages = TclComplete#ReadJsonFile('packages.json','list')
 
     "     list: derive the namespaces
     let g:TclComplete#namespaces = copy(g:TclComplete#cmds)
@@ -70,47 +75,47 @@ function! TclComplete#GetData()
     call uniq(sort(g:TclComplete#namespaces,'i'))
 
     "     dict: key = ['command']  value = alphabetical list of options
-    let g:TclComplete#options = TclComplete#ReadJsonFile('options.json')
+    let g:TclComplete#options = TclComplete#ReadJsonFile('options.json','dict')
 
     "     dict: key   = ['command']['option']
     "           value = description of option 
-    let g:TclComplete#details = TclComplete#ReadJsonFile('details.json')
+    let g:TclComplete#details = TclComplete#ReadJsonFile('details.json','dict')
 
     "  g:TclComplete#iccpp (list of iccpp parameters)
-    let g:TclComplete#iccpp = TclComplete#ReadJsonFile('iccpp.json')
+    let g:TclComplete#iccpp = TclComplete#ReadJsonFile('iccpp.json','list')
 
     " dict if iccpp parameters plus their default values
-    let g:TclComplete#iccpp_dict = TclComplete#ReadJsonFile('iccpp_dict.json')
+    let g:TclComplete#iccpp_dict = TclComplete#ReadJsonFile('iccpp_dict.json','dict')
 
     " G variables that were loaded into your session.
-    let g:TclComplete#g_vars = TclComplete#ReadJsonFile('g_vars.json')
-    let g:TclComplete#g_var_arrays = TclComplete#ReadJsonFile('g_var_arrays.json')
+    let g:TclComplete#g_vars = TclComplete#ReadJsonFile('g_vars.json','list')
+    let g:TclComplete#g_var_arrays = TclComplete#ReadJsonFile('g_var_arrays.json','list')
 
     " Get the track patterns from the G_ROUTE_TRACK_PATTERNS array
     let g:TclComplete#track_patterns = filter(copy(g:TclComplete#g_var_arrays),"v:val=~'G_ROUTE_TRACK_PATTERNS'")
     call map(g:TclComplete#track_patterns,"split(v:val,'[()]')[1]")
 
-    let g:TclComplete#app_options_dict  = TclComplete#ReadJsonFile('app_options.json')
+    let g:TclComplete#app_options_dict  = TclComplete#ReadJsonFile('app_options.json','dict')
     
     " Tech file information from the ::techfile_info array (rdt thing)
-    let g:TclComplete#techfile_types      = TclComplete#ReadJsonFile('techfile_types.json')
-    let g:TclComplete#techfile_layer_dict = TclComplete#ReadJsonFile('techfile_layer_dict.json')
-    let g:TclComplete#techfile_attr_dict  = TclComplete#ReadJsonFile('techfile_attr_dict.json')
+    let g:TclComplete#techfile_types      = TclComplete#ReadJsonFile('techfile_types.json','list')
+    let g:TclComplete#techfile_layer_dict = TclComplete#ReadJsonFile('techfile_layer_dict.json','dict')
+    let g:TclComplete#techfile_attr_dict  = TclComplete#ReadJsonFile('techfile_attr_dict.json','dict')
 
     " Tech file information from the ::techfile_info array (rdt thing)
-    let g:TclComplete#environment  = sort(keys(TclComplete#ReadJsonFile('environment.json')))
+    let g:TclComplete#environment  = sort(keys(TclComplete#ReadJsonFile('environment.json','dict')))
 
     " Design names in your session
-    let g:TclComplete#designs = TclComplete#ReadJsonFile('designs.json')
+    let g:TclComplete#designs = TclComplete#ReadJsonFile('designs.json','list')
 
     " App variables
-    let g:TclComplete#app_var_list = TclComplete#ReadJsonFile('app_vars.json')
+    let g:TclComplete#app_var_list = TclComplete#ReadJsonFile('app_vars.json','dict')
 
     " GUI settings
-    let g:TclComplete#gui_layout_window_list = TclComplete#ReadJsonFile('gui_settings_layout.json')
+    let g:TclComplete#gui_layout_window_list = TclComplete#ReadJsonFile('gui_settings_layout.json','list')
 
     " Regexp char classes
-    let g:TclComplete#regexp_char_class_list = TclComplete#ReadJsonFile('regexp_char_classes.json')
+    let g:TclComplete#regexp_char_class_list = TclComplete#ReadJsonFile('regexp_char_classes.json','list')
 
     "  Functions that use g_var completion
     let g:TclComplete#gvar_funcs = {}
@@ -348,7 +353,7 @@ function! TclComplete#Complete(findstart, base)
         let l:base = a:base=='0' ? '-' : a:base
         " 2) Allow a wildcard * to work as a regex .*
         let l:base = substitute(l:base,'*','.*','g')
-        " 3) Allow a $ to be treated literally
+        " 3) Force a $ character in l:base to be a literal $ so regex matches with =~ operator still work.
         let l:base = substitute(l:base,'\$','\\$','g')
 
         " Save globally for debug purpose
@@ -377,14 +382,25 @@ function! TclComplete#Complete(findstart, base)
             let g:ctype = 'G_var'
             let l:complete_list = g:TclComplete#g_vars
 
-        " 1c) If you've typed a "$", then use a list of variables in the buffer.
-        "      (note, I change $ to \$ l:base earlier to match literal $'s elsewhere)
+        " 1c) $::env( or ::env( or env( completion with environment variables.
+        elseif l:base=~'\$\?\(::\)\?env('
+            let g:ctype = 'env_array'
+            let g:env_base =  split(l:base,'(')[0]
+            " The base might begin with slash-dollar \$, but the slash shouldn't be part of the complete list.
+            if g:env_base[0] == '\'
+                let g:env_base = g:env_base[1:]
+            endif
+            let l:complete_list = map(copy(g:TclComplete#environment),"g:env_base.'('.v:val")
+            let g:complete_list = l:complete_list
+
+        " 1d) If you've typed a "$", then use a list of variables in the buffer.
+        "      (NOTE, I change $ to \$ in l:base earlier to avoid regex problems in =~ operations.
         elseif l:base[0:1] == '\$'
             let g:ctype = '$var'
             let l:complete_list = map(TclComplete#ScanBufferForVariableNames(),"'$'.v:val")
             
 
-        " 1d) regexp character classes start with a single colon.  ([:alnum:], [:upper:], etc)
+        " 1e) regexp character classes start with a single colon.  ([:alnum:], [:upper:], etc)
         elseif l:base[0] == ':' && l:base[1] != ':'
             let g:ctype = 'regexp char class' 
             let l:complete_list = g:TclComplete#regexp_char_class_list
@@ -574,6 +590,10 @@ function! TclComplete#Complete(findstart, base)
             let g:ctype = 'package'
             let l:complete_list = g:TclComplete#packages
 
+        " 6e) Situations where the completion list should be a list of commands.
+        elseif s:active_cmd=='info' && g:last_completed_word=~'^commands\?$'
+            let l:complete_list = g:TclComplete#cmds
+
         " 7a) Techfile stuff (relies on $SD_BUILD2/utils/shared/techfile.tcl)
         elseif s:active_cmd =~ 'tech::get_techfile_info'
             let g:ctype = 'techfile'
@@ -613,6 +633,8 @@ function! TclComplete#Complete(findstart, base)
             elseif g:last_completed_word=='-setting'
                 let l:complete_list = g:TclComplete#gui_layout_window_list
             endif
+
+
         " Default) Options of the active command.
         else
             let g:ctype = 'default'
@@ -620,7 +642,11 @@ function! TclComplete#Complete(findstart, base)
             let l:menu_dict     = get(g:TclComplete#details,s:active_cmd,[])
         endif
 
-
+        " Just in case nothing matches, let the user known.   
+        if len(l:complete_list)==0
+            echom "TclComplete: no matches found (do you have g:TclComplete#dir defined?)"
+            return
+        endif
 
         " Finally, we filter the choices and add the description.
         let res = []
