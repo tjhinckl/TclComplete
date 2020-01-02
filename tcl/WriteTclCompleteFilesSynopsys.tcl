@@ -69,6 +69,7 @@ proc TclComplete::WriteFilesSynopsys {dir_location} {
     TclComplete::write_gvars_json        $outdir
     TclComplete::write_iccpp_json        $outdir
     TclComplete::write_descriptions_json $outdir $all_command_list
+    TclComplete::write_rdt_steps         $outdir
 
     # Vim stuff
     TclComplete::write_aliases_vim       $outdir

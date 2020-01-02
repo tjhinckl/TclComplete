@@ -517,3 +517,20 @@ proc TclComplete::write_aliases_vim {outdir} {
 }
 
 
+###############################################################
+# Write JSON files for rdt_steps (if RDT flow exists)
+###############################################################
+proc TclComplete::write_rdt_steps {outdir} {
+    # RDT stages and steps in a dictionary.
+    #  key = stage
+    #  value = list of steps
+    set rdt_steps [dict create]
+
+    set rdt_stages [rdt_list_stages]
+    foreach stage $rdt_stages {
+        dict set rdt_steps $stage [rdt_list_steps $stage]
+    }
+
+    # Write out the JSON file.
+    TclComplete::write_json $outdir/rdt_steps    [TclComplete::dict_of_lists_to_json $rdt_steps]
+}
