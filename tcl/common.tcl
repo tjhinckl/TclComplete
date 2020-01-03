@@ -571,3 +571,20 @@ proc TclComplete::write_vim_tcl_syntax {outdir cmd_list} {
     puts "...syntax/tcl.vim file complete."
     close $f
 }
+
+###########################################################################
+# If descriptions are missing from commands, then add args if they're a proc
+###########################################################################
+proc TclComplete::add_args_to_description_dict {description_dict} {
+    # description_dict:
+    #    key = command name
+    #    value = description of command
+    foreach cmd [dict keys $description_dict] {
+        if {[llength [dict get $description_dict $cmd]]==0 && [llength [info proc $cmd]]==1} {
+            set info_args [info args $cmd]
+            dict set description_dict $cmd $info_args
+            puts "$cmd -> <$info_args>"
+        }
+    }
+    return $description_dict
+}
