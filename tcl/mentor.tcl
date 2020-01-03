@@ -33,21 +33,10 @@ proc TclComplete::mentor_get_help_commands {} {
 # Run this before TclComplete::mentor_parse_help 
 ######################################################
 proc TclComplete::mentor_prepare_string_for_parse {input_string} {
-    # Make sure that braces are not butted against other grouping characters
-    #   so that they are a proper Tcl list.
-    set m1a "{"
-    set m1b " {"
-    set m2a "}"
-    set m2b "} "
-
-    # Put spaces around brackets so they will be parsed as their own tokens.
-    set m3a {[}
-    set m3b { [ }
-    set m4a {]}
-    set m4b { ] }
-    set mapping [list $m1a $m1b $m2a $m2b $m3a $m3b $m4a $m4b]
-
-    set new_string [string map $mapping $input_string]
+    # Make sure that braces are not butted against other grouping characters so
+    # that they are a proper Tcl list. Put spaces around brackets so they will
+    # be parsed as their own tokens.
+    regsub -all {[]{}[]} $input_string " & " new_string
 
     # standardize details whitespace
     set new_string [regsub -all {\s+} [string trim $new_string] { }]
