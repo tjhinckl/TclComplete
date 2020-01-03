@@ -3,7 +3,7 @@
 #### WriteTclCompleteFilesStd.tcl ########
 #############################################
 
-# Authors:  Troy Hinckley, Chris Heithoff
+# Author:  Chris Heithoff
 # Description:  Run the main proc in a tclsh shell to generate
 #  a group of json files containing commands, command options, etc, 
 #  which will be consumed by an auto-completion text editor plugin.
