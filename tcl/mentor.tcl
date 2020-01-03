@@ -62,6 +62,8 @@ proc TclComplete::get_mentor_cmd_dict {} {
 
     set cmd_dict [dict create]
     foreach cmd $commands {
+        # Save the current commnad in a variable that other procs can access.
+        set ::TclComplete::most_recent_command $cmd
         # Call [help $command] and save the string to $help
         if {[catch {
             catch_output "help $cmd" -output help
@@ -74,6 +76,7 @@ proc TclComplete::get_mentor_cmd_dict {} {
         set parsed_options [TclComplete::mentor_parse_help $help]
         dict set cmd_dict $cmd $parsed_options
     }
+    unset ::TclComplete::most_recent_command
     return $cmd_dict
 }
 
@@ -81,8 +84,21 @@ proc TclComplete::get_mentor_cmd_dict {} {
 # Parse the Mentor help string for a command and return a dictionary of command options.
 ########################################################################################                   
 proc TclComplete::mentor_parse_help {section} {
-    set size [llength $section]
     set options [dict create]
+    set size 0
+    # occasionally some commands usage are malformed because of
+    # missing closing braces. Add the closing braces so we can treat
+    # the contents as a list.
+    while {[catch {set size [llength $section]} err]} {
+        if {$err == "unmatched open brace in list"} {
+            append section " \}"
+            puts "Unmatched open brace in list: $::TclComplete::most_recent_command"
+        } else {
+            puts $err
+            return {}
+        }
+    }
+    set size [llength $section]
 
     # The help string will start with the command name, so start parsing on index 1.
     for {set i 1} {$i < $size} {incr i} {

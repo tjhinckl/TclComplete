@@ -14,6 +14,7 @@ namespace eval TclComplete {}
 
 set location [file dirname [file normalize [info script]]]
 source $location/common.tcl
+source $location/mentor.tcl
 
 proc TclComplete::WriteFilesMentor {dir_location} {
     # Form a list of all commands, including those inside namespaces.
@@ -30,7 +31,7 @@ proc TclComplete::WriteFilesMentor {dir_location} {
 
     # Get command options for Mentor [help -all] commands.
     puts "parsing Tessent shell commands..."
-    set mentor_cmd_dict  [TclComplete::get_mentor_cmd_dict]
+    set mentor_cmd_dict    [TclComplete::get_mentor_cmd_dict]
     set cmd_dict           [dict merge $cmd_dict $mentor_cmd_dict]
 
     # Merge in additional options for commands which can work for non-Synopsys tools.
@@ -81,8 +82,11 @@ proc TclComplete::WriteFilesMentor {dir_location} {
     # Vim stuff
     TclComplete::write_vim_tcl_syntax    $outdir $all_command_list
     
-    # Write key-only command description dictionary
+    # Description dict. 
+    #  Start keys only for all commands
     set description_dict [TclComplete::list2keys [dict keys $cmd_dict]]
+    #  Add the result of info args for every proc that lists arguments
+    set description_dict [TclComplete::add_args_to_description_dict $description_dict]
     set description_json [TclComplete::dict_to_json $description_dict]
     TclComplete::write_json $outdir/descriptions $description_json
 
