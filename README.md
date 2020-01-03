@@ -144,7 +144,7 @@ To avoid triggering an abbreviation, type `ctrl-v space`
 - package require
 - iccpp parameters with iccpp_com::get_param and iccpp_com::set_param
 - tech::get_techfile_info autocompletion 
-- getenv completion 
+- environment variable completion (after getenv, setenv and $::env( )
 - get_xxx -design completion (also works for current_design and set_working_design)
 - namespaces for "namespace" ensemble commands.
 - inside a namespace eval ... {} block
@@ -156,4 +156,5 @@ To avoid triggering an abbreviation, type `ctrl-v space`
 - encoding names
 - regexp character classes (like [:alnum:])
 - "string is" arguments
+- rdt stages and steps (if using an Intel RDT flow)
 
