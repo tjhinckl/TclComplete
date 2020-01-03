@@ -51,9 +51,9 @@ proc TclComplete::get_all_sorted_commands {} {
     # Put them in the desired sequence.
     set all_command_list [concat $commands $ns_cmds1 $ns_cmds2 ${_commands} ${:commands}]
 
-    # One last thing.  Remove any commands with single quotes in the name
+    # One last thing.  Remove any commands with percent sign in the name
     #  (one example is tcl::clock::formatproc'%m_%d_%H_%M'c )
-    set all_command_list [lsearch -all -inline -not $all_command_list *'*]
+    set all_command_list [lsearch -all -inline -not $all_command_list *%*]
 
     return $all_command_list
 }
