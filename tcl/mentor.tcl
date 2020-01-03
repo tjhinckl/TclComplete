@@ -104,7 +104,10 @@ proc TclComplete::mentor_parse_help {section} {
         if {[llength $token ] > 1} {
             set sub_options [TclComplete::mentor_parse_help $token]
             set options [dict merge $options $sub_options]
-        } elseif {[string match -* $token]} {
+        } elseif {[regexp ^<?-.+ $token]} {
+            # Some commands use captial letters to indidcate shortest common prefix
+            set token [string tolower $token]
+            regsub {[<>]} $token {} token
             # Peek ahead to see if this option has enumerated values
             set next [lindex $section [expr {$i + 1}]]
             if {[llength $next] > 1 || [string match <* $next]} {
