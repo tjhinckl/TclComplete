@@ -218,9 +218,22 @@ proc TclComplete::get_app_option_from_man_page {app_option} {
 proc TclComplete::get_descriptions {commands} {
     set desc_dict [dict create]
     foreach cmd $commands {
+        # Get description of the command from Synopsys help, then from Synopsys man pages, 
+        # and then finally from 'info args proc_name'.
         set description [TclComplete::get_description_from_help $cmd]
         if {$description eq "# Builtin"} {
             set description [TclComplete::get_description_from_man $cmd]
+        } elseif {$description eq ""} {
+            # Important to evaluate info proc at global namespace
+            #   because we're stuck here in the TclComplete namespace
+            if {[info proc ::${cmd}] eq "::${cmd}"} {
+                set info_args [info args ::${cmd}]
+                if {$info_args eq "args" || $info_args eq ""} {
+                    set description ""
+                } else {
+                    set description "# args = $info_args"
+                }
+            }
         }
         dict set desc_dict $cmd $description
     }

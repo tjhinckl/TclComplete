@@ -580,10 +580,18 @@ proc TclComplete::add_args_to_description_dict {description_dict} {
     #    key = command name
     #    value = description of command
     foreach cmd [dict keys $description_dict] {
-        if {[llength [dict get $description_dict $cmd]]==0 && [llength [info proc $cmd]]==1} {
-            set info_args [info args $cmd]
-            dict set description_dict $cmd $info_args
-            puts "$cmd -> <$info_args>"
+        if {[dict get $description_dict $cmd] eq ""} {
+            # Important to evaluate info proc at global namespace
+            #   because we're stuck here in the TclComplete namespace
+            if {[info proc ::${cmd}] eq "::${cmd}"} {
+                set info_args [info args ::${cmd}]
+                if {$info_args eq "args"} {
+                    set description ""
+                } else {
+                    set description "# args = $info_args"
+                }
+                dict set description_dict $cmd $description
+            }
         }
     }
     return $description_dict
