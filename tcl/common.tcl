@@ -297,7 +297,7 @@ proc TclComplete::get_hardcoded_cmd_dict {} {
     # Hard coded values which included option descriptions.
     dict set cmd_dict  "string is" alnum       "Any Unicode alphabet or digit character."
     dict set cmd_dict  "string is" alpha       "Any Unicode alphabet character."
-    dict set cmd_dict  "string is" ascii       "Any character with a value less than \u0080."
+    dict set cmd_dict  "string is" ascii       "Any character with a value less than U+0080."
     dict set cmd_dict  "string is" boolean     "Any of the forms allowed to Tcl_GetBoolean."
     dict set cmd_dict  "string is" control     "Any Unicode control character."
     dict set cmd_dict  "string is" digit       "Any Unicode digit character. "
