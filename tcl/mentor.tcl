@@ -88,7 +88,7 @@ proc TclComplete::mentor_parse_help {section} {
         }
     }
 
-    # The help string will start with the command name, so start parsing on index 1.
+    # The index needs to start at zero for recursive visits into this proc.  
     for {set i 0} {$i < $size} {incr i} {
         set token [lindex $section $i]
         # stop parsing when we reach the contexts token because details
