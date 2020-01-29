@@ -357,6 +357,13 @@ proc TclComplete::get_hardcoded_cmd_dict {} {
     dict set cmd_dict "lsort"        "-nocase"     "Compare in a case-insensitive manner."
     dict set cmd_dict "lsort"        "-unique"     "Remove duplicate elements in list"
     # ----------------------------------------------------------------
+    dict set cmd_dict "return"       "-code"       "ok, error, return, break, or continue"
+    dict set cmd_dict "return"       "-errorcode"  "List of additional information about the error.  Only used with -code error"
+    dict set cmd_dict "return"       "-errorinfo"  "Info is the initial stack trace.  Only used with -code error"
+    dict set cmd_dict "return"       "-errorstack" "Initial error stack reachable through info errorstack."
+    dict set cmd_dict "return"       "-level"      "Defines the number of levels up the stack at which the return code of a command should be. Default=1"
+    dict set cmd_dict "return"       "-options"    "The value must be a valid dictionary"
+    # ----------------------------------------------------------------
     dict set cmd_dict "lsearch"      "-exact"      "Pattern is compared for exact equality against each list element."
     dict set cmd_dict "lsearch"      "-glob"       "Pattern is a glob-style pattern."
     dict set cmd_dict "lsearch"      "-regexp"     "Pattern is treated as a regular expression."
