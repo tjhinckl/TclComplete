@@ -10,7 +10,6 @@
 "     1) g:TclComplete#dir defined in ~/.vimrc 
 "     2) $WARD/TclComplete
 "     3) $WARD/dp/inputs/TclComplete
-"     4) The location of this plugin.
 if !exists("g:TclComplete#dir")
     if isdirectory($WARD."/TclComplete")
         let g:TclComplete#dir = $WARD."/TclComplete"
