@@ -1,7 +1,7 @@
 "tclcomplete.vim - Omni Completion for Synopsys Tcl
 " Creator: Chris Heithoff < christopher.b.heithoff@intel.com >
-" Version: 2.0
-" Last Updated: 09-Jul-2019
+" Version: 2.1
+" Last Updated: 18-Feb-2020
 "
 
 function! TclComplete#ReadJsonFile(json_file, json_type)
@@ -161,7 +161,7 @@ function! TclComplete#GetData()
         let g:TclComplete#app_option_funcs[f]=''
     endfor
 
-endfunction                                                            l
+endfunction
 
 function! TclComplete#GetObjectClass(get_command)
     " Strip off 'get_'
@@ -170,6 +170,12 @@ function! TclComplete#GetObjectClass(get_command)
         return object
     endif
     " Try without the 's'.  get_cells vs get_cell
+    let object = object[0:-2]
+    if index(g:TclComplete#object_classes, object) >= 0
+        return object
+    endif
+
+    " Try taking off one more letter (port_buses --> port_buse --> port_bus)
     let object = object[0:-2]
     if index(g:TclComplete#object_classes, object) >= 0
         return object
