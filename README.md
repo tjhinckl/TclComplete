@@ -12,15 +12,30 @@ https://soco.intel.com/groups/vim-users/blog/2018/07/13/auto-completion-for-syno
 
 ==============================================================================
 ## Installing this plugin
-1.  Vim8.0 or above is required.  
-2.  To install the plugin, make a pack directory in your ~/.vim folder and a subdirectory for the plugin.
+1.  Vim8.0 or above is required. 
+
+     (see https://soco.intel.com/groups/vim-users/blog/2016/11/28/how-to-set-your-vim-version-at-intel )
+
+2.  If you are on an Intel EC SLES11 machine, you must use a newer version
+     of Git than the default version.
+
+   This version is known to work.
+>   /usr/intel/pkgs/git/2.12.0a/bin/git
+
+   Add this line to your `~/.itools` file to use this as default
+>   P:git      2.12.0a
+
+3.  To install the plugin, make a pack directory in your ~/.vim folder and a subdirectory for the plugin.
 >     mkdir -p ~/.vim/pack/from_gitlab/start
 >     cd ~/.vim/pack/from_gitlab/start
 >     git clone https://gitlab.devtools.intel.com/cbheitho/TclComplete
-3.  In your ~/.vimrc, you *must* enable filetype plugins
+
+4.  In your ~/.vimrc, you *must* enable filetype plugins
 >     filetype plugin indent on
-4.  Start your tcl shell 
-5.  Create the TclComplete files from your tcl shell:
+
+5.  Start your tcl shell 
+
+6.  Create the TclComplete files from your tcl shell:
 For Synopsys tools
 >     source ~/.vim/pack/from_gitlab/start/TclComplete/tcl/WriteTclCompleteFilesSynopsys.tcl
 >     TclComplete::WriteFilesSynopsys <directory>
