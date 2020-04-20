@@ -15,7 +15,13 @@ function! TclComplete#ReadJsonFile(json_file, json_type)
     endif
     let file_lines = readfile(json_full_path)
     let file_as_one_string = join(file_lines)
-    let object = json_decode(file_as_one_string)
+
+    " Some json files might throw out some warnings.
+    " ..suppress the warning with a try/endtry.
+    try
+        let object = json_decode(file_as_one_string)
+    endtry
+
     return object
 endfunction
     
