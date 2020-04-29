@@ -493,6 +493,7 @@ proc TclComplete::write_regex_char_class_json {outdir} {
 # Write a json file with the packages available
 #######################################################
 proc TclComplete::write_packages_json {outdir} {
+    catch {package require look_for_a_package_that_does_not_exist_so_package_names_returns_all_available_packages}
     set package_list [lsort -u [package names]]
     TclComplete::write_json $outdir/packages [TclComplete::list_to_json $package_list]
 }
