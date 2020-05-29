@@ -29,6 +29,8 @@ https://soco.intel.com/groups/vim-users/blog/2018/07/13/auto-completion-for-syno
 >     mkdir -p ~/.vim/pack/from_gitlab/start
 >     cd ~/.vim/pack/from_gitlab/start
 >     git clone https://gitlab.devtools.intel.com/cbheitho/TclComplete
+   If the git clone step doesn't work (because of a recent change to gitlab.devtools.intel.com) then disable ssL verification and try again.
+>     git config --global http.sslVerify false
 
 4.  In your ~/.vimrc, you *must* enable filetype plugins
 >     filetype plugin indent on
