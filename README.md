@@ -20,17 +20,19 @@ https://soco.intel.com/groups/vim-users/blog/2018/07/13/auto-completion-for-syno
      of Git than the default version.
 
    This version is known to work.
->   /usr/intel/pkgs/git/2.12.0a/bin/git
+>   /usr/intel/pkgs/git/2.23.0/bin/git
 
    Add this line to your `~/.itools` file to use this as default
->   P:git      2.12.0a
+>   P:git      2.23.0a
 
 3.  To install the plugin, make a pack directory in your ~/.vim folder and a subdirectory for the plugin.
 >     mkdir -p ~/.vim/pack/from_gitlab/start
 >     cd ~/.vim/pack/from_gitlab/start
 >     git clone https://gitlab.devtools.intel.com/cbheitho/TclComplete
+
    If the git clone step doesn't work (because of a recent change to gitlab.devtools.intel.com) then disable ssL verification and try again.
->     git config --global http.sslVerify false
+>     git config --global http.sslCAPath /etc/ssl/certs
+>     git config --global http.proxy http://proxy-chain.intel.com:911
 
 4.  In your ~/.vimrc, you *must* enable filetype plugins
 >     filetype plugin indent on
