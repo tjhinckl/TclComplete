@@ -30,7 +30,7 @@ https://soco.intel.com/groups/vim-users/blog/2018/07/13/auto-completion-for-syno
 >     cd ~/.vim/pack/from_gitlab/start
 >     git clone https://gitlab.devtools.intel.com/cbheitho/TclComplete
 
-   If the git clone step doesn't work (because of a recent change to gitlab.devtools.intel.com) then disable ssL verification and try again.
+   If the git clone step doesn't work (because of a recent change to gitlab.devtools.intel.com) then add these git settings and try again.
 >     git config --global http.sslCAPath /etc/ssl/certs
 >     git config --global http.proxy http://proxy-chain.intel.com:911
 
