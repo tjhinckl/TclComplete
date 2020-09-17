@@ -53,6 +53,9 @@ proc TclComplete::WriteFilesStd {dir_location} {
     TclComplete::write_regex_char_class_json $outdir
     TclComplete::write_packages_json         $outdir
 
+    # Find any arrays and dump their current values.
+    TclComplete::write_arrays_json $outdir
+
     # Vim stuff
     TclComplete::write_vim_tcl_syntax    $outdir $all_command_list
     

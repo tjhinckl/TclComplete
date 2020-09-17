@@ -48,6 +48,8 @@ endfunction
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
 " TclComplete#GetData()
 " - this is called when TclComplete is activated.
+"   TODO: Maybe make this lazy...only take the time to read a json file 
+"           if the completion context was triggered.
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! TclComplete#GetData()                                     
     let l:dir = g:TclComplete#dir
@@ -96,6 +98,9 @@ function! TclComplete#GetData()
     let g:TclComplete#g_vars = TclComplete#ReadJsonFile('g_vars.json','list')
     let g:TclComplete#g_var_arrays = TclComplete#ReadJsonFile('g_var_arrays.json','list')
 
+    " arrays (names and values of every Tcl array variable)
+    let g:TclComplete#arrays = TclComplete#ReadJsonFile('arrays.json','dict')
+
     " Get the track patterns from the G_ROUTE_TRACK_PATTERNS array
     let g:TclComplete#track_patterns = filter(copy(g:TclComplete#g_var_arrays),"v:val=~'G_ROUTE_TRACK_PATTERNS'")
     call map(g:TclComplete#track_patterns,"split(v:val,'[()]')[1]")
@@ -108,8 +113,8 @@ function! TclComplete#GetData()
     let g:TclComplete#techfile_layer_dict = TclComplete#ReadJsonFile('techfile_layer_dict.json','dict')
     let g:TclComplete#techfile_attr_dict  = TclComplete#ReadJsonFile('techfile_attr_dict.json','dict')
 
-    " Environment variables
-    let g:TclComplete#environment  = sort(keys(TclComplete#ReadJsonFile('environment.json','dict')))
+    " " Environment variables (this was made obsolete by g:TclComplete#arrays)
+    " let g:TclComplete#environment  = sort(keys(TclComplete#ReadJsonFile('environment.json','dict')))
 
     " Design names in your session
     let g:TclComplete#designs = TclComplete#ReadJsonFile('designs.json','list')
@@ -290,7 +295,8 @@ function! TclComplete#FindStart()
     " Important:  We need to search for :: for namespaces, $ for var names
     "             and * for the wildcard mode, and -dashes for options
     "             and . for app_options.
-    let l:valid_chars = '[\-a-zA-Z0-9:_*$(.]'
+    let l:valid_chars = '[\-a-zA-Z0-9:_*$(.,]'
+
 
     " Move backward as long as the previous character(index-1)  is part of valid_chars
     while  l:index>0 && l:line[l:index - 1]=~l:valid_chars
@@ -401,16 +407,38 @@ function! TclComplete#Complete(findstart, base)
             let g:ctype = 'G_var'
             let l:complete_list = g:TclComplete#g_vars
 
-        " 1c) $::env( or ::env( or env( completion with environment variables.
-        elseif l:base=~'\$\?\(::\)\?env('
-            let g:ctype = 'env_array'
-            let g:env_base =  split(l:base,'(')[0]
+        " 1c)  If you've typed an array that in the g:TclComplete#arrays dict, then 
+        "      complete the names
+        elseif l:base=~'('
+            let g:ctype= 'array'
+            " Find the base text before the left parenthesis
+            let g:array_base = split(l:base,'(')[0]
             " The base might begin with slash-dollar \$, but the slash shouldn't be part of the complete list.
-            if g:env_base[0] == '\'
-                let g:env_base = g:env_base[1:]
+            if g:array_base[0] == '\'
+                let g:array_base = g:array_base[1:]
             endif
-            let l:complete_list = map(copy(g:TclComplete#environment),"g:env_base.'('.v:val")
-            let g:complete_list = l:complete_list
+            " The base might include $ or ::.  We don't want those for dictionary lookup
+            let g:array_varname = substitute(g:array_base, '^[$:]*', '', 'g')
+
+            " Get the array variable's name/value dict (default to empty dict)
+            if has_key(g:TclComplete#arrays, g:array_varname)
+                let g:array_dict  = get(g:TclComplete#arrays, g:array_varname)
+                let g:array_names = keys(g:array_dict)
+
+                " Make a list and dict with the full base name as keys 
+                "   - ($ and ::) restored if needed. 
+                "    - and a ( before the name.
+                let l:menu_dict = {}
+                for l:array_name in g:array_names
+                    let l:array_full_name = g:array_base . "(" . l:array_name
+                    let l:menu_dict[l:array_full_name] = g:array_dict[l:array_name]
+                endfor
+                let g:menu_dict = l:menu_dict
+                let l:complete_list = sort(keys(l:menu_dict))
+            else 
+                let l:complete_list = []
+            endif
+
 
         " 1d) If you've typed a "$", then use a list of variables in the buffer.
         "      (NOTE, I change $ to \$ in l:base earlier to avoid regex problems in =~ operations.
@@ -557,7 +585,8 @@ function! TclComplete#Complete(findstart, base)
         " 5c) Complete with environment variables
         elseif has_key(g:TclComplete#env_funcs, s:active_cmd)
             let g:ctype = 'env'
-            let l:complete_list = g:TclComplete#environment
+            let l:menu_dict = g:TclComplete#arrays['env']
+            let l:complete_list = sort(keys(l:menu_dict))
 
         " 5d) Complete with the list of designs in your project.
         elseif g:last_completed_word == "-design" || has_key(g:TclComplete#design_funcs, s:active_cmd)

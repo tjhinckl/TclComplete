@@ -6,7 +6,7 @@ namespace eval TclComplete {}
 set TclComplete::script_dir [file dirname [file normalize [info script]]]
 
 #############################################################
-# Super version of info commands that also goes into namespaces
+# Super version of [info commands] that also goes into namespaces
 #############################################################
 proc TclComplete::get_all_sorted_commands {} {
     
@@ -607,3 +607,53 @@ proc TclComplete::add_args_to_description_dict {description_dict} {
     }
     return $description_dict
 }
+
+#########################################
+# Get all the variables which are arrays
+#########################################
+proc TclComplete::info_arrays {} {
+    # This proc is in the TclComplete namespace, but we want to look at global arrays
+    namespace eval :: {
+        set all_var_names [info vars]
+
+        foreach var_name $all_var_names {
+            if {[array exists $var_name]} {
+                lappend arrays $var_name
+            }
+        }
+    }
+    return [lsort -unique $::arrays]
+}
+
+#######################################################
+# Write a json file for all arrays
+#  key = name of array (ivar, env, etc)
+#  values = keys for that array 
+#######################################################
+proc TclComplete::write_arrays_json {outdir} {
+    # Run in the global namespace because this proc is in a different namespace
+    # and [info vars] is namespace sensitive.
+    namespace eval :: {
+         foreach var_name [info vars] {
+            if {[array exists $var_name]} {
+                lappend TclComplete::array_vars ${var_name}
+            }
+        }
+    }
+
+    # Get the current values and set it all in the array_dict.
+    set array_dict [dict create]
+    foreach array_var $TclComplete::array_vars {
+        foreach {name value} [array get $array_var] {
+            # Flatten any nested lists to make it work bettern with JSON.
+            set value [join [join $value]]
+
+            # Escape double quotes in the value to make it work with JSON.
+            set value [regsub -all "\"" $value {\"}]
+            dict set array_dict $array_var $name $value
+        }
+    }
+
+    TclComplete::write_json $outdir/arrays [TclComplete::dict_of_dicts_to_json $array_dict]
+}
+

@@ -255,6 +255,7 @@ proc TclComplete::get_synopsys_cmd_dict {commands} {
     set cmd_dict [dict create]
 
     foreach cmd $commands {
+        puts $cmd
         dict set details_dict $cmd [dict create]
 
 
@@ -297,6 +298,7 @@ proc TclComplete::write_app_options_json {outdir} {
 
     # Make a dictionary of app_options where the value object type (like integer, boolean, etc)
     foreach app_option $app_option_list {
+        puts $app_option
         dict set app_option_dict $app_option [TclComplete::get_app_option_from_man_page $app_option]
     }
 
@@ -500,6 +502,17 @@ proc TclComplete::write_gvars_json {outdir} {
     TclComplete::write_json $outdir/g_var_arrays [TclComplete::list_to_json $Gvar_array_list] 
 }
 
+###############################################################
+# Write JSON files for G_variables (this is an Intel RDT thing)
+###############################################################
+proc TclComplete::write_ivars_json {outdir} {
+    # The ivar() global array is used in Cheetah2.  There are hundreds of possible values.
+    set ivar_list [lsort [array names ::ivar]]
+
+    # Write out the JSON files.
+    TclComplete::write_json $outdir/i_vars       [TclComplete::list_to_json $ivar_list]
+}
+
 ######################################################################
 # Write JSON files for ICC++ (itar).  This is an Intel add-on to ICC2
 ######################################################################
@@ -534,6 +547,10 @@ proc TclComplete::write_aliases_vim {outdir} {
 # Write JSON files for rdt_steps (if RDT flow exists)
 ###############################################################
 proc TclComplete::write_rdt_steps {outdir} {
+    if {[info proc rdt_list_stages] eq ""} {
+        return
+    }
+
     # RDT stages and steps in a dictionary.
     #  key = stage
     #  value = list of steps

@@ -59,6 +59,9 @@ proc TclComplete::WriteFilesSynopsys {dir_location} {
     TclComplete::write_regex_char_class_json $outdir
     TclComplete::write_packages_json         $outdir
 
+    # Dump array variables' names and values
+    TclComplete::write_arrays_json           $outdir
+
     # Synopsys/Intel only
     TclComplete::write_attributes_json   $outdir
     TclComplete::write_app_vars_json     $outdir
@@ -67,6 +70,7 @@ proc TclComplete::WriteFilesSynopsys {dir_location} {
     TclComplete::write_gui_settings_json $outdir
     TclComplete::write_techfile_json     $outdir
     TclComplete::write_gvars_json        $outdir
+    TclComplete::write_ivars_json        $outdir
     TclComplete::write_iccpp_json        $outdir
     TclComplete::write_descriptions_json $outdir $all_command_list
     TclComplete::write_rdt_steps         $outdir
