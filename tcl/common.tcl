@@ -641,10 +641,12 @@ proc TclComplete::write_arrays_json {outdir} {
         }
     }
 
-    # Get the current values and set it all in the array_dict.
+    # Get the current values and set it all in the array_dict. 
+    #   (Import to add :: before $array_var in the array get command)
     set array_dict [dict create]
     foreach array_var $TclComplete::array_vars {
-        foreach {name value} [array get $array_var] {
+        puts "::$array_var"
+        foreach {name value} [array get ::$array_var] {
             # Flatten any nested lists to make it work bettern with JSON.
             set value [join [join $value]]
 
