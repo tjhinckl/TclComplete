@@ -9,10 +9,34 @@
 # Bring the namespace into existence. (if not already)
 namespace eval TclComplete {}
 
+# The new Cheetah2 environment has a new proc, idefine_proc_attributes, 
+# which acts a little different than Synopsys's define_proc_attributes.
+# It exists because some Tcl code needs to run in non_SNPS tools.
+# Any command that uses this will not return anything with "help $cmd"
+# but instead needs to use "$cmd -help".   The arguments of this
+# proc are saved in a global array called idefine_proc_attributes_info.
+#  - This code saves the procs which use idefine_proc_attributes.
+set TclComplete::idefine_procs [dict create]
+if {[info vars ::idefine_proc_attributes_info] != ""} {
+    foreach proc_name [array names ::idefine_proc_attributes_info] {
+        dict set TclComplete::idefine_procs $proc_name {}
+    }
+} 
+
 #########################################################
 # Run help on a command.  Return the command's description
 #########################################################
 proc TclComplete::get_description_from_help {cmd} {
+    # Try the idefine_proc_attributes_info array first
+    if {[dict exists $TclComplete::idefine_procs $cmd]} {
+        set help_msg    [lindex $::idefine_proc_attributes_info($cmd) 0]
+        set description "# [lrange $help_msg 5 end]"
+        set result [regsub -all {"} $description {\"}]
+        # Backslash escape double quotes above to not screw up JSON "
+        return $result
+    }
+
+    # Now do the usual method.
     set result ""
     redirect -variable help_text {help $cmd}
     # Look for <cmdname>     # Description of the command
@@ -21,7 +45,7 @@ proc TclComplete::get_description_from_help {cmd} {
             if {$cmd_name == $cmd} {
                 # For the benefit of writing JSON, add backslashes before quotes.
                 set result [regsub -all {"} $description {\"}]
-                # Add closing quote to make Vim happy " 
+                # End this commnet with quote to make Vim syntax highlighting happy -->" 
             }
         }
     }
@@ -56,6 +80,21 @@ proc TclComplete::get_options_from_help {cmd} {
     # Returns a dictionary.  Key = option name  Value = option detail
     set result [dict create]
 
+    # Try the idefine_proc_attributes_info array first
+    if {[dict exists $TclComplete::idefine_procs $cmd]} {
+        set arg_lines    [lrange  $::idefine_proc_attributes_info($cmd) 1 end]
+        foreach arg_line $arg_lines {
+            set opt    [lindex $arg_line 0]
+            set detail [lindex $arg_line 1]
+            set detail [regsub -all {"} $detail {\"}]
+            # Backslash escape double quotes above to not screw up JSON "
+            dict set result $opt $detail
+        }
+
+        return $result
+    }
+
+    # Now do the usual method.
     # Parse the "help -v" text for this command
     redirect -variable help_text {help -v $cmd}
     if {[regexp "CMD-040" $help_text]} {return ""}
