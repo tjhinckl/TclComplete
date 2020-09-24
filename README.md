@@ -20,10 +20,10 @@ https://soco.intel.com/groups/vim-users/blog/2018/07/13/auto-completion-for-syno
      of Git than the default version.
 
    This version is known to work.
->   /usr/intel/pkgs/git/2.23.0/bin/git
+>   /usr/intel/pkgs/git/2.8.4/bin/git
 
    Add this line to your `~/.itools` file to use this as default
->   P:git      2.23.0a
+>   P:git      2.8.4
 
 3.  To install the plugin, make a pack directory in your ~/.vim folder and a subdirectory for the plugin.
 >     mkdir -p ~/.vim/pack/from_gitlab/start
