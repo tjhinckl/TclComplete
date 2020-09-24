@@ -7,7 +7,7 @@
 #  a group of files containing commands, command options, etc, 
 #  which will be consumed by an auto-completion text editor plugin.
 #      
-# Date of latest revision: 17-Dec-2019
+# Date of latest revision: 24-Sep-2020
 
 # Bring the namespace into existence (if not already)
 namespace eval TclComplete {}
@@ -69,8 +69,6 @@ proc TclComplete::WriteFilesSynopsys {dir_location} {
     TclComplete::write_designs_json      $outdir
     TclComplete::write_gui_settings_json $outdir
     TclComplete::write_techfile_json     $outdir
-    TclComplete::write_gvars_json        $outdir
-    TclComplete::write_ivars_json        $outdir
     TclComplete::write_iccpp_json        $outdir
     TclComplete::write_descriptions_json $outdir $all_command_list
     TclComplete::write_rdt_steps         $outdir
