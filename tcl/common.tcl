@@ -404,9 +404,54 @@ proc TclComplete::get_hardcoded_cmd_dict {} {
     dict set cmd_dict "regsub"   "-lineanchor"  "Changes behavior of ^ and $ to match beginning and end of lines."
     dict set cmd_dict "regsub"   "-nocase"      "Causes upper-case characters in string to be treated as lower case."
     dict set cmd_dict "regsub"   "-start"       "Specifies a character index offset into the string to start matching"
-
-
-
+    # ----------------------------------------------------------------
+    if {[namespace exists ::struct::list]} {
+        dict set cmd_dict "struct::list" "assign"                    "sequence varname ?varname?..."
+        dict set cmd_dict "struct::list" "dbJoin"                    "?-inner|-left|-right|-full? ?-keys varname? {keycol table}..."
+        dict set cmd_dict "struct::list" "dbJoinKeyed"               "?-inner|-left|-right|-full? ?-keys varname? table..."
+        dict set cmd_dict "struct::list" "equal"                     "a b"
+        dict set cmd_dict "struct::list" "filter"                    "sequence cmdprefix"
+        dict set cmd_dict "struct::list" "filterfor"                 "var sequence expr"
+        dict set cmd_dict "struct::list" "firstperm"                 "list"
+        dict set cmd_dict "struct::list" "flatten"                   "?-full? ?--? sequence"
+        dict set cmd_dict "struct::list" "fold"                      "sequence initialvalue cmdprefix"
+        dict set cmd_dict "struct::list" "foreachperm"               "var list body"
+        dict set cmd_dict "struct::list" "iota"                      "n"
+        dict set cmd_dict "struct::list" "lcsInvert"                 "lcsData len1 len2"
+        dict set cmd_dict "struct::list" "lcsInvert2"                "lcs1 lcs2 len1 len2"
+        dict set cmd_dict "struct::list" "lcsInvertMerge"            "lcsData len1 len2"
+        dict set cmd_dict "struct::list" "lcsInvertMerge2"           "lcs1 lcs2 len1 len2"
+        dict set cmd_dict "struct::list" "longestCommonSubsequence"  "sequence1 sequence2 ?maxOccurs?"
+        dict set cmd_dict "struct::list" "longestCommonSubsequence2" "sequence1 sequence2 ?maxOccurs?"
+        dict set cmd_dict "struct::list" "map"                       "sequence cmdprefix"
+        dict set cmd_dict "struct::list" "mapfor"                    "var sequence script"
+        dict set cmd_dict "struct::list" "nextperm"                  "perm"
+        dict set cmd_dict "struct::list" "permutations"              "list"
+        dict set cmd_dict "struct::list" "repeat"                    "size element1 ?element2 element3...?"
+        dict set cmd_dict "struct::list" "repeatn"                   "value size..."
+        dict set cmd_dict "struct::list" "reverse"                   "sequence"
+        dict set cmd_dict "struct::list" "shift"                     "listvar"
+        dict set cmd_dict "struct::list" "shuffle"                   "list"
+        dict set cmd_dict "struct::list" "split"                     "sequence cmdprefix ?passVar failVar?"
+        dict set cmd_dict "struct::list" "swap"                      "listvar i j"
+    }
+    # ----------------------------------------------------------------
+    if {[namespace exists ::struct::set]} {
+        dict set cmd_dict "struct::set" "empty"             "set"
+        dict set cmd_dict "struct::set" "size"              "set"
+        dict set cmd_dict "struct::set" "contains"          "set item"
+        dict set cmd_dict "struct::set" "union"             "?set1...?"
+        dict set cmd_dict "struct::set" "intersect"         "?set1...?"
+        dict set cmd_dict "struct::set" "symdiff"           "set1 set2"
+        dict set cmd_dict "struct::set" "difference"        "set1 set2"
+        dict set cmd_dict "struct::set" "intersect3"        "set1 set2"
+        dict set cmd_dict "struct::set" "equal"             "set1 set2"
+        dict set cmd_dict "struct::set" "include"           "svar item"
+        dict set cmd_dict "struct::set" "exclude"           "svar item"
+        dict set cmd_dict "struct::set" "add"               "svar set"
+        dict set cmd_dict "struct::set" "subtract"          "svar set"
+        dict set cmd_dict "struct::set" "subsetof"          "A B"
+    }
 
     return $cmd_dict
 }
