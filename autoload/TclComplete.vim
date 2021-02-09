@@ -422,7 +422,12 @@ function! TclComplete#Complete(findstart, base)
 
             " Get the array variable's name/value dict (default to empty dict)
             if has_key(g:TclComplete#arrays, g:array_varname)
-                let g:array_dict  = get(g:TclComplete#arrays, g:array_varname)
+                " Special case for ivars
+                if g:array_varname == 'ivar' && has_key(g:TclComplete#arrays, 'ivar_desc')
+                    let g:array_dict = get(g:TclComplete#arrays, 'ivar_desc')
+                else 
+                    let g:array_dict  = get(g:TclComplete#arrays, g:array_varname)
+                endif
                 let g:array_names = keys(g:array_dict)
 
                 " Make a list and dict with the full base name as keys 
