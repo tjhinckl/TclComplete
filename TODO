@@ -1,0 +1,22 @@
+CTH2/Fusion Compiler updates.
+
+1)  ivar completion
+
+2)  skip GUI only procs and namespaces to speed up the script
+   NWTN_D
+   *DIG
+   Widget
+   ttk
+   Tspec
+   EMS
+   iwidgets
+   tix*
+
+3)  Added $ward/TclComplete as place to look.
+
+4)  Can the procs that parse 'man' and 'help' go faster??? 
+    very very slow..
+
+5)  Can the VimScript go even faster, especially with a lot of commands?
+
+6)  What is iproc_source?
