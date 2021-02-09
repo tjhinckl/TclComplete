@@ -49,39 +49,11 @@ inoremap <buffer> <tab>a <c-r>=TclComplete#AttributeComplete()<cr>
 """""""""""""""""""""""""""""""""""""""""""
 " Source iabbrev commands
 """""""""""""""""""""""""""""""""""""""""""
-let s:aliases_file = g:TclComplete#dir."/aliases.vim"
-if file_readable(s:aliases_file)
-    execute "source ".s:aliases_file
+if exists("g:TclComplete#dir")
+    let s:aliases_file = g:TclComplete#dir."/aliases.vim"
+    if file_readable(s:aliases_file)
+        execute "source ".s:aliases_file
+    endif
 endif
-
-
-"""""""""""""""""""""""""""""""""""""""""""
-" G_variable imap
-"""""""""""""""""""""""""""""""""""""""""""
-inoremap <buffer> <expr> G_ MapGVar()
-
-function! MapGVar() 
-   let line = getline('.')
-   let cursor = col('.')-1
-
-   " Default value
-   let result = "G_"
-
-   " Replace "$G_" with "[getvar G_"
-   if cursor>=1
-       if line[cursor-1]=="$"
-           let result =  "\<BS>[getvar G_"
-       endif
-   endif
-
-   " Replace "set G_" with "setvar G_"
-   if cursor>=4
-       if line[cursor-4:cursor-2]=="set"
-           let result = "\<BS>\<BS>\<BS>\<BS>setvar G_"
-       endif
-   endif
-
-   return result
-endfunction
 
 
