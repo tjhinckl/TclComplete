@@ -678,6 +678,7 @@ proc TclComplete::info_arrays {} {
 proc TclComplete::write_arrays_json {outdir} {
     # Run in the global namespace because this proc is in a different namespace
     # and [info vars] is namespace sensitive.
+    set TclComplete::array_vars [list]
     namespace eval :: {
          foreach var_name [info vars] {
             if {[array exists $var_name]} {
@@ -692,11 +693,17 @@ proc TclComplete::write_arrays_json {outdir} {
     foreach array_var $TclComplete::array_vars {
         puts "::$array_var"
         foreach {name value} [array get ::$array_var] {
+            # Replace curlies with parentheses to make it avoid improper Tcl lists.
+            set value [regsub -all "\{" $value "("]
+            set value [regsub -all "\}" $value ")"]
+
+            # Replace double quotes with single quotes to avoid improper Tcl lists.
+            set value [regsub -all "\"" $value {'}]
+
             # Flatten any nested lists to make it work bettern with JSON.
             set value [join [join $value]]
 
-            # Escape double quotes in the value to make it work with JSON.
-            set value [regsub -all "\"" $value {\"}]
+
             dict set array_dict $array_var $name $value
         }
     }

@@ -449,6 +449,9 @@ proc TclComplete::get_synopsys_attributes {} {
     # Pick out the first item in each line of the attribute reports.
     set attributes [list]
     foreach line [concat $attribute_list $attribute_class_list] {
+        if {[catch {llength $line}]} {
+            continue
+        }
         if {[llength $line]>0} {
             lappend attributes [lindex $line 0]
         }
@@ -479,7 +482,11 @@ proc TclComplete::write_attributes_json {outdir} {
     # Now iterate over these lists to get attribute name and object class.
     foreach entry [concat $attribute_list $attribute_class_list] {
         # Skip invalid entries
-        if {[llength $entry]<3} {continue}
+        if {[catch {set entry_length [llength $entry]}]} {
+            continue
+        }
+
+        if {$entry_length < 3} {continue}
 
         # Parse entry for attr_name(like "length"), attr_class(like "wire"), and attr_datatype(like "float")
         set attr_name      [lindex $entry 0]                                                 
@@ -493,7 +500,7 @@ proc TclComplete::write_attributes_json {outdir} {
         }
 
         # Derive the attribute possible values (data type, or constrained list)
-        if {[llength $entry]>=5} {
+        if {$entry_length >= 5} {
             set attr_choices [lrange $entry 4 end]
         } else {
             set attr_choices $attr_datatype

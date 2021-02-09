@@ -79,3 +79,6 @@ proc TclComplete::WriteFilesSynopsys {dir_location} {
 
     puts "...done\n"
 }
+puts "Sourced.  "
+puts " To create a TclComplete directory located at <path>:"
+puts "   > TclComplete::WriteFilesSynopsys <path>"
