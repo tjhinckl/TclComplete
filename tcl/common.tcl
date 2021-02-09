@@ -692,7 +692,9 @@ proc TclComplete::write_arrays_json {outdir} {
     set array_dict [dict create]
     foreach array_var $TclComplete::array_vars {
         puts "::$array_var"
-        foreach {name value} [array get ::$array_var] {
+        foreach name [lsort [array names ::$array_var]] {
+            set value [lindex [array get ::$array_var $name] 1]
+        
             # Replace curlies with parentheses to make it avoid improper Tcl lists.
             set value [regsub -all "\{" $value "("]
             set value [regsub -all "\}" $value ")"]
