@@ -678,9 +678,9 @@ proc TclComplete::info_arrays {} {
 proc TclComplete::write_arrays_json {outdir} {
     # Run in the global namespace because this proc is in a different namespace
     # and [info vars] is namespace sensitive.
-    set TclComplete::array_vars [list]
     namespace eval :: {
-         foreach var_name [info vars] {
+        set TclComplete::array_vars [list]
+        foreach var_name [info vars] {
             if {[array exists $var_name]} {
                 lappend TclComplete::array_vars ${var_name}
             }
