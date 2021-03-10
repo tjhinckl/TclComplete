@@ -422,22 +422,29 @@ function! TclComplete#Complete(findstart, base)
 
             " Get the array variable's name/value dict (default to empty dict)
             if has_key(g:TclComplete#arrays, g:array_varname)
-                " Special case for ivars
-                if g:array_varname == 'ivar' && has_key(g:TclComplete#arrays, 'ivar_desc')
-                    let g:array_dict = get(g:TclComplete#arrays, 'ivar_desc')
-                else 
-                    let g:array_dict  = get(g:TclComplete#arrays, g:array_varname)
-                endif
+                let g:array_dict  = get(g:TclComplete#arrays, g:array_varname)
                 let g:array_names = keys(g:array_dict)
 
                 " Make a list and dict with the full base name as keys 
                 "   - ($ and ::) restored if needed. 
                 "    - and a ( before the name.
                 let l:menu_dict = {}
-                for l:array_name in g:array_names
-                    let l:array_full_name = g:array_base . "(" . l:array_name
-                    let l:menu_dict[l:array_full_name] = g:array_dict[l:array_name]
-                endfor
+
+                " Special case for ivars.  Use the ivar_desc array values in the popup menu.
+                if g:array_varname=='ivar' && has_key(g:TclComplete#arrays, 'ivar_desc')
+                    let l:ivar_desc_array = g:TclComplete#arrays['ivar_desc']
+                    for l:array_name in g:array_names
+                        let l:array_full_name = g:array_base . "(" . l:array_name
+                        let l:menu_dict[l:array_full_name] = get(l:ivar_desc_array,l:array_name,'')
+                    endfor
+
+                else
+                    for l:array_name in g:array_names
+                        let l:array_full_name = g:array_base . "(" . l:array_name
+                        let l:menu_dict[l:array_full_name] = g:array_dict[l:array_name]
+                    endfor
+                endif
+                    
                 let g:menu_dict = l:menu_dict
                 let l:complete_list = sort(keys(l:menu_dict))
             else 
