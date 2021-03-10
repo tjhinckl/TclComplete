@@ -318,7 +318,6 @@ proc TclComplete::get_hardcoded_cmd_dict {} {
     dict set cmd_dict  "string is" wideinteger "Any of the valid forms for a wide integer in  Tcl."
     dict set cmd_dict  "string is" wordchar    "Any  Unicode  word  character.  "
     dict set cmd_dict  "string is" xdigit      "Any hexadecimal digit character (0-9A-Fa-f)."
-    dict set cmd_dict  "string is" easter      "egg"
     # ----------------------------------------------------------------
     dict set cmd_dict "format" "%d" "Signed decimal"
     dict set cmd_dict "format" "%s" "String"
