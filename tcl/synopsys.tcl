@@ -293,8 +293,16 @@ proc TclComplete::write_descriptions_json {outdir cmd_list} {
 proc TclComplete::get_synopsys_cmd_dict {commands} {
     set cmd_dict [dict create]
 
+    puts -nonewline "Running help or man on all commands..."
+    set loop_count 0
     foreach cmd $commands {
-        puts $cmd
+        # Echo a progress indicator
+        incr loop_count
+        if {[expr {$loop_count % 100}]==0} {
+            puts -nonewline "."
+            chan flush stdout
+        }
+
         dict set details_dict $cmd [dict create]
 
 
@@ -312,6 +320,7 @@ proc TclComplete::get_synopsys_cmd_dict {commands} {
             }
         }
     }
+    puts ""
     return $cmd_dict
 }
 
@@ -337,7 +346,6 @@ proc TclComplete::write_app_options_json {outdir} {
 
     # Make a dictionary of app_options where the value object type (like integer, boolean, etc)
     foreach app_option $app_option_list {
-        puts $app_option
         dict set app_option_dict $app_option [TclComplete::get_app_option_from_man_page $app_option]
     }
 

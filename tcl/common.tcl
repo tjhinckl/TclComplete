@@ -36,17 +36,22 @@ proc TclComplete::get_all_sorted_commands {} {
     # Search through namespaces for more commands with [info command <namespace>*]
     set global_namespaces [lsort -nocase [namespace children ::]]
     foreach gn $global_namespaces {
+        # Skip namespaces starting with underscore
+        if {[string match ::_* $gn]} {
+            continue
+        }
+        
         # Get the cmds inside each global namespace, but without the leading :: colons.
         set cmds1 [lsort -nocase [info command ${gn}::*]]
         set cmds1 [lmap x $cmds1 {string trim $x "::"}]
-        set ns_cmds1 [concat $ns_cmds1 $cmds1]
+        lappend ns_cmds1 {*}$cmds1
 
-        # Go down one more level in the namespaces
+        # Go down one more level in the namespaces (are we missing anything by ignoreing three namespaces?)
         set hier_namespaces [lsort -nocase [namespace children $gn]]
         foreach hn $hier_namespaces {
             set cmds2 [lsort -nocase [info command ${hn}::*]]
             set cmds2 [lmap x $cmds2 {string trim $x "::"}]
-            set ns_cmds2 [concat $ns_cmds2 $cmds2]
+            lappend ns_cmds2 {*}$cmds2
         }
     }
 
@@ -537,7 +542,11 @@ proc TclComplete::write_regex_char_class_json {outdir} {
 # Write a json file with the packages available
 #######################################################
 proc TclComplete::write_packages_json {outdir} {
-    catch {package require look_for_a_package_that_does_not_exist_so_package_names_returns_all_available_packages}
+    catch {
+        redirect -file /dev/null {
+            package require look_for_a_package_that_does_not_exist_so_package_names_returns_all_available_packages
+        }
+    }
     set package_list [lsort -u [package names]]
     TclComplete::write_json $outdir/packages [TclComplete::list_to_json $package_list]
 }
@@ -687,10 +696,9 @@ proc TclComplete::write_arrays_json {outdir} {
     }
 
     # Get the current values and set it all in the array_dict. 
-    #   (Import to add :: before $array_var in the array get command)
+    #   (Important to add :: before $array_var in the array get command because we're not in global namespace)
     set array_dict [dict create]
     foreach array_var $TclComplete::array_vars {
-        puts "::$array_var"
         foreach name [lsort [array names ::$array_var]] {
             set value [lindex [array get ::$array_var $name] 1]
         

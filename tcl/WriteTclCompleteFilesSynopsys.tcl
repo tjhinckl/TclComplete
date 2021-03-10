@@ -7,7 +7,7 @@
 #  a group of files containing commands, command options, etc, 
 #  which will be consumed by an auto-completion text editor plugin.
 #      
-# Date of latest revision: 24-Sep-2020
+# Date of latest revision: 10-Mar-2021
 
 # Bring the namespace into existence (if not already)
 namespace eval TclComplete {}
