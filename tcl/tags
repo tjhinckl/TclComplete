@@ -1,0 +1,57 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+TclComplete::WriteFilesMentor	WriteTclCompleteFilesMentor.tcl	/^proc TclComplete::WriteFilesMentor {dir_location} {$/;"	p
+TclComplete::WriteFilesStd	WriteTclCompleteFilesStd.tcl	/^proc TclComplete::WriteFilesStd {dir_location} {$/;"	p
+TclComplete::WriteFilesSynopsys	WriteTclCompleteFilesSynopsys.tcl	/^proc TclComplete::WriteFilesSynopsys {dir_location} {$/;"	p
+TclComplete::add_args_to_description_dict	common.tcl	/^proc TclComplete::add_args_to_description_dict {description_dict} {$/;"	p
+TclComplete::advance_coroutine_to	common.tcl	/^proc TclComplete::advance_coroutine_to {coroutine_name match_pattern } {$/;"	p
+TclComplete::cmd_exists	common.tcl	/^proc TclComplete::cmd_exists {cmd} {$/;"	p
+TclComplete::dict_of_dicts_to_json	common.tcl	/^proc TclComplete::dict_of_dicts_to_json {dict_of_dicts} {$/;"	p
+TclComplete::dict_of_lists_to_json	common.tcl	/^proc TclComplete::dict_of_lists_to_json {dict_of_lists args} {$/;"	p
+TclComplete::dict_to_json	common.tcl	/^proc TclComplete::dict_to_json {dict} {$/;"	p
+TclComplete::get_all_sorted_commands	common.tcl	/^proc TclComplete::get_all_sorted_commands {} {$/;"	p
+TclComplete::get_app_option_from_man_page	synopsys.tcl	/^proc TclComplete::get_app_option_from_man_page {app_option} {$/;"	p
+TclComplete::get_description_from_help	synopsys.tcl	/^proc TclComplete::get_description_from_help {cmd} {$/;"	p
+TclComplete::get_description_from_man	synopsys.tcl	/^proc TclComplete::get_description_from_man {cmd} {$/;"	p
+TclComplete::get_descriptions	synopsys.tcl	/^proc TclComplete::get_descriptions {commands} {$/;"	p
+TclComplete::get_hardcoded_cmd_dict	common.tcl	/^proc TclComplete::get_hardcoded_cmd_dict {} {$/;"	p
+TclComplete::get_mentor_cmd_dict	mentor.tcl	/^proc TclComplete::get_mentor_cmd_dict {} {$/;"	p
+TclComplete::get_namespace_cmd_dict	common.tcl	/^proc TclComplete::get_namespace_cmd_dict {commands} {$/;"	p
+TclComplete::get_options_from_help	synopsys.tcl	/^proc TclComplete::get_options_from_help {cmd} {$/;"	p
+TclComplete::get_options_from_man	synopsys.tcl	/^proc TclComplete::get_options_from_man {cmd} {$/;"	p
+TclComplete::get_subcommands	common.tcl	/^proc TclComplete::get_subcommands {cmd} {$/;"	p
+TclComplete::get_synopsys_attributes	synopsys.tcl	/^proc TclComplete::get_synopsys_attributes {} {$/;"	p
+TclComplete::get_synopsys_cmd_dict	synopsys.tcl	/^proc TclComplete::get_synopsys_cmd_dict {commands} {$/;"	p
+TclComplete::info_arrays	common.tcl	/^proc TclComplete::info_arrays {} {$/;"	p
+TclComplete::list2keys	common.tcl	/^proc TclComplete::list2keys {list} {$/;"	p
+TclComplete::list_to_json	common.tcl	/^proc TclComplete::list_to_json {list} {$/;"	p
+TclComplete::mentor_get_help_commands	mentor.tcl	/^proc TclComplete::mentor_get_help_commands {} {$/;"	p
+TclComplete::mentor_parse_help	mentor.tcl	/^proc TclComplete::mentor_parse_help {section} {$/;"	p
+TclComplete::mentor_prepare_string_for_parse	mentor.tcl	/^proc TclComplete::mentor_prepare_string_for_parse {input_string} {$/;"	p
+TclComplete::mkdir_fresh	common.tcl	/^proc TclComplete::mkdir_fresh {dir} {$/;"	p
+TclComplete::next_element_in_list	common.tcl	/^proc TclComplete::next_element_in_list {list} {$/;"	p
+TclComplete::remove_final_comma	common.tcl	/^proc TclComplete::remove_final_comma {json_string} {$/;"	p
+TclComplete::write_aliases_vim	synopsys.tcl	/^proc TclComplete::write_aliases_vim {outdir} {$/;"	p
+TclComplete::write_app_options_json	synopsys.tcl	/^proc TclComplete::write_app_options_json {outdir} {$/;"	p
+TclComplete::write_app_vars_json	synopsys.tcl	/^proc TclComplete::write_app_vars_json {outdir} {$/;"	p
+TclComplete::write_arrays_json	common.tcl	/^proc TclComplete::write_arrays_json {outdir} {$/;"	p
+TclComplete::write_attributes_json	synopsys.tcl	/^proc TclComplete::write_attributes_json {outdir} {$/;"	p
+TclComplete::write_descriptions_json	synopsys.tcl	/^proc TclComplete::write_descriptions_json {outdir cmd_list} {$/;"	p
+TclComplete::write_designs_json	synopsys.tcl	/^proc TclComplete::write_designs_json {outdir} {$/;"	p
+TclComplete::write_environment_json	common.tcl	/^proc TclComplete::write_environment_json {outdir} {$/;"	p
+TclComplete::write_gui_settings_json	synopsys.tcl	/^proc TclComplete::write_gui_settings_json {outdir} {$/;"	p
+TclComplete::write_gvars_json	synopsys.tcl	/^proc TclComplete::write_gvars_json {outdir} {$/;"	p
+TclComplete::write_iccpp_json	synopsys.tcl	/^proc TclComplete::write_iccpp_json {outdir} {$/;"	p
+TclComplete::write_ivars_json	synopsys.tcl	/^proc TclComplete::write_ivars_json {outdir} {$/;"	p
+TclComplete::write_json	common.tcl	/^proc TclComplete::write_json {name content} {$/;"	p
+TclComplete::write_json_from_cmd_dict	common.tcl	/^proc TclComplete::write_json_from_cmd_dict {outdir cmd_dict} {$/;"	p
+TclComplete::write_log	common.tcl	/^proc TclComplete::write_log {outdir} {$/;"	p
+TclComplete::write_packages_json	common.tcl	/^proc TclComplete::write_packages_json {outdir} {$/;"	p
+TclComplete::write_rdt_steps	synopsys.tcl	/^proc TclComplete::write_rdt_steps {outdir} {$/;"	p
+TclComplete::write_regex_char_class_json	common.tcl	/^proc TclComplete::write_regex_char_class_json {outdir} {$/;"	p
+TclComplete::write_techfile_json	synopsys.tcl	/^proc TclComplete::write_techfile_json {outdir} {$/;"	p
+TclComplete::write_vim_tcl_syntax	common.tcl	/^proc TclComplete::write_vim_tcl_syntax {outdir cmd_list} {$/;"	p
