@@ -97,6 +97,29 @@ gui_add_annotation -setting
 format 
 scan 
 
+#15) A limited number of insert mode abbreviations
+ga
+gs
+cs
+fic
+
+#16) A syntax/tcl.vim file is also dumped out to highlight 
+#  a) valid commmands (Tcl core, SNPS builtin, proc names)
+lsort
+lappend
+puts
+get_pins
+ppp::push_routes
+undefined_command
+
+#  b) valid SNPS object attributes
+get_ports -filter direction==in
+get_attribute $port direction 
+
+#  c) G_* gvars
+getvar G_DESIGN_NAME
+
+
 #15) optional others
 # itar settings (if itar was loaded when TclComplete collateral was created)
 iccpp_com::get_param 
