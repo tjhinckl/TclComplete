@@ -247,7 +247,7 @@ function! TclComplete#ScanBufferForVariableNames()
         endif
 
         " Check for final args of lassign or scan (go backwards from end. look for valid var names)
-        if line=~'\v(lassign|scan)'
+        if line=~'\v(lassign|^ *scan )'
             for var in reverse(split(line))
                 if var=~'[$}"\]%]'
                     break
