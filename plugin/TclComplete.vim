@@ -86,12 +86,22 @@ if has_key(g:TclComplete#arrays, 'ivar')
     let g:ivar_dict = {}
     for ivar_name in keys(g:ivar_array)
         let value = get(g:ivar_array, ivar_name, "")
-        let desc  = get(g:ivar_desc, ivar_name, "")
-        let type  = get(g:ivar_type, ivar_name, "undefined")
+        " Limit the value to a column width
+        if len(value) > &columns - 30
+            let value = value[0:&columns-30]." ..."
+        endif
+        
         let display_str = "ivar(".ivar_name.") = ".value
+
+        " Add a description from ivar_desc array
+        let desc  = get(g:ivar_desc, ivar_name, "")
         if len(desc)>0
+            " Limit the description to approx one line of text
+            let g:desc_len = len(desc)
             let display_str .= ", (".desc.")"
         endif
+
+        
         let g:ivar_dict[ivar_name] = display_str
     endfor
 
