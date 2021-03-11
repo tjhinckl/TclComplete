@@ -1,7 +1,7 @@
 " TclComplete.vim - Auto-complete cells, ports and nets of a design into InsertMode
 " Maintainer:   Chris Heithoff ( christopher.b.heithoff@intel.com )
-" Version:      1.0
-" Latest Revision Date: 31-Oct-2017
+" Version:      2.0
+" Latest Revision Date: 11-March-2021
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set default values.  These could be overridden in your ~/.vimrc
@@ -31,58 +31,95 @@ if !exists("g:TclComplete#popupscroll")
     let g:TclComplete#popupscroll = 10
 endif
 
-
-" Consider putting this into a separate plugin "ivar-vision"
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""  IVAR VISION 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Consider putting this into a separate plugin.
 " Highlight ivar description on the bottom status line
 " Adapted from Damian Conway's Vim plugins for Perl
 "  https://github.com/thoughtstream/Damian-Conway-s-Vim-Setup/blob/master/plugin/trackperlvars.vim
-" arrays (names and values of every Tcl array variable)
+"
+" Include more keyword characters to identify the ivar array
+"   with the cword() function
+" TODO:  Is it possible that these keyword chars affect other plugins?
+set iskeyword+=(
+set iskeyword+=)
+set iskeyword+=,
 
-function! DisplayIvar()
-    let current_word = expand('<cword>')
-    let ivar_name = matchstr(current_word, 'ivar(\zs.*\ze)')
-    let g:ivar_display = get(g:ivar_dict,ivar_name,"")
-    if len(g:ivar_display) > 0
-        " Temporarily set highlighting for the echo status bar
-        echohl Pmenu
+" Call IvarVision whenever the cursor is moved.
+autocmd CursorMoved   * call IvarVision()
+autocmd CursorMovedI  * call IvarVision()
 
-        " Adjust the cmdline window height if the string is too long.
-        " This will prevent having hit-enter prompts.
-        if len(g:ivar_display) > &columns-15
-            let new_cmdheight = len(g:ivar_display)/(&columns-15) + 1
-            exec "set cmdheight=".new_cmdheight
-        else
-            set cmdheight&
-        endif
+" Turn it off when you leave to a new buffer.
+autocmd BufLeave      * call IvarVisionToggleOff()
 
-        echo   g:ivar_display
-
-        echohl None
-        let g:displaying_message = 1
+" Redo the g:ivar_dict when resizing because
+" we need to re-limit the display strings by
+" the number of window columns
+autocmd VimResized * call IvarVisionCreateDict()
 
 
-    elseif g:displaying_message==1
-        " This turns it off
-        set cmdheight&
-        echo ""
-        let g:displaying_message=0
+function! IvarVision()
+    if !exists('g:ivar_dict')
+        call IvarVisionCreateDict()
     endif
+
+    " Identify the current word under the cursor
+    let current_word = expand('<cword>')
+
+    " Is the curent word an ivar()?  If so, pull out the ivar name
+    let ivar_name = matchstr(current_word, 'ivar(\zs.*\ze)')
+
+    " Get the display string from the ivar dict
+    " Exit early if nothing to display
+    let g:ivar_display = get(g:ivar_dict,ivar_name,"")
+    if g:ivar_display == ""
+        call IvarVisionToggleOff()
+        return
+    endif
+
+    " Temporarily set highlighting for the echo status bar
+    echohl Pmenu
+
+    " Adjust the cmdline window height if the string is too long.
+    " This will prevent having hit-enter prompts.
+    " TODO:  Do the math properly on this 
+    if len(g:ivar_display) > &columns-15
+        let new_cmdheight = len(g:ivar_display)/(&columns-15) + 1
+        exec "set cmdheight=".new_cmdheight
+    else
+        set cmdheight&
+    endif
+
+    " Finally!   Echo to the cmdline window!
+    echo   g:ivar_display
+
+    " Turn off the temporary highlighting because it shouldn't be persistent.
+    echohl None
 
 endfunction
 
-let g:TclComplete#arrays = TclComplete#ReadJsonFile('arrays.json','dict')
-if has_key(g:TclComplete#arrays, 'ivar')
-    " Include more keyword characters to identify the ivar array
-    set iskeyword+=(
-    set iskeyword+=)
-    set iskeyword+=,
+
+function! IvarVisionCreateDict()
+    " Load the arrays.json file
+    if !exists('g:TclComplete#arrays')
+        let g:TclComplete#arrays = TclComplete#ReadJsonFile('arrays.json','dict')
+    endif
+
+    " Exit early with an empty dict if required.
+    if !has_key(g:TclComplete#arrays, 'ivar')
+        let g:ivar_dict = {}
+        return
+    endif
 
     " These arrays were dumped into TclComplete/arrays.json
     let g:ivar_array = get(g:TclComplete#arrays, 'ivar')
     let g:ivar_desc  = get(g:TclComplete#arrays, 'ivar_desc')
     let g:ivar_type  = get(g:TclComplete#arrays, 'ivar_type')
 
-    "Form the ivar dictionary
+    "Form the ivar dictionary with the name from the original 
+    "ivar array and the value as a display string combined from
+    "ivar name, ivar value and ivar_desc value
     let g:ivar_dict = {}
     for ivar_name in keys(g:ivar_array)
         let value = get(g:ivar_array, ivar_name, "")
@@ -105,12 +142,12 @@ if has_key(g:TclComplete#arrays, 'ivar')
         let g:ivar_dict[ivar_name] = display_str
     endfor
 
-    let g:displaying_message = 0
-    " highlight Ivar ctermbg=blue ctermfg=yellow
+    return
 
-    autocmd CursorMoved   * call DisplayIvar()
-    autocmd CursorMovedI  * call DisplayIvar()
-    autocmd BufLeave      * set cmdheight&|echo""
+endfunction
 
-endif
+function IvarVisionToggleOff()
+    set cmdheight&
+    echo ""
+endfunction
 
