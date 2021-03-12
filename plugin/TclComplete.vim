@@ -60,9 +60,6 @@ autocmd VimResized * call IvarVisionCreateDict()
 
 
 function! IvarVision()
-    if !exists('g:ivar_dict')
-        call IvarVisionCreateDict()
-    endif
 
     " Identify the current word under the cursor
     let current_word = expand('<cword>')
@@ -70,10 +67,20 @@ function! IvarVision()
     " Is the curent word an ivar()?  If so, pull out the ivar name
     let ivar_name = matchstr(current_word, 'ivar(\zs.*\ze)')
 
+    if ivar_name==''
+        call IvarVisionToggleOff()
+        return
+    endif
+        
+    " Now's the time to load the ivar_dict if not already done
+    if !exists('g:ivar_dict')
+        call IvarVisionCreateDict()
+    endif
+
     " Get the display string from the ivar dict
     " Exit early if nothing to display
     let g:ivar_display = get(g:ivar_dict,ivar_name,"")
-    if g:ivar_display == ""
+    if g:ivar_display == ''
         call IvarVisionToggleOff()
         return
     endif
@@ -123,6 +130,10 @@ function! IvarVisionCreateDict()
     let g:ivar_dict = {}
     for ivar_name in keys(g:ivar_array)
         let value = get(g:ivar_array, ivar_name, "")
+
+        " If possible, substitute the ward full path with '$ward' for brevity.
+        let value = substitute(value,$ward,'$ward','g')
+
         " Limit the value to a column width
         if len(value) > &columns - 30
             let value = value[0:&columns-30]." ..."
