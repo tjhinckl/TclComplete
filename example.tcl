@@ -1,6 +1,10 @@
 # Example file to demonstrate the completion possibilities for TclComplete ##
 # - with each exampleline, put the cursor at end of word and hit <tab> (or ctrl-x ctrl-o)
 
+# Create the TclComplete files like this:
+source ~/.vim/pack/my_plugins/start/TclComplete/tcl/WriteTclCompleteFilesSynopsys.tcl
+TclComplete::WriteFilesSynopsys $ward
+
 # 1)  Core Tcl commands, SNPS builtins or proc names
 #    Applies to first word of the line or first word after left square bracket
 lapp
