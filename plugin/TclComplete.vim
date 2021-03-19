@@ -1,23 +1,39 @@
 " TclComplete.vim - Auto-complete cells, ports and nets of a design into InsertMode
 " Maintainer:   Chris Heithoff ( christopher.b.heithoff@intel.com )
 " Version:      2.0
-" Latest Revision Date: 11-March-2021
+" Latest Revision Date: 18-March-2021
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set default values.  These could be overridden in your ~/.vimrc
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "  Possible locations of the TclComplete files (in order of priority)
 "     1) g:TclComplete#dir defined in ~/.vimrc 
-"     2) $WARD/TclComplete
-"     3) $WARD/dp/inputs/TclComplete
-"     4) $ward/TclComplete
+"     2) ward/TclComplete
+"     3) ward/*/TclComplete
+"     4) ward/*/*/TclComplete
+"     5) ward/*/*/*/TclComplete
+"     6) sample
 if !exists("g:TclComplete#dir")
-    if isdirectory($WARD."/TclComplete")
-        let g:TclComplete#dir = $WARD."/TclComplete"
-    elseif isdirectory($WARD."/dp/user_scripts/TclComplete")
-        let g:TclComplete#dir = $WARD."/dp/user_scripts/TclComplete"
-    elseif isdirectory($ward."/TclComplete")
-        let g:TclComplete#dir = $ward."/TclComplete"
+    if (exists('$WARD'))
+        let g:TclComplete#ward = $WARD
+    elseif (exists('$ward'))
+        let g:TclComplete#ward = $ward
+    endif
+
+    let g:TclComplete#dir = "unknown"
+    " Look for a TclComplete directory under the ward.
+    "  - avoid globbing with ** because that would slow down Vim startup.
+    "  - limit it to three directories down for now.
+    if exists('g:TclComplete#ward')
+        let globs = ['/', '/*/', '/*/*/', '/*/*/*/']
+        for glob in globs 
+            " Call glob with third argument true to return a list.
+            let __glob = glob(g:TclComplete#ward.glob.'TclComplete','',1)
+            if len(__glob) > 0
+                let g:TclComplete#dir = __glob[0]
+                break
+            endif
+        endfor
     else
         let g:TclComplete#dir = expand("<sfile>:p:h:h")."/sample"
     endif
@@ -30,135 +46,4 @@ execute "set runtimepath+=".g:TclComplete#dir
 if !exists("g:TclComplete#popupscroll")
     let g:TclComplete#popupscroll = 10
 endif
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-""  IVAR VISION 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Consider putting this into a separate plugin.
-" Highlight ivar description on the bottom status line
-" Adapted from Damian Conway's Vim plugins for Perl
-"  https://github.com/thoughtstream/Damian-Conway-s-Vim-Setup/blob/master/plugin/trackperlvars.vim
-"
-" Include more keyword characters to identify the ivar array
-"   with the cword() function
-" TODO:  Is it possible that these keyword chars affect other plugins?
-set iskeyword+=(
-set iskeyword+=)
-set iskeyword+=,
-
-" Call IvarVision whenever the cursor is moved.
-autocmd CursorMoved   * call IvarVision()
-autocmd CursorMovedI  * call IvarVision()
-
-" Turn it off when you leave to a new buffer.
-autocmd BufLeave      * call IvarVisionToggleOff()
-
-" Redo the g:ivar_dict when resizing because
-" we need to re-limit the display strings by
-" the number of window columns
-autocmd VimResized * call IvarVisionCreateDict()
-
-
-function! IvarVision()
-
-    " Identify the current word under the cursor
-    let current_word = expand('<cword>')
-
-    " Is the curent word an ivar()?  If so, pull out the ivar name
-    let ivar_name = matchstr(current_word, 'ivar(\zs.*\ze)')
-
-    if ivar_name==''
-        call IvarVisionToggleOff()
-        return
-    endif
-        
-    " Now's the time to load the ivar_dict if not already done
-    if !exists('g:ivar_dict')
-        call IvarVisionCreateDict()
-    endif
-
-    " Get the display string from the ivar dict
-    " Exit early if nothing to display
-    let g:ivar_display = get(g:ivar_dict,ivar_name,"")
-    if g:ivar_display == ''
-        call IvarVisionToggleOff()
-        return
-    endif
-
-    " Temporarily set highlighting for the echo status bar
-    echohl Pmenu
-
-    " Adjust the cmdline window height if the string is too long.
-    " This will prevent having hit-enter prompts.
-    " TODO:  Do the math properly on this 
-    if len(g:ivar_display) > &columns-15
-        let new_cmdheight = len(g:ivar_display)/(&columns-15) + 1
-        exec "set cmdheight=".new_cmdheight
-    else
-        set cmdheight&
-    endif
-
-    " Finally!   Echo to the cmdline window!
-    echo   g:ivar_display
-
-    " Turn off the temporary highlighting because it shouldn't be persistent.
-    echohl None
-
-endfunction
-
-
-function! IvarVisionCreateDict()
-    " Load the arrays.json file
-    if !exists('g:TclComplete#arrays')
-        let g:TclComplete#arrays = TclComplete#ReadJsonFile('arrays.json','dict')
-    endif
-
-    " Exit early with an empty dict if required.
-    if !has_key(g:TclComplete#arrays, 'ivar')
-        let g:ivar_dict = {}
-        return
-    endif
-
-    " These arrays were dumped into TclComplete/arrays.json
-    let g:ivar_array = get(g:TclComplete#arrays, 'ivar')
-    let g:ivar_desc  = get(g:TclComplete#arrays, 'ivar_desc')
-    let g:ivar_type  = get(g:TclComplete#arrays, 'ivar_type')
-
-    "Form the ivar dictionary with the name from the original 
-    "ivar array and the value as a display string combined from
-    "ivar name, ivar value and ivar_desc value
-    let g:ivar_dict = {}
-    for ivar_name in keys(g:ivar_array)
-        let value = get(g:ivar_array, ivar_name, "")
-
-        " If possible, substitute the ward full path with '$ward' for brevity.
-        let value = substitute(value,$ward,'$ward','g')
-
-        " Limit the value to a column width
-        if len(value) > &columns - 30
-            let value = value[0:&columns-30]." ..."
-        endif
-        
-        let display_str = "ivar(".ivar_name.") = ".value
-
-        " Add a description from ivar_desc array
-        let desc  = get(g:ivar_desc, ivar_name, "")
-        if len(desc)>0
-            " Limit the description to approx one line of text
-            let g:desc_len = len(desc)
-            let display_str .= ", (".desc.")"
-        endif
-
-        
-        let g:ivar_dict[ivar_name] = display_str
-    endfor
-
-    return
-
-endfunction
-
-function IvarVisionToggleOff()
-    set cmdheight&
-    echo ""
-endfunction
 

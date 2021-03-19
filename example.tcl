@@ -9,7 +9,7 @@ TclComplete::WriteFilesSynopsys $ward
 #    Applies to first word of the line or first word after left square bracket
 lapp
 get_*_block
-hc_check_
+hc_check_all_are_staples
 *geo
 puts [get_attribute [current_
 
@@ -19,7 +19,7 @@ get_cells -
 hc_check_cbc_boundary -
 
 #3) Built in Tcl commands that use two words in a command
-info 
+info args
 dict 
 string 
 package 
@@ -27,13 +27,13 @@ package
 string is 
 
 #4)  Synopsys attributes (the object_class is derived from get_* commands)
-get_cells -filter 
+get_cells -filter aon_cell
 get_cells -filter bounding_box.
 get_pins -filter 
 get_timing_arcs -filter 
 
 # If the object_class cannot be derived, then it's a two step process.
-get_attribute $coll  
+get_attribute $coll 
 filter_collection $coll  
 
 # If the context not pre-defined for attributes, 
@@ -42,8 +42,8 @@ set my_favorite_attr
 set my_favorite_attr cell.
 
 #5) Array names
-env(
-ivar(
+env(CALIBER)
+ivar(dft,clk_mux_pattern)
 ivar_desc(
 
 # environment variables also complete with 
@@ -51,9 +51,9 @@ getenv
 setenv   
 
 #6) ref names (only possible if a library and block were open in ICC2/FC when TclComplete collateral was created)
-get_nets -design 
+get_nets -design sprfuse
 get_cells -design 
-current_design 
+current_design dino
 
 #7) variable names.   Does not use json files.  Searches current buffer for variables.
 puts $my_variable_previously_assigned
@@ -62,21 +62,21 @@ lappend my_extremely_long_list_name "b"
 dict set my_even_more_extremely_long_dict_name key1 value1
 lassign {1 2 3} x y z
 
-puts $
-info exists  
+puts $my_very_very_very_long_var_name
+info exists 
 set 
 lappend 
 dict set 
 
 #8) expr functions
-expr {
+expr {sin()}
 
 #9) packages available in auto_path 
-package require  
+package require nwtnMSCTSTapDriverVM 
 
 #10) namespaces
 namespace 
-namespace exists 
+namespace exists BlockViewDIG
 
 #11) regexp character classes (rarely used)
 regexp {[:
@@ -106,6 +106,10 @@ ga
 gs
 cs
 fic
+get_attribute 
+get_selection 
+change_selection 
+foreach_in_collection 
 
 #16) A syntax/tcl.vim file is also dumped out to highlight 
 #  a) valid commmands (Tcl core, SNPS builtin, proc names)
