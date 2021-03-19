@@ -5,8 +5,7 @@ Use your TAB key to trigger auto-completion specialized for your Tcl.
 
 See doc/TclComplete.txt (in this repo) for further details.
 
-![Alt Text](https://gitlab.devtools.intel.com/cbheitho/TclComplete/-/blob/master/TclComplete_commands.gif)
-
+<p align="center"><img src="TclComplete_commands.gif"></p>
 
 ==============================================================================
 ## Installing this plugin
