@@ -5,9 +5,7 @@ Use your TAB key to trigger auto-completion specialized for your Tcl.
 
 See doc/TclComplete.txt (in this repo) for further details.
 
-Visit this InsideBlue page for demonstration videos:  
-https://soco.intel.com/groups/vim-users/blog/2018/07/13/auto-completion-for-synopsystcl
-
+![Alt Text](https://gitlab.devtools.intel.com/cbheitho/TclComplete/-/blob/master/TclComplete_commands.gif)
 
 
 ==============================================================================
