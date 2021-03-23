@@ -1,7 +1,7 @@
 "tclcomplete.vim - Omni Completion for Synopsys Tcl
 " Creator: Chris Heithoff < christopher.b.heithoff@intel.com >
 " Version: 2.1
-" Last Updated: 18-Feb-2020
+" Last Updated: 22-Mar-2021
 "
 
 function! TclComplete#ReadJsonFile(json_file, json_type)
@@ -291,20 +291,57 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! TclComplete#FindStart()
     let l:line = getline('.')
+
+    " Adjust the cursor column by one to be used as index for looking 
+    " up characters in the line string.
     let l:index = col('.') - 1
-    " Important:  We need to search for :: for namespaces, $ for var names
-    "             and * for the wildcard mode, and -dashes for options
-    "             and . for app_options.
+
+    " If the current line is the continuation of a previous line, then
+    " include the characters of those lines too.
+    let l:num_prev_chars = 0
+    if line('.')==1
+        let l:line = getline('.')
+    else
+        let l:line = getline('.')
+        let i = 1
+        while 1 
+            " Include the previous line if it has a line continouation character
+            let l:prev_line = getline(line('.') - i)
+            if prev_line[len(prev_line)-1] == '\'
+                " Trim off the line continuation slash
+                let prev_line = prev_line[0:len(prev_line)-2]
+                let l:len_prev_line = len(l:prev_line)
+
+                " Insert prev_line to beginning of line and adjust index
+                let l:line = prev_line.l:line
+                let l:index += l:len_prev_line
+                let l:num_prev_chars += l:len_prev_line
+                
+                " Increment counter to keep looking backwards
+                let i+=1
+            else
+                " No more line continuation characters. Stop
+                break
+            endif
+        endwhile
+    endif
+        
+    " Important:  We need to search for these valid characters:
+    "    : for namespaces
+    "    $ for var names
+    "    * for the wildcard mode
+    "    - for dash options
+    "    . for app_options and collection attributes
     let l:valid_chars = '[\-a-zA-Z0-9:_*$(.,]'
 
-
-    " Move backward as long as the previous character(index-1)  is part of valid_chars
+    " Look backwards at each character in the line string to first invalid char or start of string
     while  l:index>0 && l:line[l:index - 1]=~l:valid_chars
         let l:index -= 1
     endwhile
 
-    " Save this index to indicate completion will begin there
-    "   (do not include leading "::" )
+    " For start of completion, ignore any leading :: for namespaces.
+    "    s:global is used later in TclComplete#Complete() function 
+    "      to filter the completion list based on available namespaces.
     if l:line[l:index:l:index+1]=="::"
         let s:start_of_completion = l:index+2
         let s:global = 1
@@ -313,7 +350,8 @@ function! TclComplete#FindStart()
         let s:global = 0
     endif
 
-    " Continue going backward to the start of line or first unmatched left bracket
+    " Continue going backward to the start of line or first unmatched left square bracket
+    "   This is how the active cmd is discovered.   That defines the context for completion.
     let l:right_bracket_count=0
     while l:index > 0
         let l:char_behind = l:line[l:index-1]
@@ -336,26 +374,29 @@ function! TclComplete#FindStart()
         let l:index += 1
     endwhile
     
-    " Just ahead of a possible :: global namespace
+    " Move index again ahead of a possible leading "::" at the beginning of a command.
     if line[l:index:l:index+1]=="::"
         let l:index += 2
     endif
 
-    " All done moving the index. Save s:active_cmd as a script variable
-    " Let's also figure out the last completed word
+    " The index has now been moved to the start of the active command.
+    "   1)  Save active_cmd as a global variable
+    "   2)  Save the last completed word too.  This gives more context.
+    "           For example, "get_cells -filter " has "get_cells" as the 
+    "           active command and -filter as the last completed word.
+    " If there is no pre-typed active command, then we must be in command 
+    "  completion mode.
     if l:index==s:start_of_completion
-        let s:active_cmd = ''
+        let g:active_cmd = ''
         let g:last_completed_word = ''
     else
-        let s:active_cmd = matchstr(l:line, '[\-a-zA-Z0-9:_]\+',l:index)
+        let g:active_cmd = matchstr(l:line, '[\-a-zA-Z0-9:_]\+',l:index)
         let g:last_completed_word = split(l:line[0:s:start_of_completion-1])[-1]
     endif
 
-    " For debug 
-    let g:active_cmd = s:active_cmd
-
     " Finally, return the start which is required for a completion function
-    return s:start_of_completion
+    "   but now unadjust for the characters on previous lines due to line continuation
+    return s:start_of_completion - l:num_prev_chars
 endfunction
 
 
@@ -399,8 +440,8 @@ function! TclComplete#Complete(findstart, base)
         " 1a)  If you've typed a dash, then get the -options of the active cmd.
         if l:base[0] == '-' 
             let g:ctype = 'dash'
-            let l:complete_list = get(g:TclComplete#options,s:active_cmd,[])
-            let l:menu_dict     = get(g:TclComplete#details,s:active_cmd,[])
+            let l:complete_list = get(g:TclComplete#options,g:active_cmd,[])
+            let l:menu_dict     = get(g:TclComplete#details,g:active_cmd,[])
 
         " 1b)  If you've typed "G_", then use list of g vars.
         elseif l:base[0:1] == 'G_' 
@@ -466,7 +507,7 @@ function! TclComplete#Complete(findstart, base)
 
 
         " 2) Command completion if no command exists yet.
-        elseif s:active_cmd == ''
+        elseif g:active_cmd == ''
             " 2a) If you're inside a namespace eval block, then use cmds as scoped to the namespace
             if get(l:context,0,'')=='namespace' && get(l:context,1,'')=='eval' && len(l:context)>2
                 let namespace = l:context[2]
@@ -512,7 +553,7 @@ function! TclComplete#Complete(findstart, base)
             let g:TclComplete#attr_flag  = 'no'
 
         " 4b) Attribute completion following attribute commands (like get_attribute)
-        elseif has_key(g:TclComplete#attribute_funcs,s:active_cmd)
+        elseif has_key(g:TclComplete#attribute_funcs,g:active_cmd)
             " Check for dotted attribute format.  (like cell.full_name, pin.cell.origin)
             if l:base =~ '\.'
                 let g:ctype = 'attributes (dotted)'
@@ -554,7 +595,7 @@ function! TclComplete#Complete(findstart, base)
             endif
 
         " 4c) Attribute completion after the -filter option of get_cells, get_nets, etc.
-        elseif g:last_completed_word=="-filter" && s:active_cmd =~# '^get_'
+        elseif g:last_completed_word=="-filter" && g:active_cmd =~# '^get_'
             " Check for dotted attribute format.  (like cell.full_name, pin.cell.origin)
             "  (THIS CODE IS REPEATED FROM 4b. CAN THIS BE RE-FACTORED BETTER?)
             if l:base =~ '\.'
@@ -578,59 +619,59 @@ function! TclComplete#Complete(findstart, base)
                 call map(l:complete_list, "l:prefix.v:val")
             else
                 let g:ctype = 'attributes (derived from get_* -filter)'
-                let g:TclComplete#attr_class = TclComplete#GetObjectClass(s:active_cmd)
+                let g:TclComplete#attr_class = TclComplete#GetObjectClass(g:active_cmd)
                 let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
                 let l:menu_dict     = get(g:TclComplete#attributes,g:TclComplete#attr_class,{})
             endif
 
 
         " 5a) G_var completion but for the getvar/setvar/etc commands
-        elseif has_key(g:TclComplete#gvar_funcs, s:active_cmd)
+        elseif has_key(g:TclComplete#gvar_funcs, g:active_cmd)
             let g:ctype = 'g_var function'
             let l:complete_list = g:TclComplete#g_vars
 
         " 5b) Complete the command with variable names (without $ sign)
-        elseif has_key(g:TclComplete#varname_funcs, s:active_cmd) || has_key(g:TclComplete#varname_funcs, s:active_cmd.' '.g:last_completed_word)
+        elseif has_key(g:TclComplete#varname_funcs, g:active_cmd) || has_key(g:TclComplete#varname_funcs, g:active_cmd.' '.g:last_completed_word)
             let g:ctype = 'varname function'
             let l:complete_list = TclComplete#ScanBufferForVariableNames()
 
         " 5c) Complete with environment variables
-        elseif has_key(g:TclComplete#env_funcs, s:active_cmd)
+        elseif has_key(g:TclComplete#env_funcs, g:active_cmd)
             let g:ctype = 'env'
             let l:menu_dict = g:TclComplete#arrays['env']
             let l:complete_list = sort(keys(l:menu_dict))
 
         " 5d) Complete with the list of designs in your project.
-        elseif g:last_completed_word == "-design" || has_key(g:TclComplete#design_funcs, s:active_cmd)
+        elseif g:last_completed_word == "-design" || has_key(g:TclComplete#design_funcs, g:active_cmd)
             let g:ctype = 'design'
             let l:complete_list = g:TclComplete#designs
 
         " 5e) Complete with Synopsys application options
-        elseif has_key(g:TclComplete#app_option_funcs, s:active_cmd)
+        elseif has_key(g:TclComplete#app_option_funcs, g:active_cmd)
             let g:ctype = 'app_options'
             let l:complete_list = sort(keys(g:TclComplete#app_options_dict))
             let l:menu_dict = g:TclComplete#app_options_dict
 
         " 5f) Complete with Synopsys applicaiton variables
-        elseif s:active_cmd=~# 'app_var'
+        elseif g:active_cmd=~# 'app_var'
             let g:ctype = 'app_var'
             let l:complete_list = sort(g:TclComplete#app_var_list)
 
         " 5g) Complete with iccpp (iTar) parameters
-        elseif s:active_cmd =~# '\viccpp_com::(set|get)_param'
+        elseif g:active_cmd =~# '\viccpp_com::(set|get)_param'
             let g:ctype = 'iccpp parameter'
             let l:complete_list = sort(keys(g:TclComplete#iccpp_dict))
             let l:menu_dict = g:TclComplete#iccpp_dict
 
         " 6a) Completions for two word combinations (like 'string is')
-        elseif has_key(g:TclComplete#options,s:active_cmd." ".g:last_completed_word)
+        elseif has_key(g:TclComplete#options,g:active_cmd." ".g:last_completed_word)
             let g:ctype = 'two word options'
-            let l:two_word_command = join([s:active_cmd,g:last_completed_word])
+            let l:two_word_command = join([g:active_cmd,g:last_completed_word])
             let l:complete_list = g:TclComplete#options[l:two_word_command]
             let l:menu_dict     = get(g:TclComplete#details,l:two_word_command,[])
 
         " 6b) Complete two word namespace commands with your namespaces.
-        elseif s:active_cmd=='namespace'
+        elseif g:active_cmd=='namespace'
             let l:namespace_options = get(g:TclComplete#options,'namespace',[])
             if index(l:namespace_options,g:last_completed_word)<0
                 let g:ctype = 'namespace_options'
@@ -641,21 +682,21 @@ function! TclComplete#Complete(findstart, base)
             endif
 
         " 6c) Complete two word array commands with your array names
-        elseif (s:active_cmd=='array' && g:last_completed_word != 'array') || s:active_cmd=='parray'
+        elseif (g:active_cmd=='array' && g:last_completed_word != 'array') || g:active_cmd=='parray'
             let g:ctype = 'array'
             let l:complete_list = g:TclComplete#ScanBufferForArrayNames()
 
         " 6d) Complete two word package commands with your packages
-        elseif s:active_cmd=='package' && g:last_completed_word != 'package' 
+        elseif g:active_cmd=='package' && g:last_completed_word != 'package' 
             let g:ctype = 'package'
             let l:complete_list = g:TclComplete#packages
 
         " 6e) Situations where the completion list should be a list of commands.
-        elseif s:active_cmd=='info' && g:last_completed_word=~'^commands\?$'
+        elseif g:active_cmd=='info' && g:last_completed_word=~'^commands\?$'
             let l:complete_list = g:TclComplete#cmds
 
         " 7a) Techfile stuff (relies on $SD_BUILD2/utils/shared/techfile.tcl)
-        elseif s:active_cmd =~ 'tech::get_techfile_info'
+        elseif g:active_cmd =~ 'tech::get_techfile_info'
             let g:ctype = 'techfile'
             if g:last_completed_word=='-type'
                 let l:complete_list = g:TclComplete#techfile_types
@@ -672,12 +713,12 @@ function! TclComplete#Complete(findstart, base)
             endif
 
         " 8) Track patterns
-        elseif has_key(g:TclComplete#trackpattern_funcs, s:active_cmd) && g:last_completed_word=='-pattern'
+        elseif has_key(g:TclComplete#trackpattern_funcs, g:active_cmd) && g:last_completed_word=='-pattern'
             let g:ctype = 'track_patterns'
             let l:complete_list = g:TclComplete#track_patterns
 
         " 9) GUI stuff
-        elseif s:active_cmd=~'^gui' && g:last_completed_word!~'^gui'
+        elseif g:active_cmd=~'^gui' && g:last_completed_word!~'^gui'
             if g:last_completed_word == '-color'
                 let l:complete_list = split('white red orange yellow green blue purple light_red light_orange light_yellow light_green light_blue light_purple')
             elseif g:last_completed_word == '-pattern'                                                             
@@ -696,15 +737,15 @@ function! TclComplete#Complete(findstart, base)
 
 
         " 11) RDT stuff
-        elseif has_key(g:TclComplete#rdt_commands,s:active_cmd)
+        elseif has_key(g:TclComplete#rdt_commands,g:active_cmd)
             let g:ctype = 'rdt_steps'
-            let l:complete_list = TclComplete#get_rdt_list(s:active_cmd,g:last_completed_word,l:base)
+            let l:complete_list = TclComplete#get_rdt_list(g:active_cmd,g:last_completed_word,l:base)
         
         " Default) Options of the active command.
         else
             let g:ctype = 'default'
-            let l:complete_list = get(g:TclComplete#options,s:active_cmd,[])
-            let l:menu_dict     = get(g:TclComplete#details,s:active_cmd,[])
+            let l:complete_list = get(g:TclComplete#options,g:active_cmd,[])
+            let l:menu_dict     = get(g:TclComplete#details,g:active_cmd,[])
         endif
 
         " Just in case nothing matches, let the user known.   
