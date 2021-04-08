@@ -6,6 +6,8 @@
 
 function! TclComplete#ReadJsonFile(json_file, json_type)
     let json_full_path = g:TclComplete#dir.'/'.a:json_file
+
+    " If no file exists, then return an empty list or empty dict
     if !filereadable(json_full_path)
         if a:json_type=='list'
             return []
@@ -13,6 +15,7 @@ function! TclComplete#ReadJsonFile(json_file, json_type)
             return {}
         endif
     endif
+
     let file_lines = readfile(json_full_path)
     let file_as_one_string = join(file_lines)
 
@@ -27,9 +30,10 @@ endfunction
     
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
 " TclComplete#GetContextList()
-" - This finds the line of the previous unmatched curly
-"   brace and return the command found.
+" - This finds the line of the previous UNMATCHED curly
+"   brace and returns the command found.
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 function! TclComplete#GetContextList()
     " Save the location of the cursor as a mark
     normal ma
@@ -60,12 +64,11 @@ function! TclComplete#GetData()
     "   dictionary: key = 'command', value = 'description of command'
     let g:TclComplete#descriptions = TclComplete#ReadJsonFile('descriptions.json','dict')
 
-    "   multi-level dictionary [object_class][attr_name] = choices
+    "   dictionary: key = object_class, value = attribute for the class
     let g:TclComplete#attributes = TclComplete#ReadJsonFile('attributes.json','dict')
     let g:TclComplete#object_classes = sort(keys(g:TclComplete#attributes))
 
-    "  We will check if commands are included as keys here for attribute completion.
-    "    (Note, has_key() lookup is probably faster than searching through a list
+    "  define here the commands that will use attribute mode completion
     let g:TclComplete#attribute_funcs = {}
     for f in ['get_attribute', 'filter_collection', 'set_attribute', 'get_defined_attributes', 'sort_collection']
         let g:TclComplete#attribute_funcs[f]=''
@@ -74,7 +77,7 @@ function! TclComplete#GetData()
     "     list:  packages
     let g:TclComplete#packages = TclComplete#ReadJsonFile('packages.json','list')
 
-    "     list: derive the namespaces
+    "     list: Use the TclComplete#cmds list to derive namespaces 
     let g:TclComplete#namespaces = copy(g:TclComplete#cmds)
     call filter(g:TclComplete#namespaces,"v:val=~'::'")
     let map_cmd = "substitute(v:val,'::[^:]*$','','')"
@@ -488,6 +491,11 @@ function! TclComplete#Complete(findstart, base)
                     
                 let g:menu_dict = l:menu_dict
                 let l:complete_list = sort(keys(l:menu_dict))
+            elseif g:array_varname=='defined' || g:array_varname=='undefined'
+                call TclComplete#AskForAttribute()
+                let g:ctype= 'attributes (defined)'
+                let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
+                call map(l:complete_list,"g:array_varname.'('.v:val")
             else 
                 let l:complete_list = []
             endif
@@ -584,6 +592,7 @@ function! TclComplete#Complete(findstart, base)
                 let l:class_index = index(l:split_line,'-class')+1
                 let g:TclComplete#attr_class=get(l:split_line,l:class_index,'')
                 let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
+                call extend(l:complete_list,["defined","undefined"])
                 let l:menu_dict     = get(g:TclComplete#attributes,g:TclComplete#attr_class,{})
 
             " ...otherwise, ask the user for the object class.
@@ -591,6 +600,7 @@ function! TclComplete#Complete(findstart, base)
                 call TclComplete#AskForAttribute()
                 let g:ctype = 'attributes (AskForAttribute)'
                 let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
+                call extend(l:complete_list,["defined","undefined"])
                 let l:menu_dict     = get(g:TclComplete#attributes,g:TclComplete#attr_class,{})
             endif
 
@@ -621,6 +631,7 @@ function! TclComplete#Complete(findstart, base)
                 let g:ctype = 'attributes (derived from get_* -filter)'
                 let g:TclComplete#attr_class = TclComplete#GetObjectClass(g:active_cmd)
                 let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
+                call extend(l:complete_list,["defined","undefined"])
                 let l:menu_dict     = get(g:TclComplete#attributes,g:TclComplete#attr_class,{})
             endif
 
