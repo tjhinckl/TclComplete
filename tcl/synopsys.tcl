@@ -276,6 +276,9 @@ proc TclComplete::get_descriptions {commands} {
         }
         dict set desc_dict $cmd $description
     }
+
+    # Add some hard-coded override here....
+    dict set desc_dict lrepeat "Build a list. (lrepeat count ?element ...?)"
     return $desc_dict
 }
 
