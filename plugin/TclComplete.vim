@@ -8,37 +8,30 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "  Possible locations of the TclComplete files (in order of priority)
 "     1) g:TclComplete#dir defined in ~/.vimrc 
-"     2) ward/TclComplete
-"     3) ward/dp/user_scripts/TclComplete
-"     4) ward/dp/scripts/TclComplete
-"     5) ward/*/TclComplete
-"     6) ward/*/*/TclComplete
-"     7) ward/*/*/*/TclComplete
-"     8) sample
+"     2) ward or WARD work directory
+"     3) sample in this plugin directory
 if !exists("g:TclComplete#dir")
     if (exists('$WARD'))
         let g:TclComplete#ward = $WARD
     elseif (exists('$ward'))
         let g:TclComplete#ward = $ward
+    else
+        let g:TclComplete#ward = expand("<sfile>:p:h:h")."/sample"
     endif
 
-    let g:TclComplete#dir = "unknown"
     " Look for a TclComplete directory under the ward.
     "  - avoid globbing with ** because that would slow down Vim startup.
     "  - limit it to three directories down for now.
-    if exists('g:TclComplete#ward')
-        let globs = ['/', '/dp/user_scripts/','/dp/scripts/','/*/', '/*/*/', '/*/*/*/']
-        for glob in globs 
-            " Call glob with third argument true to return a list.
-            let __glob = glob(g:TclComplete#ward.glob.'TclComplete','',1)
-            if len(__glob) > 0
-                let g:TclComplete#dir = __glob[0]
-                break
-            endif
-        endfor
-    else
-        let g:TclComplete#dir = expand("<sfile>:p:h:h")."/sample"
-    endif
+    let globs = ['/', '/dp/user_scripts/','/dp/scripts/','/*/', '/*/*/', '/*/*/*/']
+    for glob in globs 
+        " Call glob with third argument true to return a list.
+        let __glob = glob(g:TclComplete#ward.glob.'TclComplete','',1)
+        if len(__glob) > 0
+            let g:TclComplete#dir = __glob[0]
+            break
+        endif
+    endfor
+
 endif
 
 " This activates the syntax/tcl.vim file 

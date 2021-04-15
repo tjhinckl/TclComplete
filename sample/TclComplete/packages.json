@@ -1,0 +1,10 @@
+[
+    "Tcl",
+    "TclOO",
+    "http",
+    "msgcat",
+    "platform",
+    "tcl::tommath",
+    "tcltest",
+    "zlib"
+]

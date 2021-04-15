@@ -1,0 +1,13 @@
+[
+    ":alpha:",
+    ":upper:",
+    ":lower:",
+    ":digit:",
+    ":xdigit:",
+    ":alnum:",
+    ":blank:",
+    ":space:",
+    ":punct:",
+    ":graph:",
+    ":cntrl:"
+]
