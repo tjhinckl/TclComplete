@@ -82,13 +82,14 @@ By default, Vim will look hierarchically below a $WARD or $ward directory for a 
 Otherwise, it will use the sample/TclComplete directory in this plugin's location.  
 
 To specify a different location, include this in your .vimrc file:   
->  :let g:TclComplete#dir = "/non/default/directory/"
+>     :let g:TclComplete#dir = "/non/default/directory/"
 
-Hard-coded strings must be in quotes.   
-Environment variables use $ prefixes.  
-Concatenate strings and expressions with a dot (.)  
-For example:
->  :let g:TclComplete#dir = $PROJ_AREA . "/TclComplete"
+ - Hard-coded strings must be in quotes.   
+ - Environment variables use $ prefixes.  
+ - Concatenate strings and expressions with a dot (.)  
+
+For example:  
+>     :let g:TclComplete#dir = $PROJ_AREA . "/TclComplete"
 
 ==============================================================================
 ## Entering TclComplete auto-completion
