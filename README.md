@@ -34,17 +34,23 @@ See doc/TclComplete.txt (in this repo) for further details.
 4.  In your ~/.vimrc, you *must* enable filetype plugins
 >     filetype plugin indent on
 
-5.  Start your tcl shell 
+For core Tcl8.6 commands only, you can stop here.  The sample/TclComplete directory
+is sufficient.
 
-6.  Create the TclComplete files from your tcl shell:
+To optimize Tcl for your specific tool, follow these additional directions:
+
+1.  Start your Tcl based tool (such as PrimeTime, FusionCompiler, etc)
+
+2.  Create a TclComplete directory underneath <directory>  
 For Synopsys tools
 >     source ~/.vim/pack/from_gitlab/start/TclComplete/tcl/WriteTclCompleteFilesSynopsys.tcl
 >     TclComplete::WriteFilesSynopsys <directory>
 For Mentor tools
 >     source ~/.vim/pack/from_gitlab/start/TclComplete/tcl/WriteTclCompleteFilesMentor.tcl
 >     TclComplete::WriteFilesMentor <directory>
-
-
+For other tools (or if the above don't work)
+>     source ~/.vim/pack/from_gitlab/start/TclComplete/tcl/WriteTclCompleteFilesStd.tcl
+>     TclComplete::WriteFilesStd <directory>
 
 
 ==============================================================================
@@ -58,41 +64,29 @@ For Mentor tools
    but not a dedicated one for Tcl....so here it is!
    
 ==============================================================================
-## Populating the completion files
+## TclComplete directory description.
 
-   Because there can be different versions of Tcl, and also many
-   possible procs that may vary from project to project, it is
-   recommended to open up your Tcl shell (or icc2_shell or pt_shell..)
-   and source the tcl/WriteTclCompleteFiles.tcl file.
+   The TclComplete directory contains a number of .json files representing 
+   the data structures (lists, dicts, dicts of list, etc) for all the completion options.
 
-   This will create a directory $WARD/TclComplete and populate it with
-   .json files representing the data structures (lists, dicts, dicts of list, etc)
-   for all the completion options.
    JSON format is not Vim specific, so similar plugins for other text
    editors can use these.  (contact Francis Creed for emacs versions)
    
    There will also be two Vim specific files.  One defines some
    insert mode aliases.  The other does syntax highlighting.
 
-   NOTE:  This expects user to be an Intel back-end engineer who works
-     in a back-end environment, where the $WARD is your work area. If 
-     you need this changed, then modify the tcl script or fake it out
-     by defining an environment variable called WARD.)
-
 ==============================================================================
 ## Location of TclComplete directory
 
-By default, TclComplete will look for the following directories
-  (in order of descending priority)
-     $WARD/TclComplete
-     $WARD/dp/user_scripts/TclComplete
+By default, Vim will look hierarchically below a $WARD or $ward directory for a directory named TclComplete. 
+Otherwise, it will use the sample/TclComplete directory in this plugin's location.  
 
-To override default, include this in your .vimrc file:   
+To specify a different location, include this in your .vimrc file:   
 >  :let g:TclComplete#dir = "/non/default/directory/"
 
-Hard-coded strings must be in quotes. 
-Environment variables use $ prefixes.
-Concatenate strings and expressions with a dot (.)
+Hard-coded strings must be in quotes.   
+Environment variables use $ prefixes.  
+Concatenate strings and expressions with a dot (.)  
 For example:
 >  :let g:TclComplete#dir = $PROJ_AREA . "/TclComplete"
 
