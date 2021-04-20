@@ -13,14 +13,14 @@ See doc/TclComplete.txt (in this repo) for further details.
 
      (see https://soco.intel.com/groups/vim-users/blog/2016/11/28/how-to-set-your-vim-version-at-intel )
 
-2.  If you are on an Intel EC SLES11 machine, you must use a newer version
-     of Git than the default version.
+2.  If you are on an Intel EC SLES11 machine, you might need to use a non-default version of Git.
 
    This version is known to work.
->   /usr/intel/pkgs/git/2.8.4/bin/git
+    `/usr/intel/pkgs/git/2.8.4/bin/git`
 
-   Add this line to your `~/.itools` file to use this as default
->   P:git      2.8.4
+   Consider setting up an alias for cloning, pulling or pushing with Intel's gitlab.
+>     alias gitlab '/usr/intel/pkgs/git/2.8.4/bin/git'
+
 
 3.  To install the plugin, make a pack directory in your ~/.vim folder and a subdirectory for the plugin.
 >     mkdir -p ~/.vim/pack/from_gitlab/start
