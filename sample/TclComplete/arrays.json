@@ -1,10 +1,4 @@
 {
-    "auto_execs":
-        {
-        },
-    "env":
-        {
-        },
     "auto_index":
         {
         "::auto_mkindex_parser::cleanup":"source /usr/intel/pkgs/tcl-tk/8.6.8/lib/tcl8.6/auto.tcl",
@@ -74,6 +68,21 @@
         "tcl_wordBreakAfter":"source /usr/intel/pkgs/tcl-tk/8.6.8/lib/tcl8.6/word.tcl",
         "tcl_wordBreakBefore":"source /usr/intel/pkgs/tcl-tk/8.6.8/lib/tcl8.6/word.tcl"
         },
+    "env":
+        {
+        "EDITOR":"/usr/intel/bin/vim",
+        "HTTPS_PROXY":"https://proxy-chain.intel.com:912",
+        "HTTP_PROXY":"http://proxy-chain.intel.com:911",
+        "LANG":"en_US.UTF-8",
+        "LANGUAGE":"",
+        "OS":"linux",
+        "OSTYPE":"linux",
+        "PAGER":"/usr/intel/bin/most",
+        "SHELL":"/usr/intel/pkgs/tcsh/6.15.00/bin/tcsh",
+        "ftp_proxy":"http://proxy-chain.intel.com:911",
+        "http_proxy":"http://proxy-chain.intel.com:911",
+        "https_proxy":"https://proxy-chain.intel.com:912"
+        },
     "tcl_platform":
         {
         "byteOrder":"littleEndian",
@@ -85,7 +94,7 @@
         "platform":"unix",
         "pointerSize":"8",
         "threaded":"1",
-        "user":"cbheitho",
+        "user":"pat_gelsinger",
         "wordSize":"8"
         }
 }

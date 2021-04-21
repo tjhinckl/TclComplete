@@ -734,106 +734,6 @@
         "-real",
         "-unique"
         ],
-    "msgcat::ConvertLocale":
-        [
-        ""
-        ],
-    "msgcat::DefaultUnknown":
-        [
-        ""
-        ],
-    "msgcat::GetPreferences":
-        [
-        ""
-        ],
-    "msgcat::Init":
-        [
-        ""
-        ],
-    "msgcat::Invoke":
-        [
-        ""
-        ],
-    "msgcat::ListComplement":
-        [
-        ""
-        ],
-    "msgcat::Load":
-        [
-        ""
-        ],
-    "msgcat::LoadAll":
-        [
-        ""
-        ],
-    "msgcat::PackageLocales":
-        [
-        ""
-        ],
-    "msgcat::PackagePreferences":
-        [
-        ""
-        ],
-    "msgcat::mc":
-        [
-        ""
-        ],
-    "msgcat::mcexists":
-        [
-        ""
-        ],
-    "msgcat::mcflmset":
-        [
-        ""
-        ],
-    "msgcat::mcflset":
-        [
-        ""
-        ],
-    "msgcat::mcforgetpackage":
-        [
-        ""
-        ],
-    "msgcat::mcload":
-        [
-        ""
-        ],
-    "msgcat::mcloadedlocales":
-        [
-        ""
-        ],
-    "msgcat::mclocale":
-        [
-        ""
-        ],
-    "msgcat::mcmax":
-        [
-        ""
-        ],
-    "msgcat::mcmset":
-        [
-        ""
-        ],
-    "msgcat::mcpackageconfig":
-        [
-        ""
-        ],
-    "msgcat::mcpackagelocale":
-        [
-        ""
-        ],
-    "msgcat::mcpreferences":
-        [
-        ""
-        ],
-    "msgcat::mcset":
-        [
-        ""
-        ],
-    "msgcat::mcunknown":
-        [
-        ""
-        ],
     "namespace":
         [
         "children",
@@ -1570,71 +1470,7 @@
         [
         ""
         ],
-    "tcl::clock::AddDays":
-        [
-        ""
-        ],
-    "tcl::clock::AddMonths":
-        [
-        ""
-        ],
-    "tcl::clock::AssignBaseIso8601Year":
-        [
-        ""
-        ],
-    "tcl::clock::AssignBaseJulianDay":
-        [
-        ""
-        ],
-    "tcl::clock::AssignBaseMonth":
-        [
-        ""
-        ],
-    "tcl::clock::AssignBaseWeek":
-        [
-        ""
-        ],
-    "tcl::clock::AssignBaseYear":
-        [
-        ""
-        ],
-    "tcl::clock::BSearch":
-        [
-        ""
-        ],
-    "tcl::clock::ChangeCurrentLocale":
-        [
-        ""
-        ],
-    "tcl::clock::ClearCaches":
-        [
-        ""
-        ],
-    "tcl::clock::ConvertLegacyTimeZone":
-        [
-        ""
-        ],
     "tcl::clock::ConvertLocalToUTC":
-        [
-        ""
-        ],
-    "tcl::clock::DeterminePosixDSTTime":
-        [
-        ""
-        ],
-    "tcl::clock::EnterLocale":
-        [
-        ""
-        ],
-    "tcl::clock::FormatNumericTimeZone":
-        [
-        ""
-        ],
-    "tcl::clock::FormatStarDate":
-        [
-        ""
-        ],
-    "tcl::clock::FreeScan":
         [
         ""
         ],
@@ -1642,15 +1478,7 @@
         [
         ""
         ],
-    "tcl::clock::GetJulianDayFromEraYearDay":
-        [
-        ""
-        ],
     "tcl::clock::GetJulianDayFromEraYearMonthDay":
-        [
-        ""
-        ],
-    "tcl::clock::GetJulianDayFromEraYearMonthWeekDay":
         [
         ""
         ],
@@ -1658,115 +1486,11 @@
         [
         ""
         ],
-    "tcl::clock::GetLocaleEra":
-        [
-        ""
-        ],
-    "tcl::clock::GetSystemTimeZone":
-        [
-        ""
-        ],
-    "tcl::clock::GuessWindowsTimeZone":
-        [
-        ""
-        ],
-    "tcl::clock::InitTZData":
-        [
-        ""
-        ],
-    "tcl::clock::InterpretHMS":
-        [
-        ""
-        ],
-    "tcl::clock::InterpretHMSP":
-        [
-        ""
-        ],
-    "tcl::clock::InterpretTwoDigitYear":
-        [
-        ""
-        ],
-    "tcl::clock::IsGregorianLeapYear":
-        [
-        ""
-        ],
-    "tcl::clock::LoadTimeZoneFile":
-        [
-        ""
-        ],
-    "tcl::clock::LoadWindowsDateTimeFormats":
-        [
-        ""
-        ],
-    "tcl::clock::LoadZoneinfoFile":
-        [
-        ""
-        ],
-    "tcl::clock::LocaleNumeralMatcher":
-        [
-        ""
-        ],
-    "tcl::clock::LocalizeFormat":
-        [
-        ""
-        ],
-    "tcl::clock::MakeParseCodeFromFields":
-        [
-        ""
-        ],
-    "tcl::clock::MakeUniquePrefixRegexp":
-        [
-        ""
-        ],
     "tcl::clock::Oldscan":
         [
         ""
         ],
-    "tcl::clock::ParseClockFormatFormat":
-        [
-        ""
-        ],
-    "tcl::clock::ParseClockFormatFormat2":
-        [
-        ""
-        ],
-    "tcl::clock::ParseClockScanFormat":
-        [
-        ""
-        ],
     "tcl::clock::ParseFormatArgs":
-        [
-        ""
-        ],
-    "tcl::clock::ParsePosixTimeZone":
-        [
-        ""
-        ],
-    "tcl::clock::ParseStarDate":
-        [
-        ""
-        ],
-    "tcl::clock::ProcessPosixTimeZone":
-        [
-        ""
-        ],
-    "tcl::clock::ReadZoneinfoFile":
-        [
-        ""
-        ],
-    "tcl::clock::ScanWide":
-        [
-        ""
-        ],
-    "tcl::clock::SetupTimeZone":
-        [
-        ""
-        ],
-    "tcl::clock::UniquePrefixRegexp":
-        [
-        ""
-        ],
-    "tcl::clock::WeekdayOnOrBefore":
         [
         ""
         ],
@@ -1783,22 +1507,6 @@
         ""
         ],
     "tcl::clock::getenv":
-        [
-        ""
-        ],
-    "tcl::clock::mc":
-        [
-        ""
-        ],
-    "tcl::clock::mcload":
-        [
-        ""
-        ],
-    "tcl::clock::mclocale":
-        [
-        ""
-        ],
-    "tcl::clock::mcpackagelocale":
         [
         ""
         ],
@@ -2560,36 +2268,6 @@
         ""
         ],
     "tcl::string::wordstart":
-        [
-        ""
-        ],
-    "tcl::tm::Defaults":
-        [
-        ""
-        ],
-    "tcl::tm::UnknownHandler":
-        [
-        ""
-        ],
-    "tcl::tm::add":
-        [
-        ""
-        ],
-    "tcl::tm::list":
-        [
-        ""
-        ],
-    "tcl::tm::path":
-        [
-        "add",
-        "list",
-        "remove"
-        ],
-    "tcl::tm::remove":
-        [
-        ""
-        ],
-    "tcl::tm::roots":
         [
         ""
         ],
