@@ -7,13 +7,16 @@
 function! TclComplete#ReadJsonFile(json_file, json_type)
     let json_full_path = g:TclComplete#dir.'/'.a:json_file
 
+    " Initialize the object
+    if a:json_type=='list'
+        let object = []
+    elseif a:json_type=='dict'
+        let object = {}
+    endif
+    
     " If no file exists, then return an empty list or empty dict
     if !filereadable(json_full_path)
-        if a:json_type=='list'
-            return []
-        elseif a:json_type=='dict'
-            return {}
-        endif
+        return object
     endif
 
     let file_lines = readfile(json_full_path)
@@ -23,6 +26,13 @@ function! TclComplete#ReadJsonFile(json_file, json_type)
     " ..suppress the warning with a try/endtry.
     try
         let object = json_decode(file_as_one_string)
+    catch
+        echomsg "Something funny happened with ".a:json_file
+        if a:json_type=='list'
+            let object = ['Bad json file '.a:json_file]
+        elseif a:json_type=='dict'
+            let object = {a:json_file : 'Bad json file'}
+        endif
     endtry
 
     return object
@@ -420,6 +430,13 @@ function! TclComplete#Complete(findstart, base)
     else
         " Adjust the base argument. 
         let l:base = a:base
+
+        " Vim8.0 has a buggy thing where a '-' character found by TclComplete#FindStart()
+        "  gets converted to a '0' (number type).
+        if type(l:base) == type(0)
+            let l:base = "-"
+        endif
+
         " 1) Allow a wildcard * to work as a regex .*
         let l:base = substitute(l:base,'*','.*','g')
         " 2) Force a $ character in l:base to be a literal $ so regex matches with =~ operator still work.
@@ -767,6 +784,8 @@ function! TclComplete#Complete(findstart, base)
 
         " Finally, we filter the choices and add the description.
         let res = []
+        let g:complete_list = l:complete_list
+        let g:menu_dict = l:menu_dict
         for m in l:complete_list
             if m=~# '^'.l:base
                 let menu = get(l:menu_dict,m,'')
@@ -851,7 +870,7 @@ function! TclComplete#get_rdt_list(active_cmd,last_completed_word,base)
     return []
 endfunction
 
-function TclComplete#get_g_var_array_names(g_var)
+function! TclComplete#get_g_var_array_names(g_var)
     let result=[]
     for g_var in g:TclComplete#g_var_arrays
         let split_list = split(g_var,'(')
