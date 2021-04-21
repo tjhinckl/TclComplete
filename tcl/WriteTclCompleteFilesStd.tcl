@@ -66,3 +66,7 @@ proc TclComplete::WriteFilesStd {dir_location} {
 
     puts "...done\n"
 }
+
+puts "sourced: WriteTclCompleteFilesStd.tcl."
+puts "IMPORTANT:  To create the TclComplete directory under <path>"
+puts "   TclComplete::WriteFilesStd <path>"

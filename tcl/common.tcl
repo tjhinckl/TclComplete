@@ -40,6 +40,11 @@ proc TclComplete::get_all_sorted_commands {} {
         if {[string match ::_* $gn]} {
             continue
         }
+
+        # Skip TclComplete namespace
+        if {[string match ::TclComplete $gn]} {
+            continue
+        }
         
         # Get the cmds inside each global namespace, but without the leading :: colons.
         set cmds1 [lsort -nocase [info command ${gn}::*]]
@@ -86,6 +91,9 @@ proc TclComplete::dict_to_json {dict} {
     set result "{\n"
     foreach key [lsort [dict keys $dict]] {
         set value [dict get $dict $key]
+        if {$key == ""} {
+            continue
+        }
         append result "${indent}\"${key}\":\"${value}\",\n"
     }
     set result [TclComplete::remove_final_comma $result]
@@ -98,6 +106,9 @@ proc TclComplete::dict_of_lists_to_json {dict_of_lists args} {
     set indent "    "
     set result "{\n"
     foreach key [lsort [dict keys $dict_of_lists]] {
+        if {$key == ""} {
+            continue
+        }
         append result "${indent}\"${key}\":\n"
         append result "${indent}${indent}\[\n"
         if {"no_sort" in $args} {
@@ -121,10 +132,16 @@ proc TclComplete::dict_of_dicts_to_json {dict_of_dicts} {
     set indent "    "
     set result "{\n"
     foreach key [lsort [dict keys $dict_of_dicts]] {
+        if {$key == ""} {
+            continue
+        }
         append result "${indent}\"${key}\":\n"
         append result "${indent}${indent}\{\n"
-        dict for {instance_name ref_name} [dict get $dict_of_dicts $key] {
-            append result "${indent}${indent}\"${instance_name}\":\"${ref_name}\",\n"
+        dict for {key2 value} [dict get $dict_of_dicts $key] {
+            if {$key2 == ""} {
+                continue
+            }
+            append result "${indent}${indent}\"${key2}\":\"${value}\",\n"
         }
         set result [TclComplete::remove_final_comma $result]
         append result "${indent}${indent}\},\n"
