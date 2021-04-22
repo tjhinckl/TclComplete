@@ -15,8 +15,6 @@ if !exists("g:TclComplete#dir")
         let g:TclComplete#ward = $WARD
     elseif (exists('$ward'))
         let g:TclComplete#ward = $ward
-    else
-        let g:TclComplete#ward = expand("<sfile>:p:h:h")."/sample"
     endif
 
     " Look for a TclComplete directory under the ward.
@@ -31,6 +29,11 @@ if !exists("g:TclComplete#dir")
             break
         endif
     endfor
+
+    if !exists("g:TclComplete#dir")
+        let g:TclComplete#ward = expand("<sfile>:p:h:h")."/sample"
+        let g:TclComplete#dir =  g:TclComplete#ward . "/TclComplete"
+    endif
 
 endif
 
