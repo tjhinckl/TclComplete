@@ -6,10 +6,11 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set default values.  These could be overridden in your ~/.vimrc
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 "  Possible locations of the TclComplete files (in order of priority)
 "     1) g:TclComplete#dir defined in ~/.vimrc 
 "     2) ward or WARD work directory
-"     3) sample in this plugin directory
+"     3) sample/TclComplete in this plugin directory
 if !exists("g:TclComplete#dir")
     if (exists('$WARD'))
         let g:TclComplete#ward = $WARD
@@ -17,25 +18,24 @@ if !exists("g:TclComplete#dir")
         let g:TclComplete#ward = $ward
     endif
 
-    " Look for a TclComplete directory under the ward.
-    "  - avoid globbing with ** because that would slow down Vim startup.
-    "  - limit it to three directories down for now.
-    let globs = ['/', '/dp/user_scripts/','/dp/scripts/','/*/', '/*/*/', '/*/*/*/']
-    for glob in globs 
-        " Call glob with third argument true to return a list.
-        let __glob = glob(g:TclComplete#ward.glob.'TclComplete','',1)
-        if len(__glob) > 0
-            let g:TclComplete#dir = __glob[0]
-            break
-        endif
-    endfor
-
-    if !exists("g:TclComplete#dir")
-        let g:TclComplete#ward = expand("<sfile>:p:h:h")."/sample"
-        let g:TclComplete#dir =  g:TclComplete#ward . "/TclComplete"
+    if exists("g:TclComplete#ward")
+        " Look for a TclComplete directory under the ward.
+        "  - avoid globbing with ** because that would slow down Vim startup.
+        "  - limit it to three directories down for now.
+        let globs = ['/', '/dp/user_scripts/','/dp/scripts/','/*/', '/*/*/', '/*/*/*/']
+        for glob in globs 
+            " Call glob with third argument true to return a list.
+            let __glob = glob(g:TclComplete#ward.glob.'TclComplete','',1)
+            if len(__glob) > 0
+                let g:TclComplete#dir = __glob[0]
+                break
+            endif
+        endfor
+    else
+        let g:TclComplete#dir = expand("<sfile>:p:h:h")."/sample/TclComplete"
     endif
-
 endif
+
 
 " This activates the syntax/tcl.vim file 
 execute "set runtimepath+=".g:TclComplete#dir
