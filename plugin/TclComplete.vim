@@ -31,7 +31,10 @@ if !exists("g:TclComplete#dir")
                 break
             endif
         endfor
-    else
+    endif
+
+    " Default
+    if !exists("g:TclComplete#dir")
         let g:TclComplete#dir = expand("<sfile>:p:h:h")."/sample/TclComplete"
     endif
 endif
