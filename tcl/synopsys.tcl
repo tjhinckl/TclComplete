@@ -263,14 +263,21 @@ proc TclComplete::get_descriptions {commands} {
         if {$description eq "# Builtin"} {
             set description [TclComplete::get_description_from_man $cmd]
         } elseif {$description eq ""} {
-            # Important to evaluate info proc at global namespace
-            #   because we're stuck here in the TclComplete namespace
-            if {[info proc ::${cmd}] eq "::${cmd}"} {
-                set info_args [info args ::${cmd}]
-                if {$info_args eq "args" || $info_args eq ""} {
-                    set description ""
+            # Important:  Prefix with :: because we're in the TclComplete namespace
+            set cmd_name ::${cmd}
+            # Check if $cmd is a proc
+            if {[llength [info proc $cmd_name]] == 1} {
+                # Add a catch for info args.  
+                #    (added for Khushal Gondaliya because of ::findString) 
+                if {![catch {set arg_list [info args $cmd_name]} errmsg]} {
+                    if {$arg_list eq "args" || $arg_list eq ""} {
+                        set description ""
+                    } else {
+                        set description "# args = $arg_list"
+                    }
                 } else {
-                    set description "# args = $info_args"
+                    puts "     Is $cmd_name a proc?  \[info proc $cmd_name\] = [info proc $cmd_name]"
+                    puts "       \[info args $cmd_name\] --> $errmsg"
                 }
             }
         }
@@ -358,7 +365,11 @@ proc TclComplete::write_app_options_json {outdir} {
 # Write a json file for Synopsys designs 
 #########################################################
 proc TclComplete::write_designs_json {outdir} {
-    set designs [lsort [get_attribute [get_designs -quiet] name]]
+    if {([info commands get_designs]=="get_designs") &&  ("name" in [get_defined_attributes -class design])} {
+        set designs [lsort [get_attribute [get_designs -quiet] name]]
+    } else {
+        set designs [list]
+    }
     TclComplete::write_json $outdir/designs [TclComplete::list_to_json $designs]
 }
 
@@ -521,7 +532,6 @@ proc TclComplete::write_attributes_json {outdir} {
         dict set attribute_dict $attr_class $attr_name $attr_choices
     }
     TclComplete::write_json $outdir/attributes [TclComplete::dict_of_dicts_to_json $attribute_dict] 
-    puts "...attributes.json file complete."
 }
 
 ###############################################################
