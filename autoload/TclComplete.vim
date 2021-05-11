@@ -114,6 +114,12 @@ function! TclComplete#GetData()
     " arrays (names and values of every Tcl array variable)
     let g:TclComplete#arrays = TclComplete#ReadJsonFile('arrays.json','dict')
 
+    " Modify the ivar array for better/faster access later.
+    let g:TclComplete#ivar_lib_names = {}
+    call TclComplete#ivar_modify()
+    
+    " Remap the arrays so each dict's key is preceded by "array_name("
+
     " Get the track patterns from the G_ROUTE_TRACK_PATTERNS array
     let g:TclComplete#track_patterns = filter(copy(g:TclComplete#g_var_arrays),"v:val=~'G_ROUTE_TRACK_PATTERNS'")
     call map(g:TclComplete#track_patterns,"split(v:val,'[()]')[1]")
@@ -491,14 +497,19 @@ function! TclComplete#Complete(findstart, base)
                 "    - and a ( before the name.
                 let l:menu_dict = {}
 
-                " Special case for ivars.  Use the ivar_desc array values in the popup menu.
-                if g:array_varname=='ivar' && has_key(g:TclComplete#arrays, 'ivar_desc')
-                    let l:ivar_desc_array = g:TclComplete#arrays['ivar_desc']
-                    for l:array_name in g:array_names
-                        let l:array_full_name = g:array_base . "(" . l:array_name
-                        let l:menu_dict[l:array_full_name] = get(l:ivar_desc_array,l:array_name,'')
-                    endfor
-
+                " Special case for ivars.  
+                if g:array_varname=='ivar'
+                    if l:base=~'^ivar(lib,[^,]*,'
+                        " Insane ivar completion to manage thousands of ivar(lib,*) values
+                        let g:ctype = 'ivar_lib'
+                        let g:ivar_lib_name = split(l:base,'(')[1]
+                        let g:ivar_lib_key = join(split(g:ivar_lib_name,',')[0:1],',')
+                        let l:menu_dict = get(g:TclComplete#ivar_lib_names,g:ivar_lib_key)
+                    else
+                        " Normal ivar completion
+                        let g:ctype = 'ivar'
+                        let l:menu_dict = g:TclComplete#arrays['ivar']
+                    endif
                 else
                     for l:array_name in g:array_names
                         let l:array_full_name = g:array_base . "(" . l:array_name
@@ -879,4 +890,52 @@ function! TclComplete#get_g_var_array_names(g_var)
         endif
     endfor
     return result
+endfunction
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 1)  Change keys of g:TclComplete#arrays['ivar'] to start
+"       with "ivar(".   
+" 2)  Change values, if possible, of g:TclComplete#arrays['ivar'] to 
+"       come from ivar_desc array
+" 3)  Break up the ivar(lib,*,*,*) values because there are so many!
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function! TclComplete#ivar_modify()
+    if !has_key(g:TclComplete#arrays, 'ivar')
+        return
+    endif
+
+    let ivar_dict = get(g:TclComplete#arrays, 'ivar')
+
+    if has_key(g:TclComplete#arrays, 'ivar_desc')
+        let value_dict = get(g:TclComplete#arrays,'ivar_desc')
+    else
+        let value_dict = ivar_dict
+    endif
+
+    let new_ivar_dict = {}
+    for ivar_name in keys(ivar_dict)
+        " Special consideration for bit ivar(lib,*,*,*...) values
+        if ivar_name =~ '^lib,'
+            let lib_fields = split(ivar_name,",")
+
+            " Use the first two fields as an ivar( completion candidate.
+            let first_two  = join(lib_fields[0:1], ",")
+            let new_key = 'ivar('.first_two
+            let new_ivar_dict[new_key] = ''
+
+            " Also save the complete name in a new dict just for ivar lib names
+            if !has_key(g:TclComplete#ivar_lib_names,first_two)
+                let g:TclComplete#ivar_lib_names[first_two] = {}
+            endif
+            let g:TclComplete#ivar_lib_names[first_two]['ivar('.ivar_name] = ''
+
+        else 
+            let new_key = 'ivar('.ivar_name
+            let new_value = get(value_dict, ivar_name, '')
+            let new_ivar_dict[new_key] = new_value
+        endif
+    endfor
+
+    let g:TclComplete#arrays['ivar'] = new_ivar_dict
+
 endfunction
