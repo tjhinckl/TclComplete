@@ -74,6 +74,10 @@ set iskeyword+=(
 set iskeyword+=)
 set iskeyword+=,
 
+" Save the user's selection for 'showcmd' setting.
+"   This affects the number of columns available in the status line
+let g:ivar_vision_user_showcmd = &showcmd
+
 " Call IvarVision whenever the cursor is moved.
 autocmd CursorMoved   * call IvarVision()
 autocmd CursorMovedI  * call IvarVision()
@@ -88,6 +92,7 @@ autocmd VimResized * call IvarVisionInitialize()
 
 
 function! IvarVision()
+    echo ""
 
     " Identify the current word under the cursor
     let current_word = expand('<cword>')
@@ -119,12 +124,16 @@ function! IvarVision()
     " Adjust the cmdline window height if the string is too long.
     " This will prevent having hit-enter prompts.
     " TODO:  Do the math properly on this 
-    if len(g:ivar_display) > &columns-15
-        let new_cmdheight = len(g:ivar_display)/(&columns-15) + 1
-        exec "set cmdheight=".new_cmdheight
-    else
-        set cmdheight&
-    endif
+    " if len(g:ivar_display) > &columns-15
+    "     let new_cmdheight = len(g:ivar_display)/(&columns-15) + 1
+    "     exec "set cmdheight=".new_cmdheight
+    " else
+    "     set cmdheight&
+    " endif
+
+    " Turn off showcmd to give more space on the status line
+    "   (don't worry, it will be restored in IvarVisionToggleOff)
+    set noshowcmd
 
     " Finally!   Echo to the cmdline window!
     echo   g:ivar_display
@@ -138,6 +147,7 @@ endfunction
 function! IvarVisionInitialize()
     " Initialize the array used for ivar_vision
     let g:ivar_vision = {}
+
 
     " Load the arrays.json file
     if !exists('g:TclComplete#arrays')
@@ -163,6 +173,7 @@ endfunction
 " Call this function during events
 function IvarVisionToggleOff()
     set cmdheight&
+    let &showcmd = g:ivar_vision_user_showcmd
     echo ""
 endfunction
 
@@ -176,14 +187,14 @@ function IvarVisionGetDisplayStr(ivar_name)
     " Get the ivar's value (substitute literal '$ward' if possible)
     let value = get(g:ivar_array, a:ivar_name, "")
     let value = substitute(value,$ward,'$ward','g')
+    
+    " Make an empty string display literally as empty string
+    if value == ""
+        let value = "{}"
+    endif
 
     " Add a description from ivar_desc array
     let desc  = get(g:ivar_desc, a:ivar_name, "")
-
-    " Avoid time if no value or desc
-    if value=="" && desc==""
-        return ""
-    endif
 
     " Construct the string to display.  
     "   - start with the ivar name
