@@ -81,10 +81,10 @@ autocmd CursorMovedI  * call IvarVision()
 " Turn it off when you leave to a new buffer.
 autocmd BufLeave      * call IvarVisionToggleOff()
 
-" Redo the g:ivar_dict when resizing because
+" Redo the g:ivar_vision when resizing because
 " we need to re-limit the display strings by
 " the number of window columns
-autocmd VimResized * call IvarVisionCreateDict()
+autocmd VimResized * call IvarVisionInitialize()
 
 
 function! IvarVision()
@@ -100,14 +100,14 @@ function! IvarVision()
         return
     endif
         
-    " Now's the time to load the ivar_dict if not already done
-    if !exists('g:ivar_dict')
-        call IvarVisionCreateDict()
+    " Now's the time to load the ivar_vision if not already done
+    if !exists('g:ivar_vision')
+        call IvarVisionInitialize()
     endif
 
     " Get the display string from the ivar dict
     " Exit early if nothing to display
-    let g:ivar_display = get(g:ivar_dict,ivar_name,"")
+    let g:ivar_display = IvarVisionGetDisplayStr(ivar_name)
     if g:ivar_display == ''
         call IvarVisionToggleOff()
         return
@@ -135,7 +135,10 @@ function! IvarVision()
 endfunction
 
 
-function! IvarVisionCreateDict()
+function! IvarVisionInitialize()
+    " Initialize the array used for ivar_vision
+    let g:ivar_vision = {}
+
     " Load the arrays.json file
     if !exists('g:TclComplete#arrays')
         let g:TclComplete#arrays = TclComplete#ReadJsonFile('arrays.json','dict')
@@ -143,50 +146,83 @@ function! IvarVisionCreateDict()
 
     " Exit early with an empty dict if required.
     if !has_key(g:TclComplete#arrays, 'ivar')
-        let g:ivar_dict = {}
+        let g:ivar_array  = {}
+        let g:ivar_desc   = {}
+        let g:ivar_type   = {}
         return
     endif
 
-    " These arrays were dumped into TclComplete/arrays.json
-    let g:ivar_array = get(g:TclComplete#arrays, 'ivar')
-    let g:ivar_desc  = get(g:TclComplete#arrays, 'ivar_desc')
-    let g:ivar_type  = get(g:TclComplete#arrays, 'ivar_type')
-
-    "Form the ivar dictionary with the name from the original 
-    "ivar array and the value as a display string combined from
-    "ivar name, ivar value and ivar_desc value
-    let g:ivar_dict = {}
-    for ivar_name in keys(g:ivar_array)
-        let value = get(g:ivar_array, ivar_name, "")
-
-        " If possible, substitute the ward full path with '$ward' for brevity.
-        let value = substitute(value,$ward,'$ward','g')
-
-        " Limit the value to a column width
-        if len(value) > &columns - 30
-            let value = value[0:&columns-30]." ..."
-        endif
-        
-        let display_str = "ivar(".ivar_name.") = ".value
-
-        " Add a description from ivar_desc array
-        let desc  = get(g:ivar_desc, ivar_name, "")
-        if len(desc)>0
-            " Limit the description to approx one line of text
-            let g:desc_len = len(desc)
-            let display_str .= ", (".desc.")"
-        endif
-
-        
-        let g:ivar_dict[ivar_name] = display_str
-    endfor
+    " These arrays should be in TclComplete/arrays.json 
+    let g:ivar_array = get(g:TclComplete#arrays, 'ivar', {})
+    let g:ivar_desc  = get(g:TclComplete#arrays, 'ivar_desc', {})
+    let g:ivar_type  = get(g:TclComplete#arrays, 'ivar_type', {})
 
     return
-
 endfunction
 
+" Call this function during events
 function IvarVisionToggleOff()
     set cmdheight&
     echo ""
+endfunction
+
+" Return the string used in ivar_vision 
+function IvarVisionGetDisplayStr(ivar_name)
+    " Check cache first:
+    if has_key(g:ivar_vision, a:ivar_name)
+        return get(g:ivar_vision, a:ivar_name)
+    endif
+
+    " Get the ivar's value (substitute literal '$ward' if possible)
+    let value = get(g:ivar_array, a:ivar_name, "")
+    let value = substitute(value,$ward,'$ward','g')
+
+    " Add a description from ivar_desc array
+    let desc  = get(g:ivar_desc, a:ivar_name, "")
+
+    " Avoid time if no value or desc
+    if value=="" && desc==""
+        return ""
+    endif
+
+    " Construct the string to display.  
+    "   - start with the ivar name
+    let display_name = "ivar(".a:ivar_name.") = "
+
+    " Get the available space.  Reserve some space for fixed characters.
+    let available_space = &columns - len(display_name) - 5
+
+    if len(desc)==0
+        " No description.  Just display the value within available space.
+        if len(value) <= available_space
+            let display_end = value
+        else
+            let display_end = value[0:available_space]."..."
+        endif
+    else
+        " Add the description within available space.
+        let available_space = available_space - 4
+        let display_len = len(value) + len(desc)
+        if display_len > available_space
+            let chop_pct =  1.0 * available_space / display_len
+            let value_allowed_len = float2nr(chop_pct * len(value))
+            let desc_allowed_len  = float2nr(chop_pct * len(desc))
+            if value_allowed_len < len(value)
+                let value = value[0:value_allowed_len-3].".."
+            endif
+            if desc_allowed_len < len(desc)
+                let desc = desc[0:desc_allowed_len-3].".."
+            endif
+        endif
+        let display_end = value." (".desc.")"
+    endif
+
+    let display_string = display_name.display_end
+
+    " Save to cache
+    let g:ivar_vision[a:ivar_name] = display_string
+
+    return display_string
+
 endfunction
 

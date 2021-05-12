@@ -114,11 +114,11 @@ function! TclComplete#GetData()
     " arrays (names and values of every Tcl array variable)
     let g:TclComplete#arrays = TclComplete#ReadJsonFile('arrays.json','dict')
 
-    " Modify the ivar array for better/faster access later.
+    " Prepare for faster ivar access later.
     let g:TclComplete#ivar_lib_names = {}
-    call TclComplete#ivar_modify()
-    
-    " Remap the arrays so each dict's key is preceded by "array_name("
+    let g:TclComplete#ivar_completion = {}
+    call TclComplete#ivar_prep()
+
 
     " Get the track patterns from the G_ROUTE_TRACK_PATTERNS array
     let g:TclComplete#track_patterns = filter(copy(g:TclComplete#g_var_arrays),"v:val=~'G_ROUTE_TRACK_PATTERNS'")
@@ -508,7 +508,7 @@ function! TclComplete#Complete(findstart, base)
                     else
                         " Normal ivar completion
                         let g:ctype = 'ivar'
-                        let l:menu_dict = g:TclComplete#arrays['ivar']
+                        let l:menu_dict = g:TclComplete#ivar_completion
                     endif
                 else
                     for l:array_name in g:array_names
@@ -899,7 +899,7 @@ endfunction
 "       come from ivar_desc array
 " 3)  Break up the ivar(lib,*,*,*) values because there are so many!
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""
-function! TclComplete#ivar_modify()
+function! TclComplete#ivar_prep()
     if !has_key(g:TclComplete#arrays, 'ivar')
         return
     endif
@@ -912,7 +912,6 @@ function! TclComplete#ivar_modify()
         let value_dict = ivar_dict
     endif
 
-    let new_ivar_dict = {}
     for ivar_name in keys(ivar_dict)
         " Special consideration for bit ivar(lib,*,*,*...) values
         if ivar_name =~ '^lib,'
@@ -921,7 +920,7 @@ function! TclComplete#ivar_modify()
             " Use the first two fields as an ivar( completion candidate.
             let first_two  = join(lib_fields[0:1], ",")
             let new_key = 'ivar('.first_two
-            let new_ivar_dict[new_key] = ''
+            let g:TclComplete#ivar_completion[new_key] = ''
 
             " Also save the complete name in a new dict just for ivar lib names
             if !has_key(g:TclComplete#ivar_lib_names,first_two)
@@ -932,10 +931,8 @@ function! TclComplete#ivar_modify()
         else 
             let new_key = 'ivar('.ivar_name
             let new_value = get(value_dict, ivar_name, '')
-            let new_ivar_dict[new_key] = new_value
+            let g:TclComplete#ivar_completion[new_key] = new_value
         endif
     endfor
-
-    let g:TclComplete#arrays['ivar'] = new_ivar_dict
 
 endfunction
