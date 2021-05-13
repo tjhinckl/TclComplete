@@ -78,12 +78,18 @@ set iskeyword+=,
 "   This affects the number of columns available in the status line
 let g:ivar_vision_user_showcmd = &showcmd
 
-" Call IvarVision whenever the cursor is moved.
-autocmd CursorMoved   * call IvarVision()
-autocmd CursorMovedI  * call IvarVision()
+augroup IvarVision
+    autocmd!
 
-" Turn it off when you leave to a new buffer.
-autocmd BufLeave      * call IvarVisionToggleOff()
+    " Call IvarVision whenever the cursor is moved.
+    autocmd CursorMoved   * call IvarVision()
+    autocmd CursorMovedI  * call IvarVision()
+
+    " Turn it off when you leave to a new buffer.
+    autocmd BufLeave      * call IvarVisionToggleOff()
+    autocmd WinLeave      * call IvarVisionToggleOff()
+    autocmd WinEnter      * call IvarVisionToggleOff()
+augroup END
 
 " Redo the g:ivar_vision when resizing because
 " we need to re-limit the display strings by
@@ -123,13 +129,7 @@ function! IvarVision()
 
     " Adjust the cmdline window height if the string is too long.
     " This will prevent having hit-enter prompts.
-    " TODO:  Do the math properly on this 
-    " if len(g:ivar_display) > &columns-15
-    "     let new_cmdheight = len(g:ivar_display)/(&columns-15) + 1
-    "     exec "set cmdheight=".new_cmdheight
-    " else
-    "     set cmdheight&
-    " endif
+    let g:ivar_display = g:ivar_display[0:&columns]
 
     " Turn off showcmd to give more space on the status line
     "   (don't worry, it will be restored in IvarVisionToggleOff)
