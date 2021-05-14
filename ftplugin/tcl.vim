@@ -58,7 +58,6 @@ if exists("g:TclComplete#dir")
     endif
 endif
 
-
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 ""  IVAR VISION 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -69,58 +68,66 @@ endif
 "
 " Include more keyword characters to identify the ivar array
 "   with the cword() function
-" TODO:  Is it possible that these keyword chars affect other plugins?
 set iskeyword+=(
 set iskeyword+=)
 set iskeyword+=,
 
 " Save the user's selection for 'showcmd' setting.
 "   This affects the number of columns available in the status line
-let g:ivar_vision_user_showcmd = &showcmd
-
-augroup IvarVision
-    autocmd!
-
-    " Call IvarVision whenever the cursor is moved.
-    autocmd CursorMoved   * call IvarVision()
-    autocmd CursorMovedI  * call IvarVision()
-
-    " Turn it off when you leave to a new buffer.
-    autocmd BufLeave      * call IvarVisionToggleOff()
-    autocmd WinLeave      * call IvarVisionToggleOff()
-    autocmd WinEnter      * call IvarVisionToggleOff()
-augroup END
-
-" Redo the g:ivar_vision when resizing because
-" we need to re-limit the display strings by
-" the number of window columns
-autocmd VimResized * call IvarVisionInitialize()
+let g:TclComplete#showcmd = &showcmd
+let g:TclComplete#vision_initialized = 0
 
 
-function! IvarVision()
+ augroup TclCompleteVision
+     " Clear the group if previously defined (because autocmds are appended to existing ones)
+     autocmd!
+
+     " Call TclCompleteVision whenever the cursor is moved.
+     autocmd CursorMoved   * call TclCompleteVision()
+     autocmd CursorMovedI  * call TclCompleteVision()
+
+     " Turn it off when you leave to a new buffer.
+     autocmd BufLeave      * call TclCompleteVisionToggleOff()
+     autocmd WinLeave      * call TclCompleteVisionToggleOff()
+
+     " Redo the g:ivar_vision when resizing because
+     " we need to re-limit the display strings by
+     " the number of window columns
+    autocmd VimResized * call TclCompleteVisionInitialize()
+ augroup END
+
+function! TclCompleteVision()
     echo ""
 
-    " Identify the current word under the cursor
+    if g:TclComplete#vision_initialized == 0
+        call TclCompleteVisionInitialize()
+    endif
+
+    " Get the current word under the cursor
     let current_word = expand('<cword>')
 
-    " Is the curent word an ivar()?  If so, pull out the ivar name
-    let ivar_name = matchstr(current_word, 'ivar(\zs.*\ze)')
+    let g:vision_current_word = current_word
 
-    if ivar_name==''
-        call IvarVisionToggleOff()
-        return
+    " Is it a proc?
+    if has_key(g:TclComplete#descriptions, current_word)
+        let g:TclComplete#display_str = get(g:TclComplete#descriptions, current_word,"")
+        let g:vision_word = current_word
+    else
+        " Is it an ivar?  
+        let ivar_name = matchstr(current_word, 'ivar(\zs.*\ze)')
+        if ivar_name != ""
+            let g:vision_word = ivar_name
+            let g:TclComplete#display_str = IvarVisionGetDisplayStr(ivar_name)
+        else
+            " Or something else?
+            let g:vision_word = "none"
+            let g:TclComplete#display_str = ""
+        endif
     endif
-        
-    " Now's the time to load the ivar_vision if not already done
-    if !exists('g:ivar_vision')
-        call IvarVisionInitialize()
-    endif
-
-    " Get the display string from the ivar dict
-    " Exit early if nothing to display
-    let g:ivar_display = IvarVisionGetDisplayStr(ivar_name)
-    if g:ivar_display == ''
-        call IvarVisionToggleOff()
+    
+    " Turn off and return if nothing to display
+    if g:TclComplete#display_str == ""
+        call TclCompleteVisionToggleOff()
         return
     endif
 
@@ -129,14 +136,14 @@ function! IvarVision()
 
     " Adjust the cmdline window height if the string is too long.
     " This will prevent having hit-enter prompts.
-    let g:ivar_display = g:ivar_display[0:&columns]
+    let g:TclComplete#display_str = g:TclComplete#display_str[0:&columns-2]
 
     " Turn off showcmd to give more space on the status line
     "   (don't worry, it will be restored in IvarVisionToggleOff)
     set noshowcmd
 
     " Finally!   Echo to the cmdline window!
-    echo   g:ivar_display
+    echo   g:TclComplete#display_str
 
     " Turn off the temporary highlighting because it shouldn't be persistent.
     echohl None
@@ -144,22 +151,21 @@ function! IvarVision()
 endfunction
 
 
-function! IvarVisionInitialize()
-    " Initialize the array used for ivar_vision
+function! TclCompleteVisionInitialize()
+    let g:TclCompleteVisionInitialized = 1
+
+    " Initialize the array used for ivar_vision because it has formatting
+    "  based on number of available columns
     let g:ivar_vision = {}
 
-
-    " Load the arrays.json file
-    if !exists('g:TclComplete#arrays')
-        let g:TclComplete#arrays = TclComplete#ReadJsonFile('arrays.json','dict')
+    " Load the description.json file to get the descriptions of procs
+    if !exists('g:TclComplete#descriptions')
+        let g:TclComplete#descriptions = TclComplete#ReadJsonFile('descriptions.json','dict')
     endif
 
-    " Exit early with an empty dict if required.
-    if !has_key(g:TclComplete#arrays, 'ivar')
-        let g:ivar_array  = {}
-        let g:ivar_desc   = {}
-        let g:ivar_type   = {}
-        return
+    " Load the arrays.json file to get the ivars
+    if !exists('g:TclComplete#arrays')
+        let g:TclComplete#arrays = TclComplete#ReadJsonFile('arrays.json','dict')
     endif
 
     " These arrays should be in TclComplete/arrays.json 
@@ -171,14 +177,14 @@ function! IvarVisionInitialize()
 endfunction
 
 " Call this function during events
-function IvarVisionToggleOff()
+function! TclCompleteVisionToggleOff()
     set cmdheight&
-    let &showcmd = g:ivar_vision_user_showcmd
+    let &showcmd = g:TclComplete#showcmd
     echo ""
 endfunction
 
 " Return the string used in ivar_vision 
-function IvarVisionGetDisplayStr(ivar_name)
+function! IvarVisionGetDisplayStr(ivar_name)
     " Check cache first:
     if has_key(g:ivar_vision, a:ivar_name)
         return get(g:ivar_vision, a:ivar_name)
