@@ -59,7 +59,7 @@ if exists("g:TclComplete#dir")
 endif
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-""  IVAR VISION 
+""  TclComplete VISION 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Consider putting this into a separate plugin.
 " Highlight ivar description on the bottom status line
@@ -76,6 +76,7 @@ set iskeyword+=,
 "   This affects the number of columns available in the status line
 let g:TclComplete#showcmd = &showcmd
 let g:TclComplete#vision_initialized = 0
+let g:TclComplete#vision_disabled    = 0
 
 
  augroup TclCompleteVision
