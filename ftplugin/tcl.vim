@@ -115,11 +115,11 @@ function! TclCompleteVision()
         let g:vision_word = current_word
     elseif match(current_word, '^ivar(')>-1
         " Is it an ivar?  
-        let ivar_name = split(current_word,'[()]')[1]
+        let ivar_name = get(split(current_word,'[()]'),1,"")
         let g:vision_word = ivar_name
         let g:TclComplete#display_str = IvarVisionGetDisplayStr(ivar_name)
     elseif match(current_word, 'env(')>-1
-        let env_name = split(current_word,'[()]')[1]
+        let env_name = get(split(current_word,'[()]'),1,"")
         let g:vision_word = env_name
         let g:TclComplete#display_str = '$'.env_name.' = '.get(g:TclComplete#arrays['env'],env_name,"")
     else
