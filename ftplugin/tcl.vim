@@ -121,7 +121,8 @@ function! TclCompleteVision()
     elseif match(current_word, 'env(')>-1
         let env_name = get(split(current_word,'[()]'),1,"")
         let g:vision_word = env_name
-        let g:TclComplete#display_str = '$'.env_name.' = '.get(g:TclComplete#arrays['env'],env_name,"")
+        let env_array = get(g:TclComplete#arrays,'env', {})
+        let g:TclComplete#display_str = '$'.env_name.' = '.get(env_array,env_name,"")
     else
         " Or something else?
         let g:vision_word = "none"
