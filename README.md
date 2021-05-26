@@ -11,7 +11,7 @@ See doc/TclComplete.txt (in this repo) for further details.
 ## Installing this plugin
 1.  Vim8.0 or above is required. 
 
-     (see https://soco.intel.com/groups/vim-users/blog/2016/11/28/how-to-set-your-vim-version-at-intel )
+     (see https://intel.sharepoint.com/sites/intelvimusers/SitePages/Intel%20Vim%20Users/News1888624.aspx)
 
 2.  If you are on an Intel EC SLES11 machine, you might need to use a non-default version of Git.
 
