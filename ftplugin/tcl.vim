@@ -84,17 +84,17 @@ let g:TclComplete#vision_disabled    = 0
      autocmd!
 
      " Call TclCompleteVision whenever the cursor is moved.
-     autocmd CursorMoved   * call TclCompleteVision()
-     autocmd CursorMovedI  * call TclCompleteVision()
+     autocmd CursorMoved  *.tcl call TclCompleteVision()
+     autocmd CursorMovedI *.tcl call TclCompleteVision()
 
      " Turn it off when you leave to a new buffer.
-     autocmd BufLeave      * call TclCompleteVisionToggleOff()
-     autocmd WinLeave      * call TclCompleteVisionToggleOff()
+     autocmd BufLeave     *.tcl  call TclCompleteVisionToggleOff()
+     autocmd WinLeave     *.tcl  call TclCompleteVisionToggleOff()
 
      " Redo the g:ivar_vision when resizing because
      " we need to re-limit the display strings by
      " the number of window columns
-    autocmd VimResized * call TclCompleteVisionInitialize()
+    autocmd VimResized *  call TclCompleteVisionInitialize()
  augroup END
 
 function! TclCompleteVision()
@@ -113,9 +113,10 @@ function! TclCompleteVision()
     if has_key(g:TclComplete#descriptions, current_word)
         let g:TclComplete#display_str = get(g:TclComplete#descriptions, current_word,"")
         let g:vision_word = current_word
-    elseif match(current_word, '^ivar(')>-1
+    elseif match(current_word, '\(::\)\?ivar(')>-1
         " Is it an ivar?  
         let ivar_name = get(split(current_word,'[()]'),1,"")
+        let ivar_name = substitute(ivar_name,'^::','','')
         let g:vision_word = ivar_name
         let g:TclComplete#display_str = IvarVisionGetDisplayStr(ivar_name)
     elseif match(current_word, 'env(')>-1
