@@ -28,10 +28,14 @@ proc TclComplete::WriteFilesStd {dir_location} {
         dict set cmd_dict $cmd {} {}
     }
 
-    # Merge in additional options to the cmd_dict.
-    set hardcoded_cmd_dict  [TclComplete::get_hardcoded_cmd_dict]
+    # Merge in commands with subcommands as options (as revealed through namespaces)
     set namespace_cmd_dict  [TclComplete::get_namespace_cmd_dict $all_command_list]
-    set cmd_dict  [dict merge $cmd_dict $hardcoded_cmd_dict $namespace_cmd_dict]
+    set cmd_dict            [dict merge $cmd_dict $namespace_cmd_dict]
+
+    # Finally, add any hardcoded command options and descriptions that are not 
+    #  revealed through help and man pages.
+    set hardcoded_cmd_dict  [TclComplete::get_hardcoded_cmd_dict]
+    set cmd_dict            [dict merge $cmd_dict $hardcoded_cmd_dict]
 
     # Add expression functions as options for the expr command.
     set func_list [ lsort -u [info function] ]
