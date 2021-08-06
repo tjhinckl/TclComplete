@@ -508,7 +508,7 @@ function! TclComplete#Complete(findstart, base)
                     else
                         " Normal ivar completion
                         let g:ctype = 'ivar'
-                        let l:menu_dict = g:TclComplete#ivar_completion
+                        let l:menu_dict = g:TclComplete#dollar_ivar_completion
                     endif
                 else
                     for l:array_name in g:array_names
@@ -934,5 +934,13 @@ function! TclComplete#ivar_prep()
             let g:TclComplete#ivar_completion[new_key] = new_value
         endif
     endfor
+
+    " Make another ivar dictionary, but with all keys starting with '$'
+    let g:TclComplete#dollar_ivar_completion = {}
+    for ivar_name in keys(g:TclComplete#ivar_completion) 
+        let val = get(g:TclComplete#ivar_completion, ivar_name)
+        let g:TclComplete#dollar_ivar_completion['$'.ivar_name] = val
+    endfor
+
 
 endfunction
