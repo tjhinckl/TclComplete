@@ -499,16 +499,21 @@ function! TclComplete#Complete(findstart, base)
 
                 " Special case for ivars.  
                 if g:array_varname=='ivar'
+                    let g:base = l:base
                     if l:base=~'^ivar(lib,[^,]*,'
                         " Insane ivar completion to manage thousands of ivar(lib,*) values
                         let g:ctype = 'ivar_lib'
                         let g:ivar_lib_name = split(l:base,'(')[1]
                         let g:ivar_lib_key = join(split(g:ivar_lib_name,',')[0:1],',')
                         let l:menu_dict = get(g:TclComplete#ivar_lib_names,g:ivar_lib_key)
+                    elseif l:base=~'\$'
+                        " ivar completion starting with dollar sign
+                        let g:ctype = 'dollar_ivar'
+                        let l:menu_dict = g:TclComplete#dollar_ivar_completion
                     else
                         " Normal ivar completion
                         let g:ctype = 'ivar'
-                        let l:menu_dict = g:TclComplete#dollar_ivar_completion
+                        let l:menu_dict = g:TclComplete#ivar_completion
                     endif
                 else
                     for l:array_name in g:array_names
