@@ -22,7 +22,7 @@ if !exists("g:TclComplete#dir")
         " Look for a TclComplete directory under the ward.
         "  - avoid globbing with ** because that would slow down Vim startup.
         "  - limit it to three directories down for now.
-        let globs = ['/', '/dp/user_scripts/','/dp/scripts/','/*/', '/*/*/', '/*/*/*/']
+        let globs = ['/', '/dp/user_scripts/','/dp/scripts/','/*/']
         for glob in globs 
             " Call glob with third argument true to return a list.
             let __glob = glob(g:TclComplete#ward.glob.'TclComplete','',1)
