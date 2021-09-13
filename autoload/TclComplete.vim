@@ -737,7 +737,23 @@ function! TclComplete#Complete(findstart, base)
 
         " 6e) Situations where the completion list should be a list of commands.
         elseif g:active_cmd=='info' && g:last_completed_word=~'^commands\?$'
+            let g:ctype = 'info commands'
             let l:complete_list = g:TclComplete#cmds
+
+        " 6f) compute polygons -operation
+                " AND       Get the region covered by both objects1 and objects2
+                " OR        Get the region covered by either objects1 or objects2
+                " XOR       Get the region covered by objects1 or by objects2 but
+                "                    not both
+                " NOT       Get the region covered by objects1 but not by objects2
+                " TOUCHING  Get the region covered by the poly_rects in objects1 that abuts
+                "                    or overlaps with one or more poly_rects in objects2
+                " INTERSECT Get the region covered by the poly_rects in objects1 that overlaps
+                "                    with one or more poly_rects in objects2
+        elseif g:active_cmd=='compute_polygons' && g:last_completed_word=='-operation'
+            let g:ctype = 'compute_polygons'
+            let l:complete_list = ['AND', 'OR', 'XOR', 'NOT', 'TOUCHING', 'INTERSECT']
+
 
         " 7a) Techfile stuff (relies on $SD_BUILD2/utils/shared/techfile.tcl)
         elseif g:active_cmd =~ 'tech::get_techfile_info'
