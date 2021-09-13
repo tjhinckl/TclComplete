@@ -342,6 +342,8 @@ proc TclComplete::get_hardcoded_cmd_dict {} {
     dict set cmd_dict  "string is" wordchar    "Any  Unicode  word  character.  "
     dict set cmd_dict  "string is" xdigit      "Any hexadecimal digit character (0-9A-Fa-f)."
     # ----------------------------------------------------------------
+    dict set cmd_dict  "file copy" -force      "Force the copy if destination file already exists"
+    # ----------------------------------------------------------------
     dict set cmd_dict "format" "%d" "Signed decimal"
     dict set cmd_dict "format" "%s" "String"
     dict set cmd_dict "format" "%c" "Unicode character"
