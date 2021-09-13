@@ -684,6 +684,20 @@ function! TclComplete#Complete(findstart, base)
             let g:ctype = 'g_var function'
             let l:complete_list = g:TclComplete#g_vars
 
+        " ivar bundle tag completion from archive
+        elseif g:active_cmd == 'set' && g:last_completed_word =~ 'ivar(\w\+,\w\+,tag)'
+            let g:ctype = 'bundle tag'
+            let [__,block,bundle,tag] = split(g:last_completed_word,'[(),]')
+            if exists('$PROJ_ARCHIVE')
+                let arc_dir = join([$PROJ_ARCHIVE,'arc',block,bundle],"/")
+                let g:ctype = arc_dir
+                if isdirectory(arc_dir)
+                    let l:complete_list = glob(arc_dir.'/*',"",'1')
+                    call map(l:complete_list, 'split(v:val, "/")[-1]')
+                endif
+            endif
+            
+
         " 5b) Complete the command with variable names (without $ sign)
         elseif has_key(g:TclComplete#varname_funcs, g:active_cmd) || has_key(g:TclComplete#varname_funcs, g:active_cmd.' '.g:last_completed_word)
             let g:ctype = 'varname function'
