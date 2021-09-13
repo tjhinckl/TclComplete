@@ -1,7 +1,7 @@
 "tclcomplete.vim - Omni Completion for Synopsys Tcl
 " Creator: Chris Heithoff < christopher.b.heithoff@intel.com >
-" Version: 2.1
-" Last Updated: 23-Mar-2021
+" Version: 3.0
+" Last Updated: 13-Sep-21
 "
 
 function! TclComplete#ReadJsonFile(json_file, json_type)
@@ -507,11 +507,19 @@ function! TclComplete#Complete(findstart, base)
                         let g:ivar_lib_key = join(split(g:ivar_lib_name,',')[0:1],',')
                         let l:menu_dict = get(g:TclComplete#ivar_lib_names,g:ivar_lib_key)
                     elseif l:base=~'\$'
-                        " ivar completion starting with dollar sign
+                        " ivar completion starting with dollar sign (with or without colons)
                         let g:ctype = 'dollar_ivar'
                         let l:menu_dict = g:TclComplete#dollar_ivar_completion
+                        if l:base=~'::'
+                            let g:ctype = 'dollar_colon_ivar'
+                            let l:menu_dict = {}
+                            for ivar_name in keys(g:TclComplete#ivar_completion) 
+                                let val = get(g:TclComplete#ivar_completion, ivar_name)
+                                let l:menu_dict['$::'.ivar_name] = val
+                            endfor
+                        endif
                     else
-                        " Normal ivar completion
+                        " Normal ivar completion (with or without colon)
                         let g:ctype = 'ivar'
                         let l:menu_dict = g:TclComplete#ivar_completion
                     endif
@@ -539,6 +547,8 @@ function! TclComplete#Complete(findstart, base)
         elseif l:base[0:1] == '\$'
             let g:ctype = '$var'
             let l:complete_list = map(TclComplete#ScanBufferForVariableNames(),"'$'.v:val")
+            " Always included ivar and env!
+            call extend(l:complete_list,['$ivar', '$env', '$::ivar', '$::env'])
             
 
         " 1e) regexp character classes start with a single colon.  ([:alnum:], [:upper:], etc)
@@ -919,6 +929,7 @@ endfunction
 " 2)  Change values, if possible, of g:TclComplete#arrays['ivar'] to 
 "       come from ivar_desc array
 " 3)  Break up the ivar(lib,*,*,*) values because there are so many!
+" 4)  
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! TclComplete#ivar_prep()
     if !has_key(g:TclComplete#arrays, 'ivar')
@@ -934,8 +945,12 @@ function! TclComplete#ivar_prep()
     endif
 
     for ivar_name in keys(ivar_dict)
-        " Special consideration for bit ivar(lib,*,*,*...) values
-        if ivar_name =~ '^lib,'
+        if ivar_name =~ '^/p/.*archive' 
+            " Ignore ivar names like '/p/gnrc/archive...'
+            continue
+
+        elseif ivar_name =~ '^lib,' 
+            " Special consideration for bit ivar(lib,*,*,*...) values
             let lib_fields = split(ivar_name,",")
 
             " Use the first two fields as an ivar( completion candidate.
