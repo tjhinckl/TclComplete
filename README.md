@@ -41,7 +41,7 @@ To optimize Tcl for your specific tool, follow these additional directions:
 
 1.  Start your Tcl based tool (such as PrimeTime, FusionCompiler, etc)
 
-2.  Create a TclComplete directory underneath <directory>  
+2.  Run the command which will create the TclComplete directory underneath <directory>  
 For Synopsys tools
 >     source ~/.vim/pack/from_gitlab/start/TclComplete/tcl/WriteTclCompleteFilesSynopsys.tcl
 >     TclComplete::WriteFilesSynopsys <directory>
