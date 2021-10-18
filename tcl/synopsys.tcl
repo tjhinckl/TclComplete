@@ -664,7 +664,9 @@ proc TclComplete::man_msg_id {msg_id} {
     set i_name [lsearch $man_lines "NAM*"]
     if {$i_name > -1} {
         set line [lindex $man_lines [incr i_name]]
-        return "#[string trimleft [regsub $msg_id $line {}]]"
+        # Get rid of double quotes or else the json will be bad.
+        set line [regsub -all "\"" $line ""]
+        return "# [string trimleft [regsub $msg_id $line {}]]"
     } else {
         return ""
     }
