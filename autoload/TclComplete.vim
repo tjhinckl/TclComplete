@@ -86,11 +86,18 @@ function! TclComplete#GetDataMsgIds()
     return g:TclComplete#msg_ids
 endfunction
 
+function! TclComplete#GetPackages()
+    if !exists('g:TclComplete#packages')
+        let g:TclComplete#packages = TclComplete#ReadJsonFile('packages.json', 'dict')
+    endif
+    return g:TclComplete#packages
+endfunction
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
-" TclComplete#GetData()
+" TclComplete#Init()
 " - this is called when TclComplete is activated.
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""
-function! TclComplete#GetData()                                     
+function! TclComplete#Init()
     let l:dir = g:TclComplete#dir
 
     "   list of commands.  Namespaced commands at end.
@@ -99,18 +106,11 @@ function! TclComplete#GetData()
     "   dictionary: key = 'command', value = 'description of command'
     let g:TclComplete#descriptions = TclComplete#ReadJsonFile('descriptions.json','dict')
 
-    "   dictionary: key = object_class, value = attribute for the class
-    " let g:TclComplete#attributes = TclComplete#ReadJsonFile('attributes.json','dict')
-    " let g:TclComplete#object_classes = sort(keys(g:TclComplete#attributes))
-
     "  define here the commands that will use attribute mode completion
     let g:TclComplete#attribute_funcs = {}
     for f in ['get_attribute', 'filter_collection', 'set_attribute', 'get_defined_attributes', 'sort_collection']
         let g:TclComplete#attribute_funcs[f]=''
     endfor
-
-    "     list:  packages
-    let g:TclComplete#packages = TclComplete#ReadJsonFile('packages.json','list')
 
     "     list: Use the TclComplete#cmds list to derive namespaces 
     let g:TclComplete#namespaces = copy(g:TclComplete#cmds)
@@ -461,7 +461,7 @@ endfunction
 function! TclComplete#Complete(findstart, base)
     " First things first, source the completion scripts if necessary
     if !exists("g:TclComplete#cmds") 
-        call TclComplete#GetData()
+        call TclComplete#Init()
     endif
 
     "findstart = 1 to figure the start point of your current word
@@ -801,7 +801,7 @@ function! TclComplete#Complete(findstart, base)
         " 6d) Complete two word package commands with your packages
         elseif g:active_cmd=='package' && g:last_completed_word != 'package' 
             let g:ctype = 'package'
-            let l:complete_list = g:TclComplete#packages
+            let l:complete_list = TclComplete#GetPackages()
 
         " 6e) Situations where the completion list should be a list of commands.
         elseif g:active_cmd=='info' && g:last_completed_word=~'^commands\?$'
