@@ -276,8 +276,8 @@ proc TclComplete::get_descriptions {commands} {
                         set description "# args = $arg_list"
                     }
                 } else {
-                    puts "     Is $cmd_name a proc?  \[info proc $cmd_name\] = [info proc $cmd_name]"
-                    puts "       \[info args $cmd_name\] --> $errmsg"
+                    # puts "     Is $cmd_name a proc?  \[info proc $cmd_name\] = [info proc $cmd_name]"
+                    # puts "       \[info args $cmd_name\] --> $errmsg"
                 }
             }
         }
@@ -641,4 +641,43 @@ proc TclComplete::write_rdt_steps {outdir} {
 
     # Write out the JSON file.
     TclComplete::write_json $outdir/rdt_steps    [TclComplete::dict_of_lists_to_json $rdt_steps "no_sort"]
+}
+
+#################################################
+# Synopsys error messages!
+#################################################
+proc TclComplete::man_msg_id {msg_id} {
+    redirect -variable man_text {man $msg_id} 
+    set man_lines [split $man_text "\n"]
+    if {[regexp "No manual entry for" [lindex $man_lines 0]]} {
+        return ""
+    }
+    # Get the first line after NAME.  Let's ignore the rest for now.
+    # Example:
+    # NAME
+    #        3DIC-003  (error)  %s  array  %s  already exists, please use another %s
+    #        array name to create %s array.
+
+    # DESCRIPTION
+    #        Errors are found during the processing of the command options.
+    
+    set i_name [lsearch $man_lines "NAM*"]
+    if {$i_name > -1} {
+        set line [lindex $man_lines [incr i_name]]
+        return "#[string trimleft [regsub $msg_id $line {}]]"
+    } else {
+        return ""
+    }
+}
+
+proc TclComplete::write_msg_ids {outdir} {
+    set msg_ids [get_message_ids]
+
+    set msg_dict [dict create]
+
+    foreach msg_id $msg_ids {
+        dict set msg_dict $msg_id [TclComplete::man_msg_id $msg_id]
+    }
+    # Write out the JSON file.
+    TclComplete::write_json $outdir/msg_ids  [TclComplete::dict_to_json $msg_dict]
 }
