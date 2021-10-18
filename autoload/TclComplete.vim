@@ -93,6 +93,113 @@ function! TclComplete#GetPackages()
     return g:TclComplete#packages
 endfunction
 
+function! TclComplete#GetNamespaces()
+    if !exists('g:TclComplete#namespaces')
+        " Use the TclComplete#cmds list to derive namespaces 
+        let g:TclComplete#namespaces = copy(g:TclComplete#cmds)
+
+        " Use only commands including ::
+        call filter(g:TclComplete#namespaces,"v:val=~'::'")
+
+        " Only keep the namespace part of the command name
+        let map_cmd = "substitute(v:val,'::[^:]*$','','')"
+        call map(g:TclComplete#namespaces,map_cmd)
+        call uniq(sort(g:TclComplete#namespaces,'i'))
+    endif
+    return g:TclComplete#namespaces
+endfunction
+
+function! TclComplete#GetIccppParams()
+    if !exists('g:TclComplete#iccpp')
+        let g:TclComplete#iccpp = TclComplete#ReadJsonFile('iccpp.json', 'list')
+    endif
+    return g:TclComplete#iccpp
+endfunction
+
+function! TclComplete#GetIccppDict()
+    if !exists('g:TclComplete#iccpp_dict')
+        let g:TclComplete#iccpp_dict = TclComplete#ReadJsonFile('iccpp_dict.json', 'dict')
+    endif
+    return g:TclComplete#iccpp_dict
+endfunction
+
+function! TclComplete#GetGVars()
+    if !exists('g:TclComplete#g_vars')
+        let g:TclComplete#g_vars = TclComplete#ReadJsonFile('g_vars.json', 'dict')
+    endif
+    return g:TclComplete#g_vars
+endfunction
+
+function! TclComplete#GetGVarArrays()
+    if !exists('g:TclComplete#g_var_arrays')
+        let g:TclComplete#g_var_arrays = TclComplete#ReadJsonFile('g_var_arrays.json', 'dict')
+    endif
+    return g:TclComplete#g_var_arrays
+endfunction
+
+function! TclComplete#GetArrays()
+    if !exists('g:TclComplete#arrays')
+        let g:TclComplete#arrays = TclComplete#ReadJsonFile('arrays.json','dict')
+        " Prepare for faster ivar access later.
+        let g:TclComplete#ivar_lib_names = {}
+        let g:TclComplete#ivar_completion = {}
+        call TclComplete#ivar_prep()
+    endif
+    return g:TclComplete#arrays
+endfunction
+
+function! TclComplete#GetTrackPatterns()
+    if !exists('g:TclComplete#track_patterns')
+        " Get the track patterns from the G_ROUTE_TRACK_PATTERNS array
+        let g:TclComplete#track_patterns = filter(copy(TclComplete#GetGVarArrays()),"v:val=~'G_ROUTE_TRACK_PATTERNS'")
+        call map(g:TclComplete#track_patterns,"split(v:val,'[()]')[1]")
+    endif
+    return g:TclComplete#track_patterns
+endfunction
+
+
+function! TclComplete#GetTechFileTypes()
+    if !exists('g:TclComplete#techfile_types')
+        let g:TclComplete#techfile_types      = TclComplete#ReadJsonFile('techfile_types.json','list')
+    endif
+    return g:TclComplete#techfile_types
+endfunction
+
+function! TclComplete#GetTechFileLayerDict()
+    if !exists('g:TclComplete#techfile_layer_dict')
+        let g:TclComplete#techfile_layer_dict = TclComplete#ReadJsonFile('techfile_layer_dict.json','dict')
+    endif
+    return g:TclComplete#techfile_layer_dict
+endfunction
+
+function! TclComplete#GetTechFileAttrDict()
+    if !exists('g:TclComplete#techfile_attr_dict')
+        let g:TclComplete#techfile_attr_dict  = TclComplete#ReadJsonFile('techfile_attr_dict.json','dict')
+    endif
+    return g:TclComplete#techfile_attr_dict
+endfunction
+
+function! TclComplete#GetAppVarList()
+    if !exists('g:TclComplete#app_var_list')
+        let g:TclComplete#app_var_list = TclComplete#ReadJsonFile('app_vars.json','dict')
+    endif
+    return g:TclComplete#app_var_list
+endfunction
+
+function! TclComplete#GetRdtStepDict()
+    if !exists('g:TclComplete#rdt_step_dict')
+        let g:TclComplete#rdt_step_dict  = TclComplete#ReadJsonFile('rdt_steps.json','dict')
+    endif
+    return g:TclComplete#rdt_step_dict
+endfunction
+
+function! TclComplete#GetRdtStageList()
+    if !exists('g:TclComplete#rdt_stage_list')
+        let g:TclComplete#rdt_stage_list = sort(keys(TclComplete#GetRdtStepDict()))
+    endif
+    return g:TclComplete#rdt_stage_list
+endfunction
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
 " TclComplete#Init()
 " - this is called when TclComplete is activated.
@@ -112,13 +219,6 @@ function! TclComplete#Init()
         let g:TclComplete#attribute_funcs[f]=''
     endfor
 
-    "     list: Use the TclComplete#cmds list to derive namespaces 
-    let g:TclComplete#namespaces = copy(g:TclComplete#cmds)
-    call filter(g:TclComplete#namespaces,"v:val=~'::'")
-    let map_cmd = "substitute(v:val,'::[^:]*$','','')"
-    call map(g:TclComplete#namespaces,map_cmd)
-    call uniq(sort(g:TclComplete#namespaces,'i'))
-
     "     dict: key = ['command']  value = alphabetical list of options
     let g:TclComplete#options = TclComplete#ReadJsonFile('options.json','dict')
 
@@ -126,49 +226,13 @@ function! TclComplete#Init()
     "           value = description of option 
     let g:TclComplete#details = TclComplete#ReadJsonFile('details.json','dict')
 
-    "  g:TclComplete#iccpp (list of iccpp parameters)
-    let g:TclComplete#iccpp = TclComplete#ReadJsonFile('iccpp.json','list')
-
-    " dict if iccpp parameters plus their default values
-    let g:TclComplete#iccpp_dict = TclComplete#ReadJsonFile('iccpp_dict.json','dict')
-
-    " G variables that were loaded into your session.
-    let g:TclComplete#g_vars = TclComplete#ReadJsonFile('g_vars.json','list')
-    let g:TclComplete#g_var_arrays = TclComplete#ReadJsonFile('g_var_arrays.json','list')
-
-    " arrays (names and values of every Tcl array variable)
-    let g:TclComplete#arrays = TclComplete#ReadJsonFile('arrays.json','dict')
-
-    " Prepare for faster ivar access later.
-    let g:TclComplete#ivar_lib_names = {}
-    let g:TclComplete#ivar_completion = {}
-    call TclComplete#ivar_prep()
-
-
-    " Get the track patterns from the G_ROUTE_TRACK_PATTERNS array
-    let g:TclComplete#track_patterns = filter(copy(g:TclComplete#g_var_arrays),"v:val=~'G_ROUTE_TRACK_PATTERNS'")
-    call map(g:TclComplete#track_patterns,"split(v:val,'[()]')[1]")
 
     " Synopsys app option dict
     let g:TclComplete#app_options_dict  = TclComplete#ReadJsonFile('app_options.json','dict')
     
-    " Tech file information from the ::techfile_info array (rdt thing)
-    let g:TclComplete#techfile_types      = TclComplete#ReadJsonFile('techfile_types.json','list')
-    let g:TclComplete#techfile_layer_dict = TclComplete#ReadJsonFile('techfile_layer_dict.json','dict')
-    let g:TclComplete#techfile_attr_dict  = TclComplete#ReadJsonFile('techfile_attr_dict.json','dict')
-
-    " " Environment variables (this was made obsolete by g:TclComplete#arrays)
-    " let g:TclComplete#environment  = sort(keys(TclComplete#ReadJsonFile('environment.json','dict')))
-
     " Design names in your session
     let g:TclComplete#designs = TclComplete#ReadJsonFile('designs.json','list')
 
-    " App variables dict (key=app var name, value=app var value when JSON file was create)
-    let g:TclComplete#app_var_list = TclComplete#ReadJsonFile('app_vars.json','dict')
-
-    " RDT steps dict (key=stage name, value = list of steps for the stage)
-    let g:TclComplete#rdt_step_dict  = TclComplete#ReadJsonFile('rdt_steps.json','dict')
-    let g:TclComplete#rdt_stage_list = sort(keys(g:TclComplete#rdt_step_dict))
     let g:TclComplete#rdt_commands={}
     for cmd in ['runRDT','rdt_add_pre_step','rdt_add_post_step','rdt_add_pre_stage','rdt_add_post_stage','rdt_remove_stage','rdt_get_global_voltages','rdt_get_rail_voltage','rdt_get_scenario_data']
         let g:TclComplete#rdt_commands[cmd]=''
@@ -508,7 +572,7 @@ function! TclComplete#Complete(findstart, base)
         " 1b)  If you've typed "G_", then use list of g vars.
         elseif l:base[0:1] == 'G_' 
             let g:ctype = 'G_var'
-            let l:complete_list = g:TclComplete#g_vars
+            let l:complete_list = TclComplete#GetGVars()
 
         " 1c)  If you've typed an array that in the g:TclComplete#arrays dict, then 
         "      complete the names
@@ -524,8 +588,9 @@ function! TclComplete#Complete(findstart, base)
             let g:array_varname = substitute(g:array_base, '^[$:]*', '', 'g')
 
             " Get the array variable's name/value dict (default to empty dict)
-            if has_key(g:TclComplete#arrays, g:array_varname)
-                let g:array_dict  = get(g:TclComplete#arrays, g:array_varname)
+            let l:arrays = TclComplete#GetArrays()
+            if has_key(l:arrays, g:array_varname)
+                let g:array_dict  = get(l:arrays, g:array_varname)
                 let g:array_names = keys(g:array_dict)
 
                 " Make a list and dict with the full base name as keys 
@@ -726,7 +791,7 @@ function! TclComplete#Complete(findstart, base)
         " 5a) G_var completion but for the getvar/setvar/etc commands
         elseif has_key(g:TclComplete#gvar_funcs, g:active_cmd)
             let g:ctype = 'g_var function'
-            let l:complete_list = g:TclComplete#g_vars
+            let l:complete_list = TclComplete#GetGVars()
 
         " ivar bundle tag completion from archive
         elseif g:active_cmd == 'set' && g:last_completed_word =~ 'ivar(\w\+,\w\+,tag)'
@@ -750,7 +815,7 @@ function! TclComplete#Complete(findstart, base)
         " 5c) Complete with environment variables
         elseif has_key(g:TclComplete#env_funcs, g:active_cmd)
             let g:ctype = 'env'
-            let l:menu_dict = g:TclComplete#arrays['env']
+            let l:menu_dict = get(TclComplete#GetArrays(), 'env')
             let l:complete_list = sort(keys(l:menu_dict))
 
         " 5d) Complete with the list of designs in your project.
@@ -767,13 +832,13 @@ function! TclComplete#Complete(findstart, base)
         " 5f) Complete with Synopsys applicaiton variables
         elseif g:active_cmd=~# 'app_var'
             let g:ctype = 'app_var'
-            let l:complete_list = sort(g:TclComplete#app_var_list)
+            let l:complete_list = sort(TclComplete#GetAppVarList())
 
         " 5g) Complete with iccpp (iTar) parameters
         elseif g:active_cmd =~# '\viccpp_com::(set|get)_param'
             let g:ctype = 'iccpp parameter'
-            let l:complete_list = sort(keys(g:TclComplete#iccpp_dict))
-            let l:menu_dict = g:TclComplete#iccpp_dict
+            let l:menu_dict = TclComplete#GetIccppDict()
+            let l:complete_list = sort(keys(l:menu_dict))
 
         " 6a) Completions for two word combinations (like 'string is')
         elseif has_key(g:TclComplete#options,g:active_cmd." ".g:last_completed_word)
@@ -790,7 +855,7 @@ function! TclComplete#Complete(findstart, base)
                 let l:complete_list = g:TclComplete#options['namespace']
             else
                 let g:ctype = 'namespaces'
-                let l:complete_list = g:TclComplete#namespaces
+                let l:complete_list = TclComplete#GetNamespaces()
             endif
 
         " 6c) Complete two word array commands with your array names
@@ -827,17 +892,17 @@ function! TclComplete#Complete(findstart, base)
         elseif g:active_cmd =~ 'tech::get_techfile_info'
             let g:ctype = 'techfile'
             if g:last_completed_word=='-type'
-                let l:complete_list = g:TclComplete#techfile_types
+                let l:complete_list = TclComplete#GetTechFileTypes()
             elseif g:last_completed_word=='-layer'
                 let l:tech_file_type = matchstr(getline('.'), '-type\s\+\zs\w\+')
-                let l:menu_dict = g:TclComplete#techfile_layer_dict
-                let l:complete_list = sort(get(g:TclComplete#techfile_layer_dict,l:tech_file_type,[]))
+                let l:menu_dict = TclComplete#GetTechFileLayerDict()
+                let l:complete_list = sort(get(l:menu_dict,l:tech_file_type,[]))
             else
                 let l:tech_file_type  = matchstr(getline('.'), '-type\s\+\zs\w\+')
                 let l:tech_file_layer = matchstr(getline('.'), '-layer\s\+\zs\w\+')
                 let l:tech_file_key = l:tech_file_type.":".l:tech_file_layer
-                let l:tech_file_dict = g:TclComplete#techfile_attr_dict
-                let l:complete_list =  sort(get(g:TclComplete#techfile_attr_dict,l:tech_file_key,['-type','-layer']))
+                let l:tech_file_dict = TclComplete#GetTechFileAttrDict()
+                let l:complete_list =  sort(get(l:tech_file_dict,l:tech_file_key,['-type','-layer']))
             endif
 
         " 8) Track patterns
@@ -908,18 +973,18 @@ function! TclComplete#get_rdt_list(active_cmd,last_completed_word,base)
     if a:active_cmd=='runRDT'
         if a:last_completed_word=='-load'
             let g:ctype = 'runRDT -load'
-            return g:TclComplete#rdt_stage_list
+            return TclComplete#GetRdtStageList()
         elseif a:last_completed_word=='-stop'
             " Allow a stage.step format
             if a:base =~ '\.'
                 let g:ctype='runRDT -stop stage.step'
                 let l:rdt_stage = split(a:base,'\.')[0]
-                let l:rdt_steps = get(g:TclComplete#rdt_step_dict,l:rdt_stage,'[]')
+                let l:rdt_steps = get(TclComplete#GetRdtStepDict(),l:rdt_stage,'[]')
                 return map(l:rdt_steps,"l:rdt_stage.'.'.v:val")
             else
             " ...or a stage name only
                 let g:ctype='runRDT -stop stage'
-                return g:TclComplete#rdt_stage_list
+                return TclComplete#GetRdtStageList()
             endif
         elseif a:last_completed_word=='-load_cel'
             let g:ctype = 'runRDT -load_cel'
@@ -931,9 +996,9 @@ function! TclComplete#get_rdt_list(active_cmd,last_completed_word,base)
     if a:active_cmd=~'^rdt_add_\(post\|pre\)_step'
         let g:ctype='rdt_add_post/pre_step'
         if a:active_cmd==a:last_completed_word
-            return g:TclComplete#rdt_stage_list
+            return TclComplete#GetRdtStageList()
         else
-            return get(g:TclComplete#rdt_step_dict,a:last_completed_word,'[]')
+            return get(TclComplete#GetRdtStepDict(),a:last_completed_word,'[]')
         endif
     endif
 
@@ -943,9 +1008,9 @@ function! TclComplete#get_rdt_list(active_cmd,last_completed_word,base)
         if a:active_cmd==a:last_completed_word
             return ['[getvar G_FLOW]']
         elseif a:last_completed_word=~'G_FLOW'
-            return g:TclComplete#rdt_stage_list
+            return TclComplete#GetRdtStageList()
         else
-            return get(g:TclComplete#rdt_step_dict,a:last_completed_word,'[]')
+            return get(TclComplete#GetRdtStepDict(),a:last_completed_word,'[]')
         endif
     endif
 
@@ -956,7 +1021,7 @@ function! TclComplete#get_rdt_list(active_cmd,last_completed_word,base)
         if a:last_completed_word=='-flow'
             return ['[getvar G_FLOW]']
         elseif a:last_completed_word=='-stage'
-            return g:TclComplete#rdt_stage_list
+            return TclComplete#GetRdtStageList()
         endif
     endif
 
@@ -978,7 +1043,7 @@ endfunction
 
 function! TclComplete#get_g_var_array_names(g_var)
     let result=[]
-    for g_var in g:TclComplete#g_var_arrays
+    for g_var in TclComplete#GetVGarArrays()
         let split_list = split(g_var,'(')
         if split_list[0]==a:g_var
             call add(result,split_list[1][0:-2])
@@ -996,14 +1061,15 @@ endfunction
 " 4)  
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! TclComplete#ivar_prep()
-    if !has_key(g:TclComplete#arrays, 'ivar')
+    let l:arrays = TclComplete#GetArrays()
+    if !has_key(l:arrays, 'ivar')
         return
     endif
 
-    let ivar_dict = get(g:TclComplete#arrays, 'ivar')
+    let ivar_dict = get(l:arrays, 'ivar')
 
-    if has_key(g:TclComplete#arrays, 'ivar_desc')
-        let value_dict = get(g:TclComplete#arrays,'ivar_desc')
+    if has_key(l:arrays, 'ivar_desc')
+        let value_dict = get(l:arrays,'ivar_desc')
     else
         let value_dict = ivar_dict
     endif

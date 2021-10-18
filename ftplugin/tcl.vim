@@ -122,7 +122,7 @@ function! TclCompleteVision()
     elseif match(current_word, 'env(')>-1
         let env_name = get(split(current_word,'[()]'),1,"")
         let g:vision_word = env_name
-        let env_array = get(g:TclComplete#arrays,'env', {})
+        let env_array = get(TclComplete#GetArrays(),'env', {})
         let g:TclComplete#display_str = '$'.env_name.' = '.get(env_array,env_name,"")
     else
         " Or something else?
@@ -169,14 +169,12 @@ function! TclCompleteVisionInitialize()
     endif
 
     " Load the arrays.json file to get the ivars
-    if !exists('g:TclComplete#arrays')
-        let g:TclComplete#arrays = TclComplete#ReadJsonFile('arrays.json','dict')
-    endif
+    let l:arrays = TclComplete#GetArrays()
 
     " These arrays should be in TclComplete/arrays.json 
-    let g:ivar_array = get(g:TclComplete#arrays, 'ivar', {})
-    let g:ivar_desc  = get(g:TclComplete#arrays, 'ivar_desc', {})
-    let g:ivar_type  = get(g:TclComplete#arrays, 'ivar_type', {})
+    let g:ivar_array = get(l:arrays, 'ivar', {})
+    let g:ivar_desc  = get(l:arrays, 'ivar_desc', {})
+    let g:ivar_type  = get(l:arrays, 'ivar_type', {})
 
     return
 endfunction
