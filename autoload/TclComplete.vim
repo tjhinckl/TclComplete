@@ -155,6 +155,14 @@ function! TclComplete#GetData()
     " Regexp char classes
     let g:TclComplete#regexp_char_class_list = TclComplete#ReadJsonFile('regexp_char_classes.json','list')
 
+    " Synopsys error message ids
+    let g:TclComplete#msg_ids = TclComplete#ReadJsonFile('msg_ids.json', 'dict')
+    let g:TclComplete#msg_id_funcs = {}
+    for f in ['suppress_message', 'unsuppress_message'] 
+        let g:TclComplete#msg_id_funcs[f]=''
+    endfor
+    
+
     "  Functions that use g_var completion
     let g:TclComplete#gvar_funcs = {}
     for f in ['setvar', 'getvar', 'lappend_var', 'info_var', 'append_var']
@@ -819,8 +827,14 @@ function! TclComplete#Complete(findstart, base)
                 let l:complete_list = g:TclComplete#gui_layout_window_list
             endif
 
+        " 11) Synopsys error/warning msg ids
+        elseif has_key(g:TclComplete#msg_id_funcs, g:active_cmd)
+            let g:ctype = 'msg_id'
+            let l:complete_list = sort(keys(g:TclComplete#msg_ids))
+            let l:menu_dict = g:TclComplete#msg_ids
 
-        " 11) RDT stuff
+
+        " 12) RDT stuff
         elseif has_key(g:TclComplete#rdt_commands,g:active_cmd)
             let g:ctype = 'rdt_steps'
             let l:complete_list = TclComplete#get_rdt_list(g:active_cmd,g:last_completed_word,l:base)
