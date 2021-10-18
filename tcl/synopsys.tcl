@@ -531,6 +531,17 @@ proc TclComplete::write_attributes_json {outdir} {
         # Fill up the class dict: key=attr-name, value=attr_choices
         dict set attribute_dict $attr_class $attr_name $attr_choices
     }
+
+    # Some object_classes might not be automatically generated.  Hard-code them here.
+    dict set attribute_dict dff_connection start          "collection"
+    dict set attribute_dict dff_connection end            "collection"
+    dict set attribute_dict dff_connection full_name      "string"
+    dict set attribute_dict dff_connection name           "string"
+    dict set attribute_dict dff_connection detail         "collection"
+    dict set attribute_dict dff_connection hierarchy_pins "collection"
+    dict set attribute_dict dff_connection gates          "int"
+    dict set attribute_dict dff_connection registers      "int"
+    dict set attribute_dict dff_connection object_class   "string"
     TclComplete::write_json $outdir/attributes [TclComplete::dict_of_dicts_to_json $attribute_dict] 
 }
 
