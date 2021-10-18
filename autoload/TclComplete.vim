@@ -59,11 +59,36 @@ function! TclComplete#GetContextList()
     " Return what was found.
     return context_list
 endfunction
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Some individual json files are loaded only when needed
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function! TclComplete#GetAttributes()
+    "   dictionary: key = object_class, value = attribute for the class
+    if !exists('g:TclComplete#attributes')
+        let g:TclComplete#attributes = TclComplete#ReadJsonFile('attributes.json','dict')
+    endif
+    return g:TclComplete#attributes
+endfunction
+
+function! TclComplete#GetObjectClasses()
+    "   dictionary: key = object_class, value = attribute for the class
+    if !exists('g:TclComplete#object_classes')
+        let g:TclComplete#object_classes = sort(keys(TclComplete#GetAttributes()))
+    endif
+    return g:TclComplete#object_classes
+endfunction
+
+function! TclComplete#GetDataMsgIds()
+    if !exists('g:TclComplete#msg_ids')
+        let g:TclComplete#msg_ids = TclComplete#ReadJsonFile('msg_ids.json', 'dict')
+    endif
+    return g:TclComplete#msg_ids
+endfunction
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
 " TclComplete#GetData()
 " - this is called when TclComplete is activated.
-"   TODO: Maybe make this lazy...only take the time to read a json file 
-"           if the completion context was triggered.
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! TclComplete#GetData()                                     
     let l:dir = g:TclComplete#dir
@@ -75,8 +100,8 @@ function! TclComplete#GetData()
     let g:TclComplete#descriptions = TclComplete#ReadJsonFile('descriptions.json','dict')
 
     "   dictionary: key = object_class, value = attribute for the class
-    let g:TclComplete#attributes = TclComplete#ReadJsonFile('attributes.json','dict')
-    let g:TclComplete#object_classes = sort(keys(g:TclComplete#attributes))
+    " let g:TclComplete#attributes = TclComplete#ReadJsonFile('attributes.json','dict')
+    " let g:TclComplete#object_classes = sort(keys(g:TclComplete#attributes))
 
     "  define here the commands that will use attribute mode completion
     let g:TclComplete#attribute_funcs = {}
@@ -155,8 +180,8 @@ function! TclComplete#GetData()
     " Regexp char classes
     let g:TclComplete#regexp_char_class_list = TclComplete#ReadJsonFile('regexp_char_classes.json','list')
 
-    " Synopsys error message ids
-    let g:TclComplete#msg_ids = TclComplete#ReadJsonFile('msg_ids.json', 'dict')
+    " " Synopsys error message ids
+    " let g:TclComplete#msg_ids = TclComplete#ReadJsonFile('msg_ids.json', 'dict')
     let g:TclComplete#msg_id_funcs = {}
     for f in ['suppress_message', 'unsuppress_message'] 
         let g:TclComplete#msg_id_funcs[f]=''
@@ -202,20 +227,22 @@ function! TclComplete#GetData()
 endfunction
 
 function! TclComplete#GetObjectClass(get_command)
+    let l:object_classes = TclComplete#GetObjectClasses()
+
     " Strip off 'get_'
     let object = a:get_command[4:]
-    if index(g:TclComplete#object_classes, object) >= 0
+    if index(l:object_classes, object) >= 0
         return object
     endif
     " Try without the 's'.  get_cells vs get_cell
     let object = object[0:-2]
-    if index(g:TclComplete#object_classes, object) >= 0
+    if index(l:object_classes, object) >= 0
         return object
     endif
 
     " Try taking off one more letter (port_buses --> port_buse --> port_bus)
     let object = object[0:-2]
-    if index(g:TclComplete#object_classes, object) >= 0
+    if index(l:object_classes, object) >= 0
         return object
     endif
 
@@ -224,7 +251,8 @@ function! TclComplete#GetObjectClass(get_command)
 endfunction
     
 function! TclComplete#AttrChoices(A,L,P)
-    return join(sort(keys(g:TclComplete#attributes)),"\n")
+    let attributes = TclComplete#GetAttributes()
+    return join(sort(keys(attributes)),"\n")
 endfunction
 
 function! TclComplete#AttributeComplete()
@@ -541,9 +569,11 @@ function! TclComplete#Complete(findstart, base)
                 let g:menu_dict = l:menu_dict
                 let l:complete_list = sort(keys(l:menu_dict))
             elseif g:array_varname=='defined' || g:array_varname=='undefined'
+                " defined( and undefined( may appear like arrays, but they are attribute filters
                 call TclComplete#AskForAttribute()
                 let g:ctype= 'attributes (defined)'
-                let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
+                let l:attribute_dict = TclComplete#GetAttributes()
+                let l:complete_list = sort(keys(get(l:attribute_dict,g:TclComplete#attr_class,{})))
                 call map(l:complete_list,"g:array_varname.'('.v:val")
             else 
                 let l:complete_list = []
@@ -601,14 +631,15 @@ function! TclComplete#Complete(findstart, base)
         " 3) Complete object classes after '-class', typically during a get_attribute type command
         elseif g:last_completed_word=='-class'
             let g:ctype = 'object classes'
-            let l:complete_list = g:TclComplete#object_classes
+            let l:complete_list = TclComplete#GetObjectClasses()
 
         " 4a) Attribute completion if triggered by the TclComplete#AttributeComplete() function
         "      (Rare.  this is triggered by the <tab>-a shortcut.)
         elseif g:TclComplete#attr_flag == 'yes'
             let g:ctype = 'attributes (attr_function)'
-            let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
-            let l:menu_dict     = get(g:TclComplete#attributes,g:TclComplete#attr_class,{})
+            let l:attributes = TclComplete#GetAttributes()
+            let l:menu_dict     = get(l:attributes,g:TclComplete#attr_class,{})
+            let l:complete_list = sort(keys(l:menu_dict))
             let g:TclComplete#attr_flag  = 'no'
 
         " 4b) Attribute completion following attribute commands (like get_attribute)
@@ -633,7 +664,8 @@ function! TclComplete#Complete(findstart, base)
                 let g:TclComplete#attr_class = substitute(g:TclComplete#attr_class,'parent_','','')
 
                 " Construct the complete_list so that the dotted prefixes are in front.
-                let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
+                let l:attributes = TclComplete#GetAttributes()
+                let l:complete_list = sort(keys(get(l:attributes,g:TclComplete#attr_class,{})))
                 call map(l:complete_list, "l:prefix.v:val")
 
             " Try to derive the object class based on a -class argument
@@ -642,17 +674,19 @@ function! TclComplete#Complete(findstart, base)
                 let l:split_line = split(getline('.'))
                 let l:class_index = index(l:split_line,'-class')+1
                 let g:TclComplete#attr_class=get(l:split_line,l:class_index,'')
-                let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
+                let l:attributes = TclComplete#GetAttributes()
+                let l:menu_dict     = get(l:attributes,g:TclComplete#attr_class,{})
+                let l:complete_list = sort(keys(l:menu_dict))
                 call extend(l:complete_list,["defined","undefined"])
-                let l:menu_dict     = get(g:TclComplete#attributes,g:TclComplete#attr_class,{})
 
             " ...otherwise, ask the user for the object class.
             else
                 call TclComplete#AskForAttribute()
                 let g:ctype = 'attributes (AskForAttribute)'
-                let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
+                let l:attributes = TclComplete#GetAttributes()
+                let l:menu_dict     = get(l:attributes,g:TclComplete#attr_class,{})
+                let l:complete_list = sort(keys(l:menu_dict))
                 call extend(l:complete_list,["defined","undefined"])
-                let l:menu_dict     = get(g:TclComplete#attributes,g:TclComplete#attr_class,{})
             endif
 
         " 4c) Attribute completion after the -filter option of get_cells, get_nets, etc.
@@ -676,14 +710,16 @@ function! TclComplete#Complete(findstart, base)
                 let g:TclComplete#attr_class = substitute(g:TclComplete#attr_class,'parent_','','')
 
                 " Construct the complete_list so that the dotted prefixes are in front.
-                let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
+                let l:attributes = TclComplete#GetAttributes()
+                let l:complete_list = sort(keys(get(l:attributes,g:TclComplete#attr_class,{})))
                 call map(l:complete_list, "l:prefix.v:val")
             else
                 let g:ctype = 'attributes (derived from get_* -filter)'
                 let g:TclComplete#attr_class = TclComplete#GetObjectClass(g:active_cmd)
-                let l:complete_list = sort(keys(get(g:TclComplete#attributes,g:TclComplete#attr_class,{})))
+                let l:attributes = TclComplete#GetAttributes()
+                let l:menu_dict     = get(l:attributes,g:TclComplete#attr_class,{})
+                let l:complete_list = sort(keys(l:menu_dict))
                 call extend(l:complete_list,["defined","undefined"])
-                let l:menu_dict     = get(g:TclComplete#attributes,g:TclComplete#attr_class,{})
             endif
 
 
@@ -830,8 +866,8 @@ function! TclComplete#Complete(findstart, base)
         " 11) Synopsys error/warning msg ids
         elseif has_key(g:TclComplete#msg_id_funcs, g:active_cmd)
             let g:ctype = 'msg_id'
-            let l:complete_list = sort(keys(g:TclComplete#msg_ids))
-            let l:menu_dict = g:TclComplete#msg_ids
+            let l:menu_dict = TclComplete#GetDataMsgIds()
+            let l:complete_list = sort(keys(l:menu_dict))
 
 
         " 12) RDT stuff
