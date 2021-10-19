@@ -61,10 +61,40 @@ function! TclComplete#GetContextList()
 endfunction
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Some individual json files are loaded only when needed
+" Give each completion list/dict a different getter function
+"  for lazy loading.  Only load the json when needed instead
+"  of loading everything at once, which slows down the first
+"  TclComplete operation for the user.
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function! TclComplete#GetCommands()
+    if !exists('g:TclComplete#cmds')
+        let g:TclComplete#cmds = TclComplete#ReadJsonFile('commands.json','list')
+    endif
+    return g:TclComplete#cmds
+endfunction
+
+function! TclComplete#GetOptions()
+    if !exists('g:TclComplete#options')
+        let g:TclComplete#options = TclComplete#ReadJsonFile('options.json','dict')
+    endif
+    return g:TclComplete#options
+endfunction
+
+function! TclComplete#GetOptionDetails()
+    if !exists('g:TclComplete#details')
+        let g:TclComplete#details = TclComplete#ReadJsonFile('details.json','dict')
+    endif
+    return g:TclComplete#details
+endfunction
+
+function! TclComplete#GetDescriptions()
+    if !exists('g:TclComplete#descriptions')
+        let g:TclComplete#descriptions = TclComplete#ReadJsonFile('descriptions.json','dict')
+    endif
+    return g:TclComplete#descriptions
+endfunction
+
 function! TclComplete#GetAttributes()
-    "   dictionary: key = object_class, value = attribute for the class
     if !exists('g:TclComplete#attributes')
         let g:TclComplete#attributes = TclComplete#ReadJsonFile('attributes.json','dict')
     endif
@@ -72,18 +102,24 @@ function! TclComplete#GetAttributes()
 endfunction
 
 function! TclComplete#GetObjectClasses()
-    "   dictionary: key = object_class, value = attribute for the class
     if !exists('g:TclComplete#object_classes')
         let g:TclComplete#object_classes = sort(keys(TclComplete#GetAttributes()))
     endif
     return g:TclComplete#object_classes
 endfunction
 
-function! TclComplete#GetDataMsgIds()
+function! TclComplete#GetMsgIds()
     if !exists('g:TclComplete#msg_ids')
         let g:TclComplete#msg_ids = TclComplete#ReadJsonFile('msg_ids.json', 'dict')
     endif
     return g:TclComplete#msg_ids
+endfunction
+
+function! TclComplete#GetRegexpCharClassList()
+    if !exists('g:TclComplete#regexp_char_class_list')
+        let g:TclComplete#regexp_char_class_list = TclComplete#ReadJsonFile('regexp_char_classes.json','list')
+    endif
+    return g:TclComplete#regexp_char_class_list
 endfunction
 
 function! TclComplete#GetPackages()
@@ -96,7 +132,7 @@ endfunction
 function! TclComplete#GetNamespaces()
     if !exists('g:TclComplete#namespaces')
         " Use the TclComplete#cmds list to derive namespaces 
-        let g:TclComplete#namespaces = copy(g:TclComplete#cmds)
+        let g:TclComplete#namespaces = copy(TclComplete#GetCommands())
 
         " Use only commands including ::
         call filter(g:TclComplete#namespaces,"v:val=~'::'")
@@ -186,6 +222,27 @@ function! TclComplete#GetAppVarList()
     return g:TclComplete#app_var_list
 endfunction
 
+function! TclComplete#GetAppOptionDict()
+    if !exists('g:TclComplete#app_options_dict')
+        let g:TclComplete#app_options_dict  = TclComplete#ReadJsonFile('app_options.json','dict')
+    endif
+    return g:TclComplete#app_options_dict
+endfunction
+
+function! TclComplete#GetDesigns()
+    if !exists('g:TclComplete#designs')
+        let g:TclComplete#designs = TclComplete#ReadJsonFile('designs.json','list')
+    endif
+    return g:TclComplete#designs
+endfunction
+
+function! TclComplete#GetGuiLayoutWindowList()
+    if !exists('g:TclComplete#gui_layout_window_list')
+        let g:TclComplete#gui_layout_window_list = TclComplete#ReadJsonFile('gui_settings_layout.json','list')
+    endif
+    return g:TclComplete#gui_layout_window_list
+endfunction
+
 function! TclComplete#GetRdtStepDict()
     if !exists('g:TclComplete#rdt_step_dict')
         let g:TclComplete#rdt_step_dict  = TclComplete#ReadJsonFile('rdt_steps.json','dict')
@@ -205,52 +262,23 @@ endfunction
 " - this is called when TclComplete is activated.
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! TclComplete#Init()
-    let l:dir = g:TclComplete#dir
-
-    "   list of commands.  Namespaced commands at end.
-    let g:TclComplete#cmds = TclComplete#ReadJsonFile('commands.json','list')
-
-    "   dictionary: key = 'command', value = 'description of command'
-    let g:TclComplete#descriptions = TclComplete#ReadJsonFile('descriptions.json','dict')
-
-    "  define here the commands that will use attribute mode completion
+    " Define the commands that will use attribute completion
     let g:TclComplete#attribute_funcs = {}
     for f in ['get_attribute', 'filter_collection', 'set_attribute', 'get_defined_attributes', 'sort_collection']
         let g:TclComplete#attribute_funcs[f]=''
     endfor
 
-    "     dict: key = ['command']  value = alphabetical list of options
-    let g:TclComplete#options = TclComplete#ReadJsonFile('options.json','dict')
-
-    "     dict: key   = ['command']['option']
-    "           value = description of option 
-    let g:TclComplete#details = TclComplete#ReadJsonFile('details.json','dict')
-
-
-    " Synopsys app option dict
-    let g:TclComplete#app_options_dict  = TclComplete#ReadJsonFile('app_options.json','dict')
-    
-    " Design names in your session
-    let g:TclComplete#designs = TclComplete#ReadJsonFile('designs.json','list')
-
+    " Define the commands that will use rdt json files
     let g:TclComplete#rdt_commands={}
     for cmd in ['runRDT','rdt_add_pre_step','rdt_add_post_step','rdt_add_pre_stage','rdt_add_post_stage','rdt_remove_stage','rdt_get_global_voltages','rdt_get_rail_voltage','rdt_get_scenario_data']
         let g:TclComplete#rdt_commands[cmd]=''
     endfor
 
-    " GUI settings
-    let g:TclComplete#gui_layout_window_list = TclComplete#ReadJsonFile('gui_settings_layout.json','list')
-
-    " Regexp char classes
-    let g:TclComplete#regexp_char_class_list = TclComplete#ReadJsonFile('regexp_char_classes.json','list')
-
-    " " Synopsys error message ids
-    " let g:TclComplete#msg_ids = TclComplete#ReadJsonFile('msg_ids.json', 'dict')
+    " Function that use msg_id completion
     let g:TclComplete#msg_id_funcs = {}
     for f in ['suppress_message', 'unsuppress_message'] 
         let g:TclComplete#msg_id_funcs[f]=''
     endfor
-    
 
     "  Functions that use g_var completion
     let g:TclComplete#gvar_funcs = {}
@@ -288,6 +316,7 @@ function! TclComplete#Init()
         let g:TclComplete#app_option_funcs[f]=''
     endfor
 
+    let g:TclComplete#init_done = 1
 endfunction
 
 function! TclComplete#GetObjectClass(get_command)
@@ -524,7 +553,7 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! TclComplete#Complete(findstart, base)
     " First things first, source the completion scripts if necessary
-    if !exists("g:TclComplete#cmds") 
+    if !exists("g:TclComplete#init_done")
         call TclComplete#Init()
     endif
 
@@ -566,8 +595,8 @@ function! TclComplete#Complete(findstart, base)
         " 1a)  If you've typed a dash, then get the -options of the active cmd.
         if l:base[0] == '-' 
             let g:ctype = 'dash'
-            let l:complete_list = get(g:TclComplete#options,g:active_cmd,[])
-            let l:menu_dict     = get(g:TclComplete#details,g:active_cmd,[])
+            let l:complete_list = get(TclComplete#GetOptions(),g:active_cmd,[])
+            let l:menu_dict     = get(TclComplete#GetOptionDetails(),g:active_cmd,[])
 
         " 1b)  If you've typed "G_", then use list of g vars.
         elseif l:base[0:1] == 'G_' 
@@ -657,7 +686,7 @@ function! TclComplete#Complete(findstart, base)
         " 1e) regexp character classes start with a single colon.  ([:alnum:], [:upper:], etc)
         elseif l:base[0] == ':' && l:base[1] != ':'
             let g:ctype = 'regexp char class' 
-            let l:complete_list = g:TclComplete#regexp_char_class_list
+            let l:complete_list = TclComplete#GetRegexpCharClassList()
 
 
         " 2) Command completion if no command exists yet.
@@ -669,12 +698,12 @@ function! TclComplete#Complete(findstart, base)
                 if s:global
                     let g:ctype = 'namespace context global'
                     " If you already typed a leading :: then use fully qualified paths
-                    let l:complete_list = g:TclComplete#cmds
-                    let l:menu_dict     = g:TclComplete#descriptions
+                    let l:complete_list = TclComplete#GetCommands()
+                    let l:menu_dict     = TclComplete#GetDescriptions()
                 else
                     " If you have not typed a ::, then limit the scope to namespace or non-namespaced commands
                     let g:ctype = 'namespace context scoped'
-                    let l:complete_list = copy(g:TclComplete#cmds)
+                    let l:complete_list = copy(TclComplete#GetCommands())
                     let filter_cmd = "v:val=~'^".namespace."' || v:val!~'::'"
                     let map_cmd    = "substitute(v:val,'^".namespace."::','','')"
                     call filter(l:complete_list,filter_cmd)
@@ -684,13 +713,13 @@ function! TclComplete#Complete(findstart, base)
             " 2b) If you're in a oo::define (or similar) block, then only allow stuff like method, constructor, etc...
             elseif get(l:context,0)=~'^oo::'
                 let g:ctype = 'oo context'
-                let l:complete_list = get(g:TclComplete#options, l:context[0])
+                let l:complete_list = get(TclComplete#GetOptions(), l:context[0])
 
             " 2c) Regular old command completion.  
             else
                 let g:ctype = 'command'
-                let l:complete_list = g:TclComplete#cmds
-                let l:menu_dict     = g:TclComplete#descriptions
+                let l:complete_list = TclComplete#GetCommands()
+                let l:menu_dict     = TclComplete#GetDescriptions()
             endif
         
         " 3) Complete object classes after '-class', typically during a get_attribute type command
@@ -821,13 +850,13 @@ function! TclComplete#Complete(findstart, base)
         " 5d) Complete with the list of designs in your project.
         elseif g:last_completed_word == "-design" || has_key(g:TclComplete#design_funcs, g:active_cmd)
             let g:ctype = 'design'
-            let l:complete_list = g:TclComplete#designs
+            let l:complete_list = TclComplete#GetDesigns()
 
         " 5e) Complete with Synopsys application options
         elseif has_key(g:TclComplete#app_option_funcs, g:active_cmd)
             let g:ctype = 'app_options'
-            let l:complete_list = sort(keys(g:TclComplete#app_options_dict))
-            let l:menu_dict = g:TclComplete#app_options_dict
+            let l:menu_dict = TclComplete#GetAppOptionDict()
+            let l:complete_list = sort(keys(l:menu_dict))
 
         " 5f) Complete with Synopsys applicaiton variables
         elseif g:active_cmd=~# 'app_var'
@@ -841,18 +870,18 @@ function! TclComplete#Complete(findstart, base)
             let l:complete_list = sort(keys(l:menu_dict))
 
         " 6a) Completions for two word combinations (like 'string is')
-        elseif has_key(g:TclComplete#options,g:active_cmd." ".g:last_completed_word)
+        elseif has_key(TclComplete#GetOptions(),g:active_cmd." ".g:last_completed_word)
             let g:ctype = 'two word options'
             let l:two_word_command = join([g:active_cmd,g:last_completed_word])
-            let l:complete_list = g:TclComplete#options[l:two_word_command]
-            let l:menu_dict     = get(g:TclComplete#details,l:two_word_command,[])
+            let l:complete_list = TclComplete#GetOptions()[l:two_word_command]
+            let l:menu_dict     = get(TclComplete#GetOptionDetails(),l:two_word_command,[])
 
         " 6b) Complete two word namespace commands with your namespaces.
         elseif g:active_cmd=='namespace'
-            let l:namespace_options = get(g:TclComplete#options,'namespace',[])
+            let l:namespace_options = get(TclComplete#GetOptions(),'namespace',[])
             if index(l:namespace_options,g:last_completed_word)<0
                 let g:ctype = 'namespace_options'
-                let l:complete_list = g:TclComplete#options['namespace']
+                let l:complete_list = TclComplete#GetOptions()['namespace']
             else
                 let g:ctype = 'namespaces'
                 let l:complete_list = TclComplete#GetNamespaces()
@@ -871,7 +900,7 @@ function! TclComplete#Complete(findstart, base)
         " 6e) Situations where the completion list should be a list of commands.
         elseif g:active_cmd=='info' && g:last_completed_word=~'^commands\?$'
             let g:ctype = 'info commands'
-            let l:complete_list = g:TclComplete#cmds
+            let l:complete_list = TclComplete#GetCommands()
 
         " 6f) compute polygons -operation
                 " AND       Get the region covered by both objects1 and objects2
@@ -925,13 +954,13 @@ function! TclComplete#Complete(findstart, base)
             elseif g:last_completed_word=='-symbol_size'
                 let l:complete_list = range(3,100)
             elseif g:last_completed_word=='-setting'
-                let l:complete_list = g:TclComplete#gui_layout_window_list
+                let l:complete_list = TclComplete#GetGuiLayoutWindowList()
             endif
 
         " 11) Synopsys error/warning msg ids
         elseif has_key(g:TclComplete#msg_id_funcs, g:active_cmd)
             let g:ctype = 'msg_id'
-            let l:menu_dict = TclComplete#GetDataMsgIds()
+            let l:menu_dict = TclComplete#GetMsgIds()
             let l:complete_list = sort(keys(l:menu_dict))
 
 
@@ -943,8 +972,8 @@ function! TclComplete#Complete(findstart, base)
         " Default) Options of the active command.
         else
             let g:ctype = 'default'
-            let l:complete_list = get(g:TclComplete#options,g:active_cmd,[])
-            let l:menu_dict     = get(g:TclComplete#details,g:active_cmd,[])
+            let l:complete_list = get(TclComplete#GetOptions(),g:active_cmd,[])
+            let l:menu_dict     = get(TclComplete#GetOptionDetails(),g:active_cmd,[])
         endif
 
         " Just in case nothing matches, let the user known.   
@@ -988,7 +1017,7 @@ function! TclComplete#get_rdt_list(active_cmd,last_completed_word,base)
             endif
         elseif a:last_completed_word=='-load_cel'
             let g:ctype = 'runRDT -load_cel'
-            return g:TclComplete#designs
+            return TclComplete#GetDesigns()
         endif
     endif
 
