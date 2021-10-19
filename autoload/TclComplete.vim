@@ -92,7 +92,7 @@ function! TclComplete#Init()
 
     "  Functions that use variable name completion
     let g:TclComplete#varname_funcs = {}
-    for f in ['set', 'unset', 'append', 'lappend', 'lset', 'incr', 'info exists', 'dict set', 'dict unset', 'dict append', 'dict lappend', 'dict incr', 'dict with', 'dict update']
+    for f in ['set', 'unset', 'append', 'lappend', 'lset', 'incr', 'info exists', 'dict set', 'dict unset', 'dict append', 'dict lappend', 'dict incr', 'dict with', 'dict update', 'append_to_collection']
         let g:TclComplete#varname_funcs[f]=''
     endfor
 
@@ -217,7 +217,6 @@ endfunction
 function! TclComplete#ScanBufferForArrayNames()
     " Assign the matches to dict keys for uniqueness instead of dealing with a non-unique list.
     let matches = {}
-    let regex_str = '\varray\s+set\s+\zs\h\w*'
     for linenum in range(1,line('$'))
         " Skip the line you're on.
         if linenum==line('.') 
@@ -226,11 +225,18 @@ function! TclComplete#ScanBufferForArrayNames()
 
         let line = getline(linenum)
 
-        " Check for matches to the regex_str (set, foreach, foreach_in_collection)
+        let regex_str = 'array\s\+set\s\+\zs\h\w*'
         let match = matchstr(line,regex_str)
         if match!=''
             let matches[match] = ''
         endif
+
+        let regex_str = '\h\w*\ze(\h\w*)'
+        let match = matchstr(line,regex_str)
+        if match!=''
+            let matches[match] = ''
+        endif
+
     endfor
     return sort(filter(keys(matches),"v:val!=''"),'i')
 endfunction
@@ -597,7 +603,8 @@ function! TclComplete#Complete(findstart, base)
             let g:ctype = 'g_var function'
             let l:complete_list = TclComplete#get#GVars()
 
-        " ivar bundle tag completion from archive
+        " 5b) ivar bundle tag completion (like ivar(cpu_tile,td_collateral,tag) from archive
+        "   This i
         elseif g:active_cmd == 'set' && g:last_completed_word =~ 'ivar(\w\+,\w\+,tag)'
             let g:ctype = 'bundle tag'
             let [__,block,bundle,tag] = split(g:last_completed_word,'[(),]')
@@ -611,34 +618,34 @@ function! TclComplete#Complete(findstart, base)
             endif
             
 
-        " 5b) Complete the command with variable names (without $ sign)
+        " 5c) Complete the commands which use variable names (without $ sign)
         elseif has_key(g:TclComplete#varname_funcs, g:active_cmd) || has_key(g:TclComplete#varname_funcs, g:active_cmd.' '.g:last_completed_word)
             let g:ctype = 'varname function'
             let l:complete_list = TclComplete#ScanBufferForVariableNames()
 
-        " 5c) Complete with environment variables
+        " 5d) Complete with environment variables
         elseif has_key(g:TclComplete#env_funcs, g:active_cmd)
             let g:ctype = 'env'
             let l:menu_dict = get(TclComplete#get#Arrays(), 'env')
             let l:complete_list = sort(keys(l:menu_dict))
 
-        " 5d) Complete with the list of designs in your project.
+        " 5e) Complete with the list of designs in your project.
         elseif g:last_completed_word == "-design" || has_key(g:TclComplete#design_funcs, g:active_cmd)
             let g:ctype = 'design'
             let l:complete_list = TclComplete#get#Designs()
 
-        " 5e) Complete with Synopsys application options
+        " 5f) Complete with Synopsys application options
         elseif has_key(g:TclComplete#app_option_funcs, g:active_cmd)
             let g:ctype = 'app_options'
             let l:menu_dict = TclComplete#get#AppOptionDict()
             let l:complete_list = sort(keys(l:menu_dict))
 
-        " 5f) Complete with Synopsys applicaiton variables
+        " 5g) Complete with Synopsys application variables
         elseif g:active_cmd=~# 'app_var'
             let g:ctype = 'app_var'
             let l:complete_list = sort(TclComplete#get#AppVarList())
 
-        " 5g) Complete with iccpp (iTar) parameters
+        " 5h) Complete with iccpp (iTar) parameters
         elseif g:active_cmd =~# '\viccpp_com::(set|get)_param'
             let g:ctype = 'iccpp parameter'
             let l:menu_dict = TclComplete#get#IccppDict()
@@ -665,7 +672,7 @@ function! TclComplete#Complete(findstart, base)
         " 6c) Complete two word array commands with your array names
         elseif (g:active_cmd=='array' && g:last_completed_word != 'array') || g:active_cmd=='parray'
             let g:ctype = 'array'
-            let l:complete_list = g:TclComplete#ScanBufferForArrayNames()
+            let l:complete_list = TclComplete#ScanBufferForArrayNames()
 
         " 6d) Complete two word package commands with your packages
         elseif g:active_cmd=='package' && g:last_completed_word != 'package' 
@@ -712,7 +719,7 @@ function! TclComplete#Complete(findstart, base)
         " 8) Track patterns
         elseif has_key(g:TclComplete#trackpattern_funcs, g:active_cmd) && g:last_completed_word=='-pattern'
             let g:ctype = 'track_patterns'
-            let l:complete_list = g:TclComplete#track_patterns
+            let l:complete_list = TclComplete#get#TrackPatterns()
 
         " 9) GUI stuff
         elseif g:active_cmd=~'^gui' && g:last_completed_word!~'^gui'
@@ -737,7 +744,6 @@ function! TclComplete#Complete(findstart, base)
             let g:ctype = 'msg_id'
             let l:menu_dict = TclComplete#get#MsgIds()
             let l:complete_list = sort(keys(l:menu_dict))
-
 
         " 12) RDT stuff
         elseif has_key(g:TclComplete#rdt_commands,g:active_cmd)
