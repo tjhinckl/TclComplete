@@ -6,7 +6,6 @@ setlocal omnifunc=TclComplete#Complete
 setlocal completeopt=menuone,longest
 
 setlocal timeout
-" setlocal timeoutlen=200   "Wait time for triggering mappings (if ambiguity exists)
 setlocal ttimeoutlen=100  "Wait time for triggering abbreviations (if ambiguity exists)
 
 
