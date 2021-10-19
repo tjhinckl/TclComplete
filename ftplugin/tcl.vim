@@ -6,7 +6,7 @@ setlocal omnifunc=TclComplete#Complete
 setlocal completeopt=menuone,longest
 
 setlocal timeout
-setlocal timeoutlen=200   "Wait time for triggering mappings (if ambiguity exists)
+" setlocal timeoutlen=200   "Wait time for triggering mappings (if ambiguity exists)
 setlocal ttimeoutlen=100  "Wait time for triggering abbreviations (if ambiguity exists)
 
 
@@ -110,8 +110,8 @@ function! TclCompleteVision()
     let g:vision_current_word = current_word
 
     " Is it a proc?
-    if has_key(g:TclComplete#descriptions, current_word)
-        let g:TclComplete#display_str = get(g:TclComplete#descriptions, current_word,"")
+    if has_key(TclComplete#GetDescriptions(), current_word)
+        let g:TclComplete#display_str = get(TclComplete#GetDescriptions(), current_word,"")
         let g:vision_word = current_word
     elseif match(current_word, '\(::\)\?ivar(')>-1
         " Is it an ivar?  
@@ -157,24 +157,17 @@ endfunction
 
 
 function! TclCompleteVisionInitialize()
-    let g:TclCompleteVisionInitialized = 1
 
     " Initialize the array used for ivar_vision because it has formatting
     "  based on number of available columns
     let g:ivar_vision = {}
 
-    " Load the description.json file to get the descriptions of procs
-    if !exists('g:TclComplete#descriptions')
-        let g:TclComplete#descriptions = TclComplete#ReadJsonFile('descriptions.json','dict')
-    endif
-
-    " Load the arrays.json file to get the ivars
-    let l:arrays = TclComplete#GetArrays()
-
     " These arrays should be in TclComplete/arrays.json 
-    let g:ivar_array = get(l:arrays, 'ivar', {})
-    let g:ivar_desc  = get(l:arrays, 'ivar_desc', {})
-    let g:ivar_type  = get(l:arrays, 'ivar_type', {})
+    let g:ivar_array = TclComplete#GetIvarDict()
+    let g:ivar_desc  = get(TclComplete#GetArrays(),'ivar', {})
+    let g:ivar_type  = get(TclComplete#GetArrays(),'ivar_type', {})
+
+    let g:TclCompleteVisionInitialized = 1
 
     return
 endfunction
@@ -194,7 +187,7 @@ function! IvarVisionGetDisplayStr(ivar_name)
     endif
 
     " Get the ivar's value (substitute literal '$ward' if possible)
-    let value = get(g:ivar_array, a:ivar_name, "")
+    let value = get(TclComplete#GetIvarDict(), a:ivar_name, "")
     let value = substitute(value,$ward,'$ward','g')
     
     " Make an empty string display literally as empty string
