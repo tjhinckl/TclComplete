@@ -800,6 +800,11 @@ proc TclComplete::write_arrays_json {outdir} {
     #   (Important to add :: before $array_var in the array get command because we're not in global namespace)
     set array_dict [dict create]
     foreach array_var $TclComplete::array_vars {
+        # Skip ivar because there will be a dedicated file for that.
+        if {$array_var == "ivar"} {
+            continue
+        }
+
         foreach name [lsort [array names ::$array_var]] {
             set value [lindex [array get ::$array_var $name] 1]
         

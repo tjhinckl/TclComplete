@@ -176,12 +176,22 @@ endfunction
 function! TclComplete#GetArrays()
     if !exists('g:TclComplete#arrays')
         let g:TclComplete#arrays = TclComplete#ReadJsonFile('arrays.json','dict')
-        " Prepare for faster ivar access later.
-        let g:TclComplete#ivar_lib_names = {}
-        let g:TclComplete#ivar_completion = {}
-        call TclComplete#ivar_prep()
     endif
     return g:TclComplete#arrays
+endfunction
+
+function! TclComplete#GetIvarDict()
+    if !exists('g:TclComplete#ivar_dict')
+        let g:TclComplete#ivar_dict = TclComplete#ReadJsonFile('ivar_dict.json','dict')
+    endif
+    return g:TclComplete#ivar_dict
+endfunction
+
+function! TclComplete#GetIvarLibDict()
+    if !exists('g:TclComplete#ivar_lib_dict')
+        let g:TclComplete#ivar_lib_dict = TclComplete#ReadJsonFile('ivar_lib_dict.json','dict')
+    endif
+    return g:TclComplete#ivar_lib_dict
 endfunction
 
 function! TclComplete#GetTrackPatterns()
@@ -603,10 +613,8 @@ function! TclComplete#Complete(findstart, base)
             let g:ctype = 'G_var'
             let l:complete_list = TclComplete#GetGVars()
 
-        " 1c)  If you've typed an array that in the g:TclComplete#arrays dict, then 
-        "      complete the names
+        " 1c)  Array completion
         elseif l:base=~'('
-            let g:ctype= 'array'
             " Find the base text before the left parenthesis
             let g:array_base = split(l:base,'(')[0]
             " The base might begin with slash-dollar \$, but the slash shouldn't be part of the complete list.
@@ -616,63 +624,36 @@ function! TclComplete#Complete(findstart, base)
             " The base might include $ or ::.  We don't want those for dictionary lookup
             let g:array_varname = substitute(g:array_base, '^[$:]*', '', 'g')
 
-            " Get the array variable's name/value dict (default to empty dict)
-            let l:arrays = TclComplete#GetArrays()
-            if has_key(l:arrays, g:array_varname)
-                let g:array_dict  = get(l:arrays, g:array_varname)
-                let g:array_names = keys(g:array_dict)
-
-                " Make a list and dict with the full base name as keys 
-                "   - ($ and ::) restored if needed. 
-                "    - and a ( before the name.
-                let l:menu_dict = {}
-
-                " Special case for ivars.  
-                if g:array_varname=='ivar'
-                    let g:base = l:base
-                    if l:base=~'^ivar(lib,[^,]*,'
-                        " Insane ivar completion to manage thousands of ivar(lib,*) values
-                        let g:ctype = 'ivar_lib'
-                        let g:ivar_lib_name = split(l:base,'(')[1]
-                        let g:ivar_lib_key = join(split(g:ivar_lib_name,',')[0:1],',')
-                        let l:menu_dict = get(g:TclComplete#ivar_lib_names,g:ivar_lib_key)
-                    elseif l:base=~'\$'
-                        " ivar completion starting with dollar sign (with or without colons)
-                        let g:ctype = 'dollar_ivar'
-                        let l:menu_dict = g:TclComplete#dollar_ivar_completion
-                        if l:base=~'::'
-                            let g:ctype = 'dollar_colon_ivar'
-                            let l:menu_dict = {}
-                            for ivar_name in keys(g:TclComplete#ivar_completion) 
-                                let val = get(g:TclComplete#ivar_completion, ivar_name)
-                                let l:menu_dict['$::'.ivar_name] = val
-                            endfor
-                        endif
-                    else
-                        " Normal ivar completion (with or without colon)
-                        let g:ctype = 'ivar'
-                        let l:menu_dict = g:TclComplete#ivar_completion
-                    endif
+            " Derive the g:array_dict.  key = varname(array_name), value = array_value 
+            if g:array_varname == 'ivar'
+                if l:base =~ 'ivar(lib,'
+                    let g:ctype= 'ivar_lib'
+                    let g:array_dict    = TclComplete#GetIvarLibDict()
                 else
-                    for l:array_name in g:array_names
-                        let l:array_full_name = g:array_base . "(" . l:array_name
-                        let l:menu_dict[l:array_full_name] = g:array_dict[l:array_name]
-                    endfor
+                    let g:ctype= 'ivar'
+                    let g:array_dict    = TclComplete#GetIvarDict()
                 endif
-                    
-                let g:menu_dict = l:menu_dict
-                let l:complete_list = sort(keys(l:menu_dict))
+
             elseif g:array_varname=='defined' || g:array_varname=='undefined'
-                " defined( and undefined( may appear like arrays, but they are attribute filters
-                call TclComplete#AskForAttribute()
                 let g:ctype= 'attributes (defined)'
+                call TclComplete#AskForAttribute()
                 let l:attribute_dict = TclComplete#GetAttributes()
-                let l:complete_list = sort(keys(get(l:attribute_dict,g:TclComplete#attr_class,{})))
-                call map(l:complete_list,"g:array_varname.'('.v:val")
-            else 
-                let l:complete_list = []
+                let g:array_dict = get(l:attribute_dict,g:TclComplete#attr_class,{})
+
+            elseif has_key(TclComplete#GetArrays(), g:array_varname) 
+                let g:ctype= 'array'
+                let g:array_dict  = get(TclComplete#GetArrays(), g:array_varname)
             endif
 
+            " Now create a menu_dict from the g:array_dict, where the keys are 
+            " replaced.  Add the array base name and left parenthesis to new key
+            let g:array_names = keys(g:array_dict)
+            let l:menu_dict = {}
+            for l:array_name in g:array_names
+                let l:array_full_name = g:array_base . "(" . l:array_name
+                let l:menu_dict[l:array_full_name] = g:array_dict[l:array_name]
+            endfor
+            let l:complete_list = sort(keys(l:menu_dict))
 
         " 1d) If you've typed a "$", then use a list of variables in the buffer.
         "      (NOTE, I change $ to \$ in l:base earlier to avoid regex problems in =~ operations.

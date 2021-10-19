@@ -75,7 +75,8 @@ proc TclComplete::WriteFilesSynopsys {dir_location} {
     TclComplete::write_techfile_json     $outdir
     TclComplete::write_iccpp_json        $outdir
     TclComplete::write_descriptions_json $outdir $all_command_list
-    TclComplete::write_msg_ids           $outdir
+    TclComplete::write_msg_ids_json      $outdir
+    TclComplete::write_ivar_json         $outdir
 
     # Just for HDK/RDT not Cheetah2
     if {[info proc rdt_list_stages] == "rdt_list_stages"} {

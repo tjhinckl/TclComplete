@@ -580,16 +580,6 @@ proc TclComplete::write_gvars_json {outdir} {
     TclComplete::write_json $outdir/g_var_arrays [TclComplete::list_to_json $Gvar_array_list] 
 }
 
-###############################################################
-# Write JSON files for G_variables (this is an Intel RDT thing)
-###############################################################
-proc TclComplete::write_ivars_json {outdir} {
-    # The ivar() global array is used in Cheetah2.  There are hundreds of possible values.
-    set ivar_list [lsort [array names ::ivar]]
-
-    # Write out the JSON files.
-    TclComplete::write_json $outdir/i_vars       [TclComplete::list_to_json $ivar_list]
-}
 
 ######################################################################
 # Write JSON files for ICC++ (itar).  This is an Intel add-on to ICC2
@@ -672,7 +662,7 @@ proc TclComplete::man_msg_id {msg_id} {
     }
 }
 
-proc TclComplete::write_msg_ids {outdir} {
+proc TclComplete::write_msg_ids_json {outdir} {
     set msg_ids [get_message_ids]
 
     set msg_dict [dict create]
@@ -682,4 +672,46 @@ proc TclComplete::write_msg_ids {outdir} {
     }
     # Write out the JSON file.
     TclComplete::write_json $outdir/msg_ids  [TclComplete::dict_to_json $msg_dict]
+}
+
+
+####### ivar stuff ########################
+proc TclComplete::write_ivar_json {outdir} {
+
+    # The ivar_dict is key=name, value = value
+    # The ivar_comp_dict is key=ivar(name), value = value
+    # - It's convenient to have both sets of keys available
+    set ivar_dict           [dict create]
+    set ivar_comp_dict      [dict create]
+
+    # The lib versions start with ivar(lib,....).  There are tens of 
+    #  thousands of those.   Dump them into separate json to avoid
+    #  loading the json into Vim by default, but only when needed.
+    set ivar_lib_dict       [dict create]
+    set ivar_lib_comp_dict  [dict create]
+
+    foreach ivar_name [array names ::ivar] {
+        set ivar_val [array get ::ivar $ivar_name]
+
+        # Escape double quotes for json
+        set ivar_val [regsub -all "\"" $ivar_val {\"}]
+
+        if {[string match "lib,*" $ivar_name]} {
+            set type "lib"
+        } elseif {[string match "*,rc_type" $ivar_name]} {
+            set type "lib"
+        } else {
+            set type "default"
+        }
+
+        set ivar_comp_name "ivar($ivar_name)"
+        if {$type == "default"} {
+            dict set ivar_dict       $ivar_name      $ivar_val
+        } elseif {$type == "lib"} {
+            dict set ivar_lib_dict       $ivar_name      $ivar_val
+        }
+    }
+
+    TclComplete::write_json $outdir/ivar_dict          [TclComplete::dict_to_json $ivar_dict]
+    TclComplete::write_json $outdir/ivar_lib_dict      [TclComplete::dict_to_json $ivar_lib_dict]
 }
