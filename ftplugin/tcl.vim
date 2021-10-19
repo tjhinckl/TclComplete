@@ -110,8 +110,8 @@ function! TclCompleteVision()
     let g:vision_current_word = current_word
 
     " Is it a proc?
-    if has_key(TclComplete#GetDescriptions(), current_word)
-        let g:TclComplete#display_str = get(TclComplete#GetDescriptions(), current_word,"")
+    if has_key(TclComplete#get#Descriptions(), current_word)
+        let g:TclComplete#display_str = get(TclComplete#get#Descriptions(), current_word,"")
         let g:vision_word = current_word
     elseif match(current_word, '\(::\)\?ivar(')>-1
         " Is it an ivar?  
@@ -122,7 +122,7 @@ function! TclCompleteVision()
     elseif match(current_word, 'env(')>-1
         let env_name = get(split(current_word,'[()]'),1,"")
         let g:vision_word = env_name
-        let env_array = get(TclComplete#GetArrays(),'env', {})
+        let env_array = get(TclComplete#get#Arrays(),'env', {})
         let g:TclComplete#display_str = '$'.env_name.' = '.get(env_array,env_name,"")
     else
         " Or something else?
@@ -163,9 +163,9 @@ function! TclCompleteVisionInitialize()
     let g:ivar_vision = {}
 
     " These arrays should be in TclComplete/arrays.json 
-    let g:ivar_array = TclComplete#GetIvarDict()
-    let g:ivar_desc  = get(TclComplete#GetArrays(),'ivar', {})
-    let g:ivar_type  = get(TclComplete#GetArrays(),'ivar_type', {})
+    let g:ivar_array = TclComplete#get#IvarDict()
+    let g:ivar_desc  = get(TclComplete#get#Arrays(),'ivar', {})
+    let g:ivar_type  = get(TclComplete#get#Arrays(),'ivar_type', {})
 
     let g:TclCompleteVisionInitialized = 1
 
@@ -187,7 +187,7 @@ function! IvarVisionGetDisplayStr(ivar_name)
     endif
 
     " Get the ivar's value (substitute literal '$ward' if possible)
-    let value = get(TclComplete#GetIvarDict(), a:ivar_name, "")
+    let value = get(TclComplete#get#IvarDict(), a:ivar_name, "")
     let value = substitute(value,$ward,'$ward','g')
     
     " Make an empty string display literally as empty string
