@@ -16,6 +16,9 @@ setlocal ttimeoutlen=100  "Wait time for triggering abbreviations (if ambiguity 
 let g:TclComplete#attr_flag  = 'no'
 let g:TclComplete#attr_class = ''
 
+" This gets a yes value during TclComplete#CommandComplete()
+let g:TclComplete#cmd_flag  = 'no'
+
 """""""""""""""""""""""""""""""""""""""""""
 " Simple key maps to trigger the completion
 """""""""""""""""""""""""""""""""""""""""""
@@ -31,10 +34,12 @@ if !exists("g:OneTabImap") || g:OneTabImap!=1
     " maps beginning with <tab> mean that <tab> itself must wait for 'timeoutlen'.
     inoremap <buffer> <tab><space>  <c-x><c-o>
     inoremap <buffer> <tab>a <c-r>=TclComplete#AttributeComplete()<cr>
+    inoremap <buffer> <tab>k <c-r>=TclComplete#CommandComplete()<cr>
 else
     " Reserve <tab> for TclComplete only.  Use <c-g> prefix so that
     " TclComplete <tab> doesn't need to wait for 'timeoutlen'
     inoremap <buffer> <c-g><c-a> <c-r>=TclComplete#AttributeComplete()<cr>
+    inoremap <buffer> <c-g><c-k> <c-r>=TclComplete#CommandComplete()<cr>
 endif
 
 " Let <tab> activate and advance through the popup menu.  

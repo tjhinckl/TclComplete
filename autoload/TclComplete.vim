@@ -158,6 +158,11 @@ function! TclComplete#AttributeComplete()
     return "\<c-x>\<c-o>"
 endfunction
 
+function! TclComplete#CommandComplete()
+    let g:TclComplete#cmd_flag = 'yes'
+    return "\<c-x>\<c-o>"
+endfunction
+
 function! TclComplete#AskForAttribute()
     " This does no return a value,  It launches an input prompt, and sets global variables.
     let l:message = "Please enter an object class (tab for auto-complete, enter to use prev value): "
@@ -470,8 +475,10 @@ function! TclComplete#Complete(findstart, base)
             let l:complete_list = TclComplete#get#RegexpCharClassList()
 
 
-        " 2) Command completion if no command exists yet.
-        elseif g:active_cmd == ''
+        " 2) Command completion if no command exists yet.  (or if triggered by TclComplete#CommandComplete())
+        elseif g:active_cmd == '' || g:TclComplete#cmd_flag == 'yes'
+            " Reset the flag.
+            let g:TclComplete#cmd_flag  = 'no'
             " 2a) If you're inside a namespace eval block, then use cmds as scoped to the namespace
             if get(l:context,0,'')=='namespace' && get(l:context,1,'')=='eval' && len(l:context)>2
                 let namespace = l:context[2]
