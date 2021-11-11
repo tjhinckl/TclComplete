@@ -147,25 +147,26 @@ To avoid triggering an abbreviation, type `ctrl-v space`
 
 ==============================================================================
 ## Special categories of completion
-- variable names starting with $ 
-- attributes in the get_attribute/set_attribute commands
-- attributes after a -filter option
-- expr functions
-- command ensembles (dict, string, package, etc)
-- package require
-- iccpp parameters with iccpp_com::get_param and iccpp_com::set_param
-- tech::get_techfile_info autocompletion 
-- environment variable completion (after getenv, setenv and $::env( )
-- get_xxx -design completion (also works for current_design and set_working_design)
+- variable names starting with `$` 
+- attributes in the `get_attribute` or `set_attribute` commands
+- attributes after a `-filter` option
+- `expr` functions
+- command ensembles (`dict`, `string`, `package`, etc)
+- `package require`
+- filenames after the `-file` arg in `iproc_source` and `iproc_source_distributed`
+- iccpp parameters with `iccpp_com::get_param` and `iccpp_com::set_param`
+- `tech::get_techfile_info` autocompletion 
+- environment variable completion (after `getenv`, `setenv` and `$::env( )`
+- `get_xxx -design` completion (also works for `current_design` and `set_working_design`)
 - namespaces for "namespace" ensemble commands.
-- inside a namespace eval ... {} block
-- inside a oo:: {} block.
+- inside a `namespace eval ... {}` block
+- inside a `oo:: {}` block.
 - things that act like namespace ensemble but aren't 
 - dotted object attributes (like net.cell.full_name)
 - array variable names
 - filter special codes
 - encoding names
-- regexp character classes (like [:alnum:])
-- "string is" arguments
+- regexp character classes (like `[:alnum:]`)
+- `string is` arguments
 - rdt stages and steps (if using an Intel RDT flow)
 
