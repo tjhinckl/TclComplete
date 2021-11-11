@@ -132,6 +132,22 @@ function! TclComplete#get#IvarLibDict()
     return g:TclComplete#ivar_lib_dict
 endfunction
 
+" Try to convert the value in ivar_dict.json file for 'iproc_search_path'
+" into a comma separated string. 
+function! TclComplete#get#IprocSearchPath()
+    if !exists('g:TclComplete#iproc_search_path')
+        let search_path = get(TclComplete#get#IvarDict(), 'search_path', '')
+        if search_path != ''
+            " Weird stuff here... the value is 'iproc_search_path {path1 path2 path3}'
+            " and should be converted to 'path1,path2,path3'
+            let search_path = trim(join(split(search_path)[1:], ","), "{}")
+        endif
+        let g:TclComplete#iproc_search_path = search_path
+    endif
+
+    return g:TclComplete#iproc_search_path
+endfunction
+
 function! TclComplete#get#TrackPatterns()
     if !exists('g:TclComplete#track_patterns')
         " Get the track patterns from the G_ROUTE_TRACK_PATTERNS array

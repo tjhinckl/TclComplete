@@ -295,7 +295,8 @@ function! TclComplete#FindStart()
     "    * for the wildcard mode
     "    - for dash options
     "    . for app_options and collection attributes
-    let l:valid_chars = '[\-a-zA-Z0-9:_*$(.,]'
+    "    / for filenames
+    let l:valid_chars = '[\-a-zA-Z0-9:_*$(.,/]'
 
     " Look backwards at each character in the line string to first invalid char or start of string
     while  l:index>0 && l:line[l:index - 1]=~l:valid_chars
@@ -462,7 +463,7 @@ function! TclComplete#Complete(findstart, base)
 
         " 1d) If you've typed a "$", then use a list of variables in the buffer.
         "      (NOTE, I change $ to \$ in l:base earlier to avoid regex problems in =~ operations.
-        elseif l:base[0:1] == '\$'
+        elseif l:base[0:1] == '\$' && l:base!~'/'
             let g:ctype = '$var'
             let l:complete_list = map(TclComplete#ScanBufferForVariableNames(),"'$'.v:val")
             " Always included ivar and env!
@@ -624,6 +625,10 @@ function! TclComplete#Complete(findstart, base)
                 endif
             endif
             
+        " 5bb) iproc_source -file completion
+        elseif g:active_cmd =~ '^iproc_source' && g:last_completed_word == '-file'
+            let g:ctype = 'iproc_source file'
+            let l:complete_list = TclComplete#GlobPath(l:base)
 
         " 5c) Complete the commands which use variable names (without $ sign)
         elseif has_key(g:TclComplete#varname_funcs, g:active_cmd) || has_key(g:TclComplete#varname_funcs, g:active_cmd.' '.g:last_completed_word)
@@ -925,5 +930,64 @@ function! TclComplete#ivar_prep()
         let g:TclComplete#dollar_ivar_completion['$'.ivar_name] = val
     endfor
 
+
+endfunction
+
+function! TclComplete#GlobPath(glob)
+    let glob = a:glob 
+
+    " Add '*' to end if required
+    if glob[-1] != '*'
+        let glob = glob . '*'
+    endif
+
+    " Set path to one absolute path or comma separated list of path for searching 
+    if glob =~ '^/'
+        let type = 'abs'
+        let path = '/'
+        let glob = trim(glob, '/', 1)
+    elseif glob =~ '\\\$ward'
+        let type = 'ward'
+        let path = $ward
+        let glob = join(split(glob,'/')[1:],'/')
+    else
+        let type = 'rel'
+        let path  = TclComplete#get#IprocSearchPath()
+    endif
+
+    let g:tpath = path
+    
+    " Change .* (regex) in glob arg back to * (glob) 
+    let glob = substitute(glob, '\.\*', '*', 'g')
+
+    let g:glob = glob 
+
+    let files = globpath(path, glob , '', 1)
+
+    " For absolute paths, we're done.
+    if type == 'abs'
+        return sort(files)
+    endif
+
+    " For $ward paths, substitute full $ward value for literal '$ward'
+    if type == 'ward'
+        call map(files, {_, val -> substitute(val, path, '$ward', '')})
+        return sort(files)
+    endif
+
+    " Relative paths: Does the a:glob argument include a slash?
+    let n = count(a:glob, '/')
+    
+    if n == 0 
+        " If no slashes, then only use the file tails
+        call map(files, "fnamemodify(v:val,':t')" )
+    else
+        " If N slashes, then return the final N+1 parts of the files
+        let head = fnamemodify(a:glob, ':h')
+        call map(files, {_, val -> join(split(val, '/')[-(n+1):], '/')})
+    endif
+
+    let files = sort(uniq(files))
+    return files
 
 endfunction
