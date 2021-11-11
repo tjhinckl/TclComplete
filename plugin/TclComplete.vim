@@ -39,6 +39,8 @@ if !exists("g:TclComplete#dir")
     endif
 endif
 
+" The TclComplete#ReadJsonFile() function adds key/values to this dict.
+let g:TclComplete#json_status = {}
 
 " This activates the syntax/tcl.vim file 
 execute "set runtimepath+=".g:TclComplete#dir
