@@ -1,7 +1,7 @@
 "tclcomplete.vim - Omni Completion for Synopsys Tcl
 " Creator: Chris Heithoff < christopher.b.heithoff@intel.com >
-" Version: 3.1
-" Last Updated: 18-Sep-2021
+" Version: 3.2
+" Last Updated: 11-Nov_2021
 "
 
 function! TclComplete#ReadJsonFile(json_file, json_type)
@@ -630,10 +630,15 @@ function! TclComplete#Complete(findstart, base)
                 endif
             endif
             
-        " 5bb) iproc_source -file completion
-        elseif g:active_cmd =~ '^iproc_source' && g:last_completed_word == '-file'
+        " 5b1) iproc_source -file completion
+        elseif g:active_cmd =~ '^iproc_source' && g:last_completed_word == '-file' 
             let g:ctype = 'iproc_source file'
             let l:complete_list = TclComplete#GlobPath(l:base)
+
+        " 5b2) source completion
+        elseif g:active_cmd=='source' && l:base!~'^-'
+            let g:ctype = 'source'
+            let l:complete_list = TclComplete#GlobPath(l:base, 'abs_only')
 
         " 5c) Complete the commands which use variable names (without $ sign)
         elseif has_key(g:TclComplete#varname_funcs, g:active_cmd) || has_key(g:TclComplete#varname_funcs, g:active_cmd.' '.g:last_completed_word)
@@ -938,7 +943,7 @@ function! TclComplete#ivar_prep()
 
 endfunction
 
-function! TclComplete#GlobPath(glob)
+function! TclComplete#GlobPath(glob, flag)
     let glob = a:glob 
 
     " Add '*' to end if required
@@ -958,6 +963,11 @@ function! TclComplete#GlobPath(glob)
     else
         let type = 'rel'
         let path  = TclComplete#get#IprocSearchPath()
+    endif
+
+    " Return empty list if the glob is relative type, but only absolute paths are allowed
+    if type=='rel' && a:flag=='abs_only'
+        return []
     endif
 
     let g:tpath = path
