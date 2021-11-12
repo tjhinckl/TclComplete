@@ -682,19 +682,20 @@ proc TclComplete::write_ivar_json {outdir} {
     # The ivar_comp_dict is key=ivar(name), value = value
     # - It's convenient to have both sets of keys available
     set ivar_dict           [dict create]
-    set ivar_comp_dict      [dict create]
 
     # The lib versions start with ivar(lib,....).  There are tens of 
     #  thousands of those.   Dump them into separate json to avoid
     #  loading the json into Vim by default, but only when needed.
     set ivar_lib_dict       [dict create]
-    set ivar_lib_comp_dict  [dict create]
 
     foreach ivar_name [array names ::ivar] {
-        set ivar_val [array get ::ivar $ivar_name]
+        set ivar_val $::ivar($ivar_name)
 
         # Escape double quotes for json
         set ivar_val [regsub -all "\"" $ivar_val {\"}]
+
+        # Substitue literal tabs (\t) for spaces for better json.
+        set ivar_val [regsub -all "\t" $ivar_val {    }]
 
         if {[string match "lib,*" $ivar_name]} {
             set type "lib"

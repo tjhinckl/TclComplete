@@ -1,7 +1,7 @@
 "tclcomplete.vim - Omni Completion for Synopsys Tcl
 " Creator: Chris Heithoff < christopher.b.heithoff@intel.com >
 " Version: 3.2
-" Last Updated: 11-Nov_2021
+" Last Updated: 12-Nov_2021
 "
 
 function! TclComplete#ReadJsonFile(json_file, json_type)
@@ -908,56 +908,56 @@ endfunction
 " 3)  Break up the ivar(lib,*,*,*) values because there are so many!
 " 4)  
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""
-function! TclComplete#ivar_prep()
-    let l:arrays = TclComplete#get#Arrays()
-    if !has_key(l:arrays, 'ivar')
-        return
-    endif
+" function! TclComplete#ivar_prep()
+"     let l:arrays = TclComplete#get#Arrays()
+"     if !has_key(l:arrays, 'ivar')
+"         return
+"     endif
 
-    let ivar_dict = get(l:arrays, 'ivar')
+"     let ivar_dict = get(l:arrays, 'ivar')
 
-    if has_key(l:arrays, 'ivar_desc')
-        let value_dict = get(l:arrays,'ivar_desc')
-    else
-        let value_dict = ivar_dict
-    endif
+"     if has_key(l:arrays, 'ivar_desc')
+"         let value_dict = get(l:arrays,'ivar_desc')
+"     else
+"         let value_dict = ivar_dict
+"     endif
 
-    for ivar_name in keys(ivar_dict)
-        if ivar_name =~ '^/p/.*archive' 
-            " Ignore ivar names like '/p/gnrc/archive...'
-            continue
+"     for ivar_name in keys(ivar_dict)
+"         if ivar_name =~ '^/p/.*archive' 
+"             " Ignore ivar names like '/p/gnrc/archive...'
+"             continue
 
-        elseif ivar_name =~ '^lib,' 
-            " Special consideration for bit ivar(lib,*,*,*...) values
-            let lib_fields = split(ivar_name,",")
+"         elseif ivar_name =~ '^lib,' 
+"             " Special consideration for bit ivar(lib,*,*,*...) values
+"             let lib_fields = split(ivar_name,",")
 
-            " Use the first two fields as an ivar( completion candidate.
-            let first_two  = join(lib_fields[0:1], ",")
-            let new_key = 'ivar('.first_two
-            let g:TclComplete#ivar_completion[new_key] = ''
+"             " Use the first two fields as an ivar( completion candidate.
+"             let first_two  = join(lib_fields[0:1], ",")
+"             let new_key = 'ivar('.first_two
+"             let g:TclComplete#ivar_completion[new_key] = ''
 
-            " Also save the complete name in a new dict just for ivar lib names
-            if !has_key(g:TclComplete#ivar_lib_names,first_two)
-                let g:TclComplete#ivar_lib_names[first_two] = {}
-            endif
-            let g:TclComplete#ivar_lib_names[first_two]['ivar('.ivar_name] = ''
+"             " Also save the complete name in a new dict just for ivar lib names
+"             if !has_key(g:TclComplete#ivar_lib_names,first_two)
+"                 let g:TclComplete#ivar_lib_names[first_two] = {}
+"             endif
+"             let g:TclComplete#ivar_lib_names[first_two]['ivar('.ivar_name] = ''
 
-        else 
-            let new_key = 'ivar('.ivar_name
-            let new_value = get(value_dict, ivar_name, '')
-            let g:TclComplete#ivar_completion[new_key] = new_value
-        endif
-    endfor
+"         else 
+"             let new_key = 'ivar('.ivar_name
+"             let new_value = get(value_dict, ivar_name, '')
+"             let g:TclComplete#ivar_completion[new_key] = new_value
+"         endif
+"     endfor
 
-    " Make another ivar dictionary, but with all keys starting with '$'
-    let g:TclComplete#dollar_ivar_completion = {}
-    for ivar_name in keys(g:TclComplete#ivar_completion) 
-        let val = get(g:TclComplete#ivar_completion, ivar_name)
-        let g:TclComplete#dollar_ivar_completion['$'.ivar_name] = val
-    endfor
+"     " Make another ivar dictionary, but with all keys starting with '$'
+"     let g:TclComplete#dollar_ivar_completion = {}
+"     for ivar_name in keys(g:TclComplete#ivar_completion) 
+"         let val = get(g:TclComplete#ivar_completion, ivar_name)
+"         let g:TclComplete#dollar_ivar_completion['$'.ivar_name] = val
+"     endfor
 
 
-endfunction
+" endfunction
 
 function! TclComplete#GlobPath(glob, flag)
     let glob = a:glob 
