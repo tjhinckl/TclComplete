@@ -40,7 +40,14 @@ if !exists("g:TclComplete#dir")
 endif
 
 " The TclComplete#ReadJsonFile() function adds key/values to this dict.
+"   useful for debug
 let g:TclComplete#json_status = {}
+
+" All global vars derived from json files will go in this dict (see TclComplete/get.vim)
+let g:TclComplete#json_vars = {}
+
+" Remember a time when this plugin was loaded
+let g:TclComplete#start_time = localtime()
 
 " This activates the syntax/tcl.vim file 
 execute "set runtimepath+=".g:TclComplete#dir

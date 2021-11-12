@@ -71,6 +71,16 @@ endfunction
 " - this is called when TclComplete is activated.
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! TclComplete#Init()
+    " The TclComplete#ReadJsonFile() function adds key/values to this dict.
+    "   useful for debug
+    let g:TclComplete#json_status = {}
+
+    " All global vars derived from json files will go in this dict (see TclComplete/get.vim)
+    let g:TclComplete#json_vars = {}
+
+    " Remember a time when this was initialized.
+    let g:TclComplete#start_time = localtime()
+
     " Define the commands that will use attribute completion
     let g:TclComplete#attribute_funcs = {}
     for f in ['get_attribute', 'filter_collection', 'set_attribute', 'get_defined_attributes', 'sort_collection']
@@ -373,9 +383,15 @@ endfunction
 "" Main OmniCompletion function here!!! """""""""""""""""""""""""""""""""
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! TclComplete#Complete(findstart, base)
-    " First things first, source the completion scripts if necessary
+    " This used to do more, but the TclComplete/get.vim functions replaced most of it.
     if !exists("g:TclComplete#init_done")
         call TclComplete#Init()
+    endif
+
+    " Force reloading of json files if stale
+    if getftime(g:TclComplete#dir) > g:TclComplete#start_time 
+        call TclComplete#Init()
+        let g:reload = 'yes'
     endif
 
     "findstart = 1 to figure the start point of your current word
@@ -633,7 +649,7 @@ function! TclComplete#Complete(findstart, base)
         " 5b1) iproc_source -file completion
         elseif g:active_cmd =~ '^iproc_source' && g:last_completed_word == '-file' 
             let g:ctype = 'iproc_source file'
-            let l:complete_list = TclComplete#GlobPath(l:base)
+            let l:complete_list = TclComplete#GlobPath(l:base, '')
 
         " 5b2) source completion
         elseif g:active_cmd=='source' && l:base!~'^-'
@@ -1006,3 +1022,5 @@ function! TclComplete#GlobPath(glob, flag)
     return files
 
 endfunction
+
+
