@@ -432,8 +432,17 @@ function! TclComplete#Complete(findstart, base)
         " 1a)  If you've typed a dash, then get the -options of the active cmd.
         if l:base[0] == '-' 
             let g:ctype = 'dash'
-            let l:complete_list = get(TclComplete#get#Options(),g:active_cmd,[])
-            let l:menu_dict     = get(TclComplete#get#OptionDetails(),g:active_cmd,[])
+            " Try a two word option first (like 'file copy -force')
+            let l:two_words = join([g:active_cmd, g:last_completed_word])
+            let g:two_words = l:two_words
+            if has_key(TclComplete#get#Options(), l:two_words)
+                let g:ctype = 'dash two words'
+                let l:complete_list = get(TclComplete#get#Options(),l:two_words,[])
+                let l:menu_dict     = get(TclComplete#get#OptionDetails(),l:two_words,[])
+            else
+                let l:complete_list = get(TclComplete#get#Options(),g:active_cmd,[])
+                let l:menu_dict     = get(TclComplete#get#OptionDetails(),g:active_cmd,[])
+            endif
 
         " 1b)  If you've typed "G_", then use list of g vars.
         elseif l:base[0:1] == 'G_' 
