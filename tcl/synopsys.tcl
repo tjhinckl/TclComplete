@@ -703,7 +703,7 @@ proc TclComplete::write_ivar_json {outdir} {
             set type "lib"
         } elseif {[string match "*,rc_type" $ivar_name]} {
             set type "lib"
-        } elseif {[regexp {^attribute,[as]rf} $ivar_name]} {
+        } elseif {[regexp {^attribute,} $ivar_name]} {
             set type "attr"
         } else {
             set type "default"
@@ -714,7 +714,7 @@ proc TclComplete::write_ivar_json {outdir} {
         } elseif {$type == "lib"} {
             dict set ivar_lib_dict $ivar_name $ivar_val
         } elseif {$type == "attr"} {
-            dict set ivar_attr)dict $ivar_name $ivar_val
+            dict set ivar_attr_dict $ivar_name $ivar_val
         }
     }
 
