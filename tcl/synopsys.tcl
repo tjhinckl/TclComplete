@@ -686,7 +686,9 @@ proc TclComplete::write_ivar_json {outdir} {
     # The lib versions start with ivar(lib,....).  There are tens of 
     #  thousands of those.   Dump them into separate json to avoid
     #  loading the json into Vim by default, but only when needed.
+    # (update 2/8/2022: let's do something similar for ivar(attribute,...)
     set ivar_lib_dict       [dict create]
+    set ivar_attr_dict       [dict create]
 
     foreach ivar_name [array names ::ivar] {
         set ivar_val $::ivar($ivar_name)
@@ -701,18 +703,22 @@ proc TclComplete::write_ivar_json {outdir} {
             set type "lib"
         } elseif {[string match "*,rc_type" $ivar_name]} {
             set type "lib"
+        } elseif {[regexp {^attribute,[as]rf} $ivar_name]} {
+            set type "attr"
         } else {
             set type "default"
         }
 
-        set ivar_comp_name "ivar($ivar_name)"
         if {$type == "default"} {
-            dict set ivar_dict       $ivar_name      $ivar_val
+            dict set ivar_dict $ivar_name $ivar_val
         } elseif {$type == "lib"} {
-            dict set ivar_lib_dict       $ivar_name      $ivar_val
+            dict set ivar_lib_dict $ivar_name $ivar_val
+        } elseif {$type == "attr"} {
+            dict set ivar_attr)dict $ivar_name $ivar_val
         }
     }
 
-    TclComplete::write_json $outdir/ivar_dict          [TclComplete::dict_to_json $ivar_dict]
-    TclComplete::write_json $outdir/ivar_lib_dict      [TclComplete::dict_to_json $ivar_lib_dict]
+    TclComplete::write_json $outdir/ivar_dict       [TclComplete::dict_to_json $ivar_dict]
+    TclComplete::write_json $outdir/ivar_lib_dict   [TclComplete::dict_to_json $ivar_lib_dict]
+    TclComplete::write_json $outdir/ivar_attr_dict  [TclComplete::dict_to_json $ivar_attr_dict]
 }
