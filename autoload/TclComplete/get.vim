@@ -133,6 +133,13 @@ function! TclComplete#get#IvarLibDict()
     return g:TclComplete#json_vars['ivar_lib_dict']
 endfunction
 
+function! TclComplete#get#IvarAttrDict()
+    if !has_key(g:TclComplete#json_vars, 'ivar_attr_dict')
+        let g:TclComplete#json_vars['ivar_attr_dict'] = TclComplete#ReadJsonFile('ivar_attr_dict.json','dict')
+    endif
+    return g:TclComplete#json_vars['ivar_attr_dict']
+endfunction
+
 " Try to convert the value in ivar_dict.json file for 'iproc_search_path'
 " into a comma separated string. 
 function! TclComplete#get#IprocSearchPath()

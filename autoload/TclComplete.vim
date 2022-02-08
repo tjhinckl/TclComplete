@@ -465,6 +465,9 @@ function! TclComplete#Complete(findstart, base)
                 if l:base =~ 'ivar(lib,'
                     let g:ctype= 'ivar_lib'
                     let g:array_dict    = TclComplete#get#IvarLibDict()
+                elseif l:base =~ 'ivar(attr'
+                    let g:ctype= 'ivar_attr'
+                    let g:array_dict    = TclComplete#get#IvarAttrDict()
                 else
                     let g:ctype= 'ivar'
                     let g:array_dict    = TclComplete#get#IvarDict()
